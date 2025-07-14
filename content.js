@@ -979,18 +979,23 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 1em;
-        height: 1em;
+        width: 1.2em;
+        height: 1.2em;
         padding: 0;
         border: 1.5px solid currentColor;
         color: inherit;
         border-radius: 50%;
-        font-weight: normal;
-        font-size: 0.7em;
+        font-weight: bold;
+        font-size: 0.9em;
         line-height: 1;
         vertical-align: middle;
         position: relative;
         top: -0.05em;
+      }
+      
+      /* 透明邊框樣式（給數字 1 使用） */
+      .bv-qty-circle.transparent {
+        border-color: transparent;
       }
       
       /* 列印時保持圓圈樣式 */
@@ -1000,6 +1005,10 @@
           color: inherit !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
+        }
+        
+        .bv-qty-circle.transparent {
+          border-color: transparent !important;
         }
       }
       
@@ -1968,7 +1977,7 @@
       removeQuantityHighlight();
     }
   }
-  
+    
   // 應用數量標示 - 直接替換數字為圓圈
   function applyQuantityHighlight() {
     document.querySelectorAll('.list-item').forEach(item => {
@@ -1988,8 +1997,11 @@
       if (qtyCell && !qtyCell.querySelector('.bv-qty-circle')) {
         const qty = parseInt(qtyCell.textContent.trim());
         if (qty >= 2) {
-          // 直接替換整個內容為圓圈數字
+          // 2 以上顯示有邊框的圓圈
           qtyCell.innerHTML = `<span class="bv-qty-circle">${qty}</span>`;
+        } else if (qty === 1) {
+          // 1 顯示透明邊框的圓圈
+          qtyCell.innerHTML = `<span class="bv-qty-circle transparent">${qty}</span>`;
         }
       }
     });
