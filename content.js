@@ -1207,7 +1207,26 @@
     
     // 初始化拖曳功能
     initDragFunction();
+
+    // 初始化控制項狀態
+    updateControlsState();
   }
+  
+  // 更新控制項狀態
+function updateControlsState() {
+  const spacingControls = document.getElementById('bv-spacing-controls');
+  const presetSection = document.querySelector('.bv-preset-section');
+  
+  if (!isConverted) {
+    // 原始格式時禁用間距控制項和預設檔功能
+    if (spacingControls) spacingControls.classList.add('disabled');
+    if (presetSection) presetSection.classList.add('disabled');
+  } else {
+    // 轉換後啟用間距控制項和預設檔功能
+    if (spacingControls) spacingControls.classList.remove('disabled');
+    if (presetSection) presetSection.classList.remove('disabled');
+  }
+}
   
   // 初始化拖曳功能
   function initDragFunction() {
@@ -1797,6 +1816,9 @@
     document.getElementById('bv-revert-btn').style.display = 'block';
     
     isConverted = true;
+    
+    // 更新控制項狀態
+    updateControlsState();
     
     // 應用數量標示
     if (highlightQuantity) {
