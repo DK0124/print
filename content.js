@@ -1,4 +1,4 @@
-// BV SHOP 出貨明細標籤列印工具
+// BV SHOP 標籤機專用出貨明細
 (function() {
   'use strict';
   
@@ -31,7 +31,7 @@
           <div class="bv-icon-wrapper">
             <span class="material-icons">local_shipping</span>
           </div>
-          <span class="bv-panel-title">BV SHOP 出貨明細標籤列印工具</span>
+          <span class="bv-panel-title">BV SHOP 標籤機專用出貨明細</span>
         </h3>
         <div class="bv-header-controls">
           <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
@@ -979,21 +979,25 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 20px;
-        height: 20px;
-        padding: 0 4px;
-        border: 2px solid #333;
-        color: #333;
+        width: 1.2em;
+        height: 1.2em;
+        padding: 0;
+        border: 1.5px solid currentColor;
+        color: inherit;
         border-radius: 50%;
         font-weight: bold;
-        font-size: 12px;
+        font-size: 0.9em;
+        line-height: 1;
+        vertical-align: middle;
+        position: relative;
+        top: -0.05em;
       }
       
       /* 列印時保持圓圈樣式 */
       @media print {
         .bv-qty-circle {
-          border: 2px solid #000 !important;
-          color: #000 !important;
+          border: 1.5px solid currentColor !important;
+          color: inherit !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
