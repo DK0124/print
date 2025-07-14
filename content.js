@@ -133,17 +133,6 @@
                 <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
               </div>
             </div>
-                
-                <div class="bv-switch-container" style="margin-top: 20px;">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-highlight-qty">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
-                </div>
-              </div>
-            </div>
-          </div>
           
           <!-- 同步原始控制項的提示 -->
           <div class="bv-info-section">
