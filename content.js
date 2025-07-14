@@ -1431,11 +1431,18 @@
         border-bottom: 0.5mm solid #000 !important;
       }
       
+      /* 動態調整標題列 padding */
       .bv-converted .list-title th {
-        padding: 1.5mm 1mm !important;
+        padding: ${fontSize === '12px' ? '0.8mm 1mm' : 
+                  fontSize === '13px' ? '1mm 1mm' : 
+                  fontSize === '14px' ? '1.2mm 1mm' :
+                  fontSize === '15px' ? '1.3mm 1mm' :
+                  fontSize === '16px' ? '1.4mm 1mm' :
+                  '1.5mm 1mm'} !important;
         font-size: calc(${fontSize} - 1px) !important;
         font-weight: bold !important;
         text-align: left !important;
+        line-height: 1.2 !important;
       }
       
       .bv-converted .list-title th.text-right,
@@ -1447,10 +1454,17 @@
         border-bottom: 0.2mm solid #ddd !important;
       }
       
+      /* 動態調整內容列 padding */
       .bv-converted .list-item td {
-        padding: 1.5mm 1mm !important;
+        padding: ${fontSize === '12px' ? '1mm 1mm' : 
+                  fontSize === '13px' ? '1.2mm 1mm' : 
+                  fontSize === '14px' ? '1.3mm 1mm' :
+                  fontSize === '15px' ? '1.4mm 1mm' :
+                  fontSize === '16px' ? '1.5mm 1mm' :
+                  '1.5mm 1mm'} !important;
         font-size: calc(${fontSize} - 2px) !important;
         vertical-align: top !important;
+        line-height: 1.3 !important;
       }
       
       .bv-converted .list-item-name {
@@ -1474,9 +1488,16 @@
         border-bottom: 0.3mm solid #000 !important;
       }
       
+      /* 動態調整費用表格 padding */
       .bv-converted .order-fee td {
-        padding: 1.5mm 1mm !important;
+        padding: ${fontSize === '12px' ? '1mm 1mm' : 
+                  fontSize === '13px' ? '1.2mm 1mm' : 
+                  fontSize === '14px' ? '1.3mm 1mm' :
+                  fontSize === '15px' ? '1.4mm 1mm' :
+                  fontSize === '16px' ? '1.5mm 1mm' :
+                  '1.5mm 1mm'} !important;
         font-size: calc(${fontSize} - 2px) !important;
+        line-height: 1.2 !important;
       }
       
       .bv-converted .order-fee td:first-child {
