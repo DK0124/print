@@ -100,19 +100,19 @@
                 <!-- 表格間距設定 -->
                 <div class="bv-spacing-controls">
                   <div class="bv-control-label" style="margin-top: 20px;">
-                    <span>標題列上下間距</span>
+                    <span>標題列間距</span>
                     <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
                   </div>
                   <input type="range" id="bv-header-padding" min="0" max="3" step="0.1" value="0.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
-                    <span>內容列上下間距</span>
+                    <span>內容列間距</span>
                     <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
                   </div>
                   <input type="range" id="bv-row-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
-                    <span>費用表格間距</span>
+                    <span>費用列間距</span>
                     <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
                   </div>
                   <input type="range" id="bv-fee-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
