@@ -1,4 +1,4 @@
-// BV SHOP 標籤機專用出貨明細
+// BV SHOP 標籤機-出貨明細
 (function() {
   'use strict';
   
@@ -31,7 +31,7 @@
           <div class="bv-icon-wrapper">
             <span class="material-icons">local_shipping</span>
           </div>
-          <span class="bv-panel-title">BV SHOP 標籤機專用出貨明細</span>
+          <span class="bv-panel-title">BV SHOP 標籤機-出貨明細</span>
         </h3>
         <div class="bv-header-controls">
           <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
@@ -94,7 +94,7 @@
                   <span>標籤內距</span>
                   <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
                 </div>
-                <input type="range" id="bv-label-padding" min="0" max="5" step="0.5" value="2.5" class="bv-range">
+                <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="5" class="bv-range">
                 
                 <!-- 表格間距設定 -->
                 <div class="bv-spacing-controls">
@@ -102,25 +102,25 @@
                     <span>標題列間距</span>
                     <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
                   </div>
-                  <input type="range" id="bv-header-padding" min="0" max="3" step="0.1" value="0.5" class="bv-range">
+                  <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
                     <span>內容列間距</span>
                     <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
                   </div>
-                  <input type="range" id="bv-row-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                  <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
                     <span>費用列間距</span>
                     <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
                   </div>
-                  <input type="range" id="bv-fee-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                  <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
                     <span>區塊間距</span>
                     <span class="bv-value-badge" id="bv-section-margin-value">2mm</span>
                   </div>
-                  <input type="range" id="bv-section-margin" min="0" max="5" step="0.5" value="2" class="bv-range">
+                  <input type="range" id="bv-section-margin" min="0" max="10" step="0.5" value="5" class="bv-range">
                 </div>
                 
                 <div class="bv-switch-container" style="margin-top: 20px;">
