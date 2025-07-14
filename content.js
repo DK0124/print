@@ -37,9 +37,6 @@
           <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
             <span class="material-icons">remove</span>
           </button>
-          <button class="bv-header-button" id="bv-position-btn" title="切換位置">
-            <span class="material-icons">swap_horiz</span>
-          </button>
         </div>
       </div>
       
@@ -182,18 +179,26 @@
       #bv-label-control-panel:hover {
         box-shadow: 0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
       }
-      
-      /* 左側位置 */
-      #bv-label-control-panel.left-position {
-        left: 20px;
-        right: auto;
-      }
-      
+       
       /* 最小化狀態 */
       #bv-label-control-panel.minimized {
         height: auto;
         bottom: auto;
-        width: 320px;
+        width: auto;
+        min-width: 280px;
+      }
+      
+      #bv-label-control-panel.minimized .bv-panel-header {
+        padding: 16px 20px;
+      }
+      
+      #bv-label-control-panel.minimized .bv-panel-header h3 {
+        font-size: 16px;
+      }
+      
+      #bv-label-control-panel.minimized .bv-icon-wrapper {
+        width: 28px;
+        height: 28px;
       }
       
       #bv-label-control-panel.minimized .bv-panel-content-wrapper {
@@ -1177,28 +1182,7 @@
       // 儲存狀態
       chrome.storage.local.set({ bvPanelMinimized: isPanelMinimized });
     });
-    
-    // 位置切換按鈕
-    document.getElementById('bv-position-btn')?.addEventListener('click', function() {
-      const panel = document.getElementById('bv-label-control-panel');
-      const isLeft = panel.classList.contains('left-position');
-      
-      if (isLeft) {
-        panel.classList.remove('left-position');
-      } else {
-        panel.classList.add('left-position');
-      }
-      
-      // 重置拖曳位置
-      panel.style.transform = '';
-      
-      // 儲存位置偏好
-      chrome.storage.local.set({ 
-        bvPanelLeftPosition: !isLeft,
-        bvPanelPosition: { x: 0, y: 0 }
-      });
-    });
-    
+       
     // 浮動列印按鈕
     document.getElementById('bv-floating-print')?.addEventListener('click', function() {
       if (!isConverted) {
@@ -1962,7 +1946,7 @@
   
   // 載入設定
   function loadSettings() {
-    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized', 'bvPanelLeftPosition'], (result) => {
+    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized'], (result) => {
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
@@ -2009,12 +1993,7 @@
           panel.classList.add('minimized');
           minimizeBtn.querySelector('.material-icons').textContent = 'add';
         }
-      }
-      
-      // 載入面板位置
-      if (result.bvPanelLeftPosition && document.getElementById('bv-label-control-panel')) {
-        document.getElementById('bv-label-control-panel').classList.add('left-position');
-      }
+      }      
       
       // 如果有上次選擇的預設檔，載入它
       if (result.lastSelectedPreset) {
