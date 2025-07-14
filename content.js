@@ -5,6 +5,7 @@
   let isConverted = false;
   let highlightQuantity = true;
   let originalBodyStyle = null;
+  let isPanelMinimized = false;
   
   // 載入 Material Icons
   const iconLink = document.createElement('link');
@@ -30,120 +31,130 @@
           <div class="bv-icon-wrapper">
             <span class="material-icons">local_shipping</span>
           </div>
-          BV SHOP 出貨標籤列印
+          <span class="bv-panel-title">BV SHOP 出貨標籤列印</span>
         </h3>
+        <div class="bv-header-controls">
+          <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
+            <span class="material-icons">remove</span>
+          </button>
+          <button class="bv-header-button" id="bv-position-btn" title="切換位置">
+            <span class="material-icons">swap_horiz</span>
+          </button>
+        </div>
       </div>
       
-      <div class="bv-panel-body">
-        <!-- 設定檔區塊 -->
-        <div class="bv-preset-section">
-          <div class="bv-preset-row">
-            <select id="bv-preset-select">
-              <option value="">選擇設定檔</option>
-            </select>
-            <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
-              <span class="material-icons">save</span>
-            </button>
-            <button class="bv-icon-button" id="bv-delete-preset" title="刪除設定">
-              <span class="material-icons">delete</span>
-            </button>
-            <button class="bv-icon-button reset-button" id="bv-reset-format" title="清除格式">
-              <span class="material-icons">restart_alt</span>
-            </button>
-          </div>
-          <div class="bv-preset-row bv-save-row" id="bv-save-preset-row" style="display:none; margin-top: 10px;">
-            <input type="text" id="bv-new-preset-name" placeholder="輸入設定檔名稱">
-            <div class="bv-button-group">
-              <button class="bv-small-button primary" id="bv-confirm-save">確認</button>
-              <button class="bv-small-button" id="bv-cancel-save">取消</button>
+      <div class="bv-panel-content-wrapper">
+        <div class="bv-panel-body">
+          <!-- 設定檔區塊 -->
+          <div class="bv-preset-section">
+            <div class="bv-preset-row">
+              <select id="bv-preset-select">
+                <option value="">-選擇設定檔</option>
+              </select>
+              <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
+                <span class="material-icons">save</span>
+              </button>
+              <button class="bv-icon-button" id="bv-delete-preset" title="刪除設定">
+                <span class="material-icons">delete</span>
+              </button>
+              <button class="bv-icon-button reset-button" id="bv-reset-format" title="清除格式">
+                <span class="material-icons">restart_alt</span>
+              </button>
+            </div>
+            <div class="bv-preset-row bv-save-row" id="bv-save-preset-row" style="display:none; margin-top: 10px;">
+              <input type="text" id="bv-new-preset-name" placeholder="輸入設定檔名稱">
+              <div class="bv-button-group">
+                <button class="bv-small-button primary" id="bv-confirm-save">確認</button>
+                <button class="bv-small-button" id="bv-cancel-save">取消</button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <!-- 轉換按鈕 -->
-        <div class="bv-action-section">
-          <button id="bv-convert-btn" class="bv-action-button primary">
-            <span class="material-icons">transform</span>
-            <span class="bv-button-text">轉換為10×15cm標籤</span>
-          </button>
           
-          <button id="bv-revert-btn" class="bv-action-button secondary" style="display: none;">
-            <span class="bv-button-text">還原原始格式</span>
-          </button>
-        </div>
-        
-        <!-- 標籤設定 -->
-        <div class="bv-section">
-          <div class="bv-section-header" data-section="label">
-            <h4>
-              <span class="material-icons bv-section-icon">label</span>
-              標籤設定
-            </h4>
-            <span class="material-icons bv-section-toggle">expand_more</span>
+          <!-- 轉換按鈕 -->
+          <div class="bv-action-section">
+            <button id="bv-convert-btn" class="bv-action-button primary">
+              <span class="material-icons">transform</span>
+              <span class="bv-button-text">轉換為10×15cm標籤</span>
+            </button>
+            
+            <button id="bv-revert-btn" class="bv-action-button secondary" style="display: none;">
+              <span class="bv-button-text">還原原始格式</span>
+            </button>
           </div>
-          <div class="bv-section-content" id="label-content">
-            <div class="bv-control-group">
-              <!-- 標籤內距 -->
-              <div class="bv-control-label">
-                <span>標籤內距</span>
-                <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
-              </div>
-              <input type="range" id="bv-label-padding" min="0" max="5" step="0.5" value="2.5" class="bv-range">
-              
-              <!-- 表格間距設定 -->
-              <div class="bv-spacing-controls">
-                <div class="bv-control-label" style="margin-top: 20px;">
-                  <span>標題列上下間距</span>
-                  <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
+          
+          <!-- 標籤設定 -->
+          <div class="bv-section">
+            <div class="bv-section-header" data-section="label">
+              <h4>
+                <span class="material-icons bv-section-icon">label</span>
+                標籤設定
+              </h4>
+              <span class="material-icons bv-section-toggle">expand_more</span>
+            </div>
+            <div class="bv-section-content" id="label-content">
+              <div class="bv-control-group">
+                <!-- 標籤內距 -->
+                <div class="bv-control-label">
+                  <span>標籤內距</span>
+                  <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
                 </div>
-                <input type="range" id="bv-header-padding" min="0" max="3" step="0.1" value="0.5" class="bv-range">
+                <input type="range" id="bv-label-padding" min="0" max="5" step="0.5" value="2.5" class="bv-range">
                 
-                <div class="bv-control-label" style="margin-top: 15px;">
-                  <span>內容列上下間距</span>
-                  <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
+                <!-- 表格間距設定 -->
+                <div class="bv-spacing-controls">
+                  <div class="bv-control-label" style="margin-top: 20px;">
+                    <span>標題列上下間距</span>
+                    <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
+                  </div>
+                  <input type="range" id="bv-header-padding" min="0" max="3" step="0.1" value="0.5" class="bv-range">
+                  
+                  <div class="bv-control-label" style="margin-top: 15px;">
+                    <span>內容列上下間距</span>
+                    <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
+                  </div>
+                  <input type="range" id="bv-row-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                  
+                  <div class="bv-control-label" style="margin-top: 15px;">
+                    <span>費用表格間距</span>
+                    <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
+                  </div>
+                  <input type="range" id="bv-fee-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                  
+                  <div class="bv-control-label" style="margin-top: 15px;">
+                    <span>區塊間距</span>
+                    <span class="bv-value-badge" id="bv-section-margin-value">2mm</span>
+                  </div>
+                  <input type="range" id="bv-section-margin" min="0" max="5" step="0.5" value="2" class="bv-range">
                 </div>
-                <input type="range" id="bv-row-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
                 
-                <div class="bv-control-label" style="margin-top: 15px;">
-                  <span>費用表格間距</span>
-                  <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
+                <div class="bv-switch-container" style="margin-top: 20px;">
+                  <label class="bv-switch">
+                    <input type="checkbox" id="bv-highlight-qty" checked>
+                    <span class="bv-slider"></span>
+                  </label>
+                  <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
                 </div>
-                <input type="range" id="bv-fee-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
-                
-                <div class="bv-control-label" style="margin-top: 15px;">
-                  <span>區塊間距</span>
-                  <span class="bv-value-badge" id="bv-section-margin-value">2mm</span>
-                </div>
-                <input type="range" id="bv-section-margin" min="0" max="5" step="0.5" value="2" class="bv-range">
-              </div>
-              
-              <div class="bv-switch-container" style="margin-top: 20px;">
-                <label class="bv-switch">
-                  <input type="checkbox" id="bv-highlight-qty" checked>
-                  <span class="bv-slider"></span>
-                </label>
-                <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
               </div>
             </div>
           </div>
+          
+          <!-- 同步原始控制項的提示 -->
+          <div class="bv-info-section">
+            <h4>
+              <span class="material-icons">info</span>
+              提示
+            </h4>
+            <p>本擴充功能會自動同步原始頁面的顯示設定，您可以使用原本的控制選項來調整顯示內容。</p>
+          </div>
         </div>
         
-        <!-- 同步原始控制項的提示 -->
-        <div class="bv-info-section">
-          <h4>
-            <span class="material-icons">info</span>
-            提示
-          </h4>
-          <p>本擴充功能會自動同步原始頁面的顯示設定，您可以使用原本的控制選項來調整顯示內容。</p>
+        <!-- 固定在底部的列印按鈕 -->
+        <div class="bv-panel-footer">
+          <button class="bv-print-button" id="bv-apply-print">
+            <span class="material-icons">print</span>
+            <span class="bv-button-text">套用並列印</span>
+          </button>
         </div>
-      </div>
-      
-      <!-- 固定在底部的列印按鈕 -->
-      <div class="bv-panel-footer">
-        <button class="bv-print-button" id="bv-apply-print">
-          <span class="material-icons">print</span>
-          <span class="bv-button-text">套用並列印</span>
-        </button>
       </div>
     `;
     
@@ -172,23 +183,118 @@
         box-shadow: 0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
       }
       
+      /* 左側位置 */
+      #bv-label-control-panel.left-position {
+        left: 20px;
+        right: auto;
+      }
+      
+      /* 最小化狀態 */
+      #bv-label-control-panel.minimized {
+        height: auto;
+        bottom: auto;
+        width: 320px;
+      }
+      
+      #bv-label-control-panel.minimized .bv-panel-content-wrapper {
+        display: none;
+      }
+      
+      #bv-label-control-panel.minimized .bv-panel-header {
+        border-radius: 20px;
+      }
+      
+      /* 浮動按鈕（最小化時的快速操作） */
+      .bv-floating-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: all 0.3s ease;
+      }
+      
+      .bv-floating-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+      }
+      
+      .bv-floating-button .material-icons {
+        font-size: 28px;
+      }
+      
+      #bv-label-control-panel.minimized ~ .bv-floating-button {
+        display: flex;
+      }
+      
       /* 面板標題 */
       .bv-panel-header {
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
         color: white;
-        padding: 24px 28px;
+        padding: 20px 24px;
         box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
         flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        user-select: none;
       }
       
       .bv-panel-header h3 {
         margin: 0;
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 600;
         display: flex;
         align-items: center;
         gap: 10px;
         letter-spacing: -0.02em;
+      }
+      
+      .bv-panel-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      /* 標題控制按鈕 */
+      .bv-header-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .bv-header-button {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: white;
+      }
+      
+      .bv-header-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+      
+      .bv-header-button .material-icons {
+        font-size: 20px;
       }
       
       .bv-icon-wrapper {
@@ -199,10 +305,19 @@
         height: 32px;
         background: rgba(255, 255, 255, 0.15);
         border-radius: 8px;
+        flex-shrink: 0;
       }
       
       .bv-icon-wrapper .material-icons {
         font-size: 20px;
+      }
+      
+      /* 內容包裝器 */
+      .bv-panel-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
       }
       
       /* 面板內容 */
@@ -881,7 +996,8 @@
       }
       
       @media print {
-        #bv-label-control-panel {
+        #bv-label-control-panel,
+        .bv-floating-button {
           display: none !important;
         }
         
@@ -925,6 +1041,14 @@
     document.head.appendChild(style);
     document.body.appendChild(panel);
     
+    // 創建浮動按鈕
+    const floatingButton = document.createElement('button');
+    floatingButton.className = 'bv-floating-button';
+    floatingButton.id = 'bv-floating-print';
+    floatingButton.title = '快速列印';
+    floatingButton.innerHTML = '<span class="material-icons">print</span>';
+    document.body.appendChild(floatingButton);
+    
     // 綁定事件
     setupEventListeners();
     
@@ -936,6 +1060,97 @@
     
     // 初始化預設系統
     initPresetSystem();
+    
+    // 初始化拖曳功能
+    initDragFunction();
+  }
+  
+  // 初始化拖曳功能
+  function initDragFunction() {
+    const panel = document.getElementById('bv-label-control-panel');
+    const header = panel.querySelector('.bv-panel-header');
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+    
+    function dragStart(e) {
+      // 檢查是否點擊在按鈕上
+      if (e.target.closest('.bv-header-button')) return;
+      
+      if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+      
+      if (e.target === header || header.contains(e.target)) {
+        isDragging = true;
+        panel.style.transition = 'none';
+      }
+    }
+    
+    function dragEnd(e) {
+      initialX = currentX;
+      initialY = currentY;
+      isDragging = false;
+      panel.style.transition = '';
+      
+      // 儲存位置
+      chrome.storage.local.set({
+        bvPanelPosition: {
+          x: xOffset,
+          y: yOffset
+        }
+      });
+    }
+    
+    function drag(e) {
+      if (isDragging) {
+        e.preventDefault();
+        
+        if (e.type === "touchmove") {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+        
+        xOffset = currentX;
+        yOffset = currentY;
+        
+        setTranslate(currentX, currentY, panel);
+      }
+    }
+    
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+    }
+    
+    // 載入儲存的位置
+    chrome.storage.local.get(['bvPanelPosition'], (result) => {
+      if (result.bvPanelPosition) {
+        xOffset = result.bvPanelPosition.x;
+        yOffset = result.bvPanelPosition.y;
+        setTranslate(xOffset, yOffset, panel);
+      }
+    });
+    
+    // 添加事件監聽器
+    header.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd);
+    
+    // 觸控支援
+    header.addEventListener('touchstart', dragStart);
+    document.addEventListener('touchmove', drag);
+    document.addEventListener('touchend', dragEnd);
   }
   
   // 設置事件監聽器
@@ -943,6 +1158,58 @@
     // 轉換按鈕
     document.getElementById('bv-convert-btn').addEventListener('click', convertToLabelFormat);
     document.getElementById('bv-revert-btn').addEventListener('click', revertToOriginal);
+    
+    // 最小化按鈕
+    document.getElementById('bv-minimize-btn')?.addEventListener('click', function() {
+      const panel = document.getElementById('bv-label-control-panel');
+      const icon = this.querySelector('.material-icons');
+      
+      if (isPanelMinimized) {
+        panel.classList.remove('minimized');
+        icon.textContent = 'remove';
+        isPanelMinimized = false;
+      } else {
+        panel.classList.add('minimized');
+        icon.textContent = 'add';
+        isPanelMinimized = true;
+      }
+      
+      // 儲存狀態
+      chrome.storage.local.set({ bvPanelMinimized: isPanelMinimized });
+    });
+    
+    // 位置切換按鈕
+    document.getElementById('bv-position-btn')?.addEventListener('click', function() {
+      const panel = document.getElementById('bv-label-control-panel');
+      const isLeft = panel.classList.contains('left-position');
+      
+      if (isLeft) {
+        panel.classList.remove('left-position');
+      } else {
+        panel.classList.add('left-position');
+      }
+      
+      // 重置拖曳位置
+      panel.style.transform = '';
+      
+      // 儲存位置偏好
+      chrome.storage.local.set({ 
+        bvPanelLeftPosition: !isLeft,
+        bvPanelPosition: { x: 0, y: 0 }
+      });
+    });
+    
+    // 浮動列印按鈕
+    document.getElementById('bv-floating-print')?.addEventListener('click', function() {
+      if (!isConverted) {
+        convertToLabelFormat();
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      } else {
+        window.print();
+      }
+    });
     
     // 數量標示開關
     document.getElementById('bv-highlight-qty').addEventListener('change', toggleQuantityHighlight);
@@ -1695,7 +1962,7 @@
   
   // 載入設定
   function loadSettings() {
-    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset'], (result) => {
+    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized', 'bvPanelLeftPosition'], (result) => {
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
@@ -1730,6 +1997,23 @@
             }
           }
         });
+      }
+      
+      // 載入面板狀態
+      if (result.bvPanelMinimized !== undefined) {
+        isPanelMinimized = result.bvPanelMinimized;
+        const panel = document.getElementById('bv-label-control-panel');
+        const minimizeBtn = document.getElementById('bv-minimize-btn');
+        
+        if (isPanelMinimized && panel && minimizeBtn) {
+          panel.classList.add('minimized');
+          minimizeBtn.querySelector('.material-icons').textContent = 'add';
+        }
+      }
+      
+      // 載入面板位置
+      if (result.bvPanelLeftPosition && document.getElementById('bv-label-control-panel')) {
+        document.getElementById('bv-label-control-panel').classList.add('left-position');
       }
       
       // 如果有上次選擇的預設檔，載入它
