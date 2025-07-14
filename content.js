@@ -3,7 +3,7 @@
   'use strict';
   
   let isConverted = false;
-  let highlightQuantity = true;
+  let highlightQuantity = False;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
   
@@ -125,7 +125,7 @@
                 
                 <div class="bv-switch-container" style="margin-top: 20px;">
                   <label class="bv-switch">
-                    <input type="checkbox" id="bv-highlight-qty" checked>
+                    <input type="checkbox" id="bv-highlight-qty">
                     <span class="bv-slider"></span>
                   </label>
                   <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
@@ -1643,7 +1643,7 @@
   // 取得預設設定
   function getDefaultSettings() {
     return {
-      highlightQuantity: true,
+      highlightQuantity: false,
       labelPadding: '2.5',
       headerPadding: '0.5',
       rowPadding: '0.8',
@@ -2060,7 +2060,7 @@
         const settings = result.bvLabelSettings;
         
         // 載入基本設定
-        highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : true;
+        highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
         const qtyCheckbox = document.getElementById('bv-highlight-qty');
         if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
         
