@@ -3,7 +3,7 @@
   'use strict';
   
   let isConverted = false;
-  let highlightQuantity = False;
+  let highlightQuantity = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
   
