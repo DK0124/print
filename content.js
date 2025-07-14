@@ -90,6 +90,42 @@
               </div>
               <input type="range" id="bv-label-padding" min="0" max="5" step="0.5" value="2.5" class="bv-range">
               
+              <div class="bv-control-label" style="margin-top: 20px;">
+                <span>表格間距</span>
+                <span class="bv-value-badge" id="bv-table-spacing-value">標準</span>
+              </div>
+              <select id="bv-table-spacing" class="bv-select">
+                <option value="compact">緊湊</option>
+                <option value="normal" selected>標準</option>
+                <option value="loose">寬鬆</option>
+                <option value="custom">自訂</option>
+              </select>
+              
+              <!-- 自訂間距區塊 -->
+              <div id="bv-custom-spacing" style="display: none; margin-top: 15px; padding: 15px; background: #f0f2f5; border-radius: 8px;">
+                <div class="bv-spacing-item">
+                  <label>標題列上下間距</label>
+                  <div class="bv-input-group">
+                    <input type="number" id="bv-header-padding" value="0.8" min="0" max="5" step="0.1">
+                    <span class="bv-unit">mm</span>
+                  </div>
+                </div>
+                <div class="bv-spacing-item">
+                  <label>內容列上下間距</label>
+                  <div class="bv-input-group">
+                    <input type="number" id="bv-row-padding" value="1.0" min="0" max="5" step="0.1">
+                    <span class="bv-unit">mm</span>
+                  </div>
+                </div>
+                <div class="bv-spacing-item">
+                  <label>費用表格間距</label>
+                  <div class="bv-input-group">
+                    <input type="number" id="bv-fee-padding" value="1.0" min="0" max="5" step="0.1">
+                    <span class="bv-unit">mm</span>
+                  </div>
+                </div>
+              </div>
+              
               <div class="bv-switch-container" style="margin-top: 20px;">
                 <label class="bv-switch">
                   <input type="checkbox" id="bv-highlight-qty" checked>
@@ -637,6 +673,77 @@
         border: none;
       }
       
+      /* 選擇框樣式 */
+      .bv-select {
+        width: 100%;
+        background: white;
+        border: 2px solid #e8eaed;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #24292e;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        margin-top: 10px;
+      }
+      
+      .bv-select:hover {
+        border-color: #7289DA;
+      }
+      
+      .bv-select:focus {
+        outline: none;
+        border-color: #5865F2;
+        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+      }
+      
+      /* 自訂間距樣式 */
+      .bv-spacing-item {
+        margin-bottom: 12px;
+      }
+      
+      .bv-spacing-item:last-child {
+        margin-bottom: 0;
+      }
+      
+      .bv-spacing-item label {
+        display: block;
+        font-size: 13px;
+        color: #586069;
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      
+      .bv-input-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .bv-input-group input {
+        flex: 1;
+        background: white;
+        border: 2px solid #e8eaed;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #24292e;
+        font-weight: 500;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      }
+      
+      .bv-input-group input:focus {
+        outline: none;
+        border-color: #5865F2;
+        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+      }
+      
+      .bv-unit {
+        font-size: 13px;
+        color: #586069;
+        font-weight: 500;
+      }
+      
       /* 開關容器 */
       .bv-switch-container {
         display: flex;
@@ -936,6 +1043,36 @@
       }
     });
     
+    // 表格間距選擇
+    document.getElementById('bv-table-spacing')?.addEventListener('change', function() {
+      const value = this.value;
+      document.getElementById('bv-table-spacing-value').textContent = 
+        value === 'compact' ? '緊湊' :
+        value === 'normal' ? '標準' :
+        value === 'loose' ? '寬鬆' : '自訂';
+      
+      // 顯示/隱藏自訂區塊
+      const customSpacing = document.getElementById('bv-custom-spacing');
+      if (customSpacing) {
+        customSpacing.style.display = value === 'custom' ? 'block' : 'none';
+      }
+      
+      saveSettings();
+      if (isConverted) {
+        updateLabelStyles();
+      }
+    });
+    
+    // 自訂間距輸入
+    ['bv-header-padding', 'bv-row-padding', 'bv-fee-padding'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', function() {
+        saveSettings();
+        if (isConverted) {
+          updateLabelStyles();
+        }
+      });
+    });
+    
     // 套用並列印按鈕
     document.getElementById('bv-apply-print')?.addEventListener('click', function() {
       if (!isConverted) {
@@ -1143,6 +1280,10 @@
     return {
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
+      tableSpacing: document.getElementById('bv-table-spacing')?.value || 'normal',
+      headerPadding: document.getElementById('bv-header-padding')?.value || '0.8',
+      rowPadding: document.getElementById('bv-row-padding')?.value || '1.0',
+      feePadding: document.getElementById('bv-fee-padding')?.value || '1.0',
       // 原始頁面的設定
       fontSize: document.getElementById('fontSize')?.value || '14px',
       showProductImage: document.getElementById('showProductImage')?.checked,
@@ -1172,6 +1313,39 @@
         document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
         updateRangeProgress(paddingInput);
       }
+    }
+    
+    // 表格間距設定
+    if (settings.tableSpacing !== undefined) {
+      const spacingSelect = document.getElementById('bv-table-spacing');
+      if (spacingSelect) {
+        spacingSelect.value = settings.tableSpacing;
+        document.getElementById('bv-table-spacing-value').textContent = 
+          settings.tableSpacing === 'compact' ? '緊湊' :
+          settings.tableSpacing === 'normal' ? '標準' :
+          settings.tableSpacing === 'loose' ? '寬鬆' : '自訂';
+        
+        const customSpacing = document.getElementById('bv-custom-spacing');
+        if (customSpacing) {
+          customSpacing.style.display = settings.tableSpacing === 'custom' ? 'block' : 'none';
+        }
+      }
+    }
+    
+    // 自訂間距設定
+    if (settings.headerPadding !== undefined) {
+      const headerInput = document.getElementById('bv-header-padding');
+      if (headerInput) headerInput.value = settings.headerPadding;
+    }
+    
+    if (settings.rowPadding !== undefined) {
+      const rowInput = document.getElementById('bv-row-padding');
+      if (rowInput) rowInput.value = settings.rowPadding;
+    }
+    
+    if (settings.feePadding !== undefined) {
+      const feeInput = document.getElementById('bv-fee-padding');
+      if (feeInput) feeInput.value = settings.feePadding;
     }
     
     // 原始頁面設定
@@ -1212,6 +1386,10 @@
     return {
       highlightQuantity: true,
       labelPadding: '2.5',
+      tableSpacing: 'normal',
+      headerPadding: '0.8',
+      rowPadding: '1.0',
+      feePadding: '1.0',
       fontSize: '14px',
       showProductImage: false,
       showRemark: false,
@@ -1353,6 +1531,28 @@
     const fontSize = document.getElementById('fontSize')?.value || '14px';
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
+    // 取得間距設定
+    const tableSpacing = document.getElementById('bv-table-spacing')?.value || 'normal';
+    let headerPadding, rowPadding, feePadding;
+    
+    if (tableSpacing === 'custom') {
+      headerPadding = document.getElementById('bv-header-padding')?.value || '0.8';
+      rowPadding = document.getElementById('bv-row-padding')?.value || '1.0';
+      feePadding = document.getElementById('bv-fee-padding')?.value || '1.0';
+    } else {
+      // 預設間距對應
+      const spacingMap = {
+        compact: { header: '0.5', row: '0.8', fee: '0.8' },
+        normal: { header: '0.8', row: '1.0', fee: '1.0' },
+        loose: { header: '1.5', row: '1.8', fee: '1.5' }
+      };
+      
+      const spacing = spacingMap[tableSpacing] || spacingMap.normal;
+      headerPadding = spacing.header;
+      rowPadding = spacing.row;
+      feePadding = spacing.fee;
+    }
+    
     // 移除舊樣式
     const oldStyle = document.getElementById('bv-label-styles');
     if (oldStyle) oldStyle.remove();
@@ -1431,14 +1631,9 @@
         border-bottom: 0.5mm solid #000 !important;
       }
       
-      /* 動態調整標題列 padding */
+      /* 使用自訂的間距設定 */
       .bv-converted .list-title th {
-        padding: ${fontSize === '12px' ? '0.8mm 1mm' : 
-                  fontSize === '13px' ? '1mm 1mm' : 
-                  fontSize === '14px' ? '1.2mm 1mm' :
-                  fontSize === '15px' ? '1.3mm 1mm' :
-                  fontSize === '16px' ? '1.4mm 1mm' :
-                  '1.5mm 1mm'} !important;
+        padding: ${headerPadding}mm 1mm !important;
         font-size: calc(${fontSize} - 1px) !important;
         font-weight: bold !important;
         text-align: left !important;
@@ -1454,14 +1649,8 @@
         border-bottom: 0.2mm solid #ddd !important;
       }
       
-      /* 動態調整內容列 padding */
       .bv-converted .list-item td {
-        padding: ${fontSize === '12px' ? '1mm 1mm' : 
-                  fontSize === '13px' ? '1.2mm 1mm' : 
-                  fontSize === '14px' ? '1.3mm 1mm' :
-                  fontSize === '15px' ? '1.4mm 1mm' :
-                  fontSize === '16px' ? '1.5mm 1mm' :
-                  '1.5mm 1mm'} !important;
+        padding: ${rowPadding}mm 1mm !important;
         font-size: calc(${fontSize} - 2px) !important;
         vertical-align: top !important;
         line-height: 1.3 !important;
@@ -1488,14 +1677,8 @@
         border-bottom: 0.3mm solid #000 !important;
       }
       
-      /* 動態調整費用表格 padding */
       .bv-converted .order-fee td {
-        padding: ${fontSize === '12px' ? '1mm 1mm' : 
-                  fontSize === '13px' ? '1.2mm 1mm' : 
-                  fontSize === '14px' ? '1.3mm 1mm' :
-                  fontSize === '15px' ? '1.4mm 1mm' :
-                  fontSize === '16px' ? '1.5mm 1mm' :
-                  '1.5mm 1mm'} !important;
+        padding: ${feePadding}mm 1mm !important;
         font-size: calc(${fontSize} - 2px) !important;
         line-height: 1.2 !important;
       }
@@ -1617,7 +1800,11 @@
   function saveSettings() {
     const settings = {
       highlightQuantity: highlightQuantity,
-      labelPadding: document.getElementById('bv-label-padding')?.value || '2.5'
+      labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
+      tableSpacing: document.getElementById('bv-table-spacing')?.value || 'normal',
+      headerPadding: document.getElementById('bv-header-padding')?.value || '0.8',
+      rowPadding: document.getElementById('bv-row-padding')?.value || '1.0',
+      feePadding: document.getElementById('bv-fee-padding')?.value || '1.0'
     };
     
     chrome.storage.local.set({ bvLabelSettings: settings });
@@ -1640,6 +1827,39 @@
           paddingInput.value = settings.labelPadding;
           document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
           updateRangeProgress(paddingInput);
+        }
+        
+        // 載入表格間距設定
+        if (settings.tableSpacing) {
+          const spacingSelect = document.getElementById('bv-table-spacing');
+          if (spacingSelect) {
+            spacingSelect.value = settings.tableSpacing;
+            document.getElementById('bv-table-spacing-value').textContent = 
+              settings.tableSpacing === 'compact' ? '緊湊' :
+              settings.tableSpacing === 'normal' ? '標準' :
+              settings.tableSpacing === 'loose' ? '寬鬆' : '自訂';
+            
+            const customSpacing = document.getElementById('bv-custom-spacing');
+            if (customSpacing) {
+              customSpacing.style.display = settings.tableSpacing === 'custom' ? 'block' : 'none';
+            }
+          }
+        }
+        
+        // 載入自訂間距設定
+        if (settings.headerPadding) {
+          const headerInput = document.getElementById('bv-header-padding');
+          if (headerInput) headerInput.value = settings.headerPadding;
+        }
+        
+        if (settings.rowPadding) {
+          const rowInput = document.getElementById('bv-row-padding');
+          if (rowInput) rowInput.value = settings.rowPadding;
+        }
+        
+        if (settings.feePadding) {
+          const feeInput = document.getElementById('bv-fee-padding');
+          if (feeInput) feeInput.value = settings.feePadding;
         }
       }
       
