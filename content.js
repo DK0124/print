@@ -31,7 +31,7 @@
           <div class="bv-icon-wrapper">
             <span class="material-icons">local_shipping</span>
           </div>
-          <span class="bv-panel-title">BV SHOP 出貨標籤列印</span>
+          <span class="bv-panel-title">BV SHOP 出貨明細標籤列印工具</span>
         </h3>
         <div class="bv-header-controls">
           <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
@@ -59,7 +59,7 @@
               </button>
             </div>
             <div class="bv-preset-row bv-save-row" id="bv-save-preset-row" style="display:none; margin-top: 10px;">
-              <input type="text" id="bv-new-preset-name" placeholder="輸入設定檔名稱">
+              <input type="text" id="bv-new-preset-name" placeholder="輸入名稱">
               <div class="bv-button-group">
                 <button class="bv-small-button primary" id="bv-confirm-save">確認</button>
                 <button class="bv-small-button" id="bv-cancel-save">取消</button>
@@ -70,7 +70,7 @@
           <!-- 轉換按鈕 -->
           <div class="bv-action-section">
             <button id="bv-convert-btn" class="bv-action-button primary">
-              <span class="bv-button-text">轉換為10×15cm標籤</span>
+              <span class="bv-button-text">轉為10×15cm標籤</span>
             </button>
             
             <button id="bv-revert-btn" class="bv-action-button secondary" style="display: none;">
@@ -140,7 +140,7 @@
               <span class="material-icons">info</span>
               提示
             </h4>
-            <p>本擴充功能會自動同步原始頁面的顯示設定，您可以使用原本的控制選項來調整顯示內容。</p>
+            <p>您可使用原本的控制選項來調整顯示內容。</p>
           </div>
         </div>
         
