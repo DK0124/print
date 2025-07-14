@@ -986,7 +986,7 @@
         color: inherit;
         border-radius: 50%;
         font-weight: bold;
-        font-size: 0.9em;
+        font-size: 0.7em;
         line-height: 1;
         vertical-align: middle;
         position: relative;
