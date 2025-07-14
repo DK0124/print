@@ -39,7 +39,7 @@
         <div class="bv-preset-section">
           <div class="bv-preset-row">
             <select id="bv-preset-select">
-              <option value="">-- 選擇設定檔 --</option>
+              <option value="">選擇設定檔</option>
             </select>
             <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
               <span class="material-icons">save</span>
