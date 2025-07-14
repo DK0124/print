@@ -246,6 +246,7 @@
       .bv-panel-header {
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
         color: white;
+        outline: none;
         padding: 20px 24px;
         box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
         flex-shrink: 0;
@@ -296,6 +297,7 @@
       .bv-header-button:hover {
         background: rgba(255, 255, 255, 0.3);
         transform: translateY(-1px);
+        outline: none;
       }
       
       .bv-header-button .material-icons {
@@ -431,12 +433,14 @@
         width: 40px;
         height: 40px;
         flex-shrink: 0;
+        outline: none;
       }
       
       .bv-icon-button:hover {
         background: #f8f9ff;
         border-color: #7289DA;
         transform: translateY(-1px);
+        outline: none;
       }
       
       .bv-icon-button:active {
