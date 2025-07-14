@@ -88,7 +88,7 @@
               <span class="material-icons bv-section-toggle">expand_more</span>
             </div>
             <div class="bv-section-content" id="label-content">
-              <div class="bv-control-group">
+              <div class="bv-control-group" id="bv-spacing-controls">
                 <!-- 標籤內距 -->
                 <div class="bv-control-label">
                   <span>標籤內距</span>
@@ -122,6 +122,17 @@
                   </div>
                   <input type="range" id="bv-section-margin" min="0" max="10" step="0.5" value="5" class="bv-range">
                 </div>
+              </div>
+              
+              <!-- 數量標示開關獨立出來 -->
+              <div class="bv-switch-container always-enabled" style="margin-top: 20px;">
+                <label class="bv-switch">
+                  <input type="checkbox" id="bv-highlight-qty">
+                  <span class="bv-slider"></span>
+                </label>
+                <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
+              </div>
+            </div>
                 
                 <div class="bv-switch-container" style="margin-top: 20px;">
                   <label class="bv-switch">
@@ -942,6 +953,28 @@
       
       .bv-switch input:checked + .bv-slider:before {
         transform: translateX(20px);
+      }
+
+      /* 禁用狀態的控制項樣式 */
+      .bv-control-group.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      
+      .bv-control-group.disabled input[type="range"],
+      .bv-control-group.disabled .bv-value-badge {
+        cursor: not-allowed;
+      }
+      
+      .bv-preset-section.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      
+      /* 數量標示開關保持可用 */
+      .bv-switch-container.always-enabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
       }
       
       /* 資訊區塊 */
