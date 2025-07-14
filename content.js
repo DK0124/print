@@ -1314,7 +1314,7 @@
         
         const presetName = newPresetName.value.trim();
         if (!presetName) {
-          showNotification('請輸入設定檔名稱', 'warning');
+          showNotification('輸入名稱', 'warning');
           return;
         }
         
