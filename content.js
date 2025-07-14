@@ -68,7 +68,6 @@
           </button>
           
           <button id="bv-revert-btn" class="bv-action-button secondary" style="display: none;">
-            <span class="material-icons">restore</span>
             <span class="bv-button-text">還原原始格式</span>
           </button>
         </div>
