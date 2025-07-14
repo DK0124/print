@@ -985,7 +985,7 @@
         border: 1.5px solid currentColor;
         color: inherit;
         border-radius: 50%;
-        font-weight: bold;
+        font-weight: normal;
         font-size: 1em;
         line-height: 1;
         vertical-align: middle;
