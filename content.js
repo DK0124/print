@@ -84,46 +84,38 @@
           </div>
           <div class="bv-section-content" id="label-content">
             <div class="bv-control-group">
+              <!-- 標籤內距 -->
               <div class="bv-control-label">
                 <span>標籤內距</span>
                 <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
               </div>
               <input type="range" id="bv-label-padding" min="0" max="5" step="0.5" value="2.5" class="bv-range">
               
-              <div class="bv-control-label" style="margin-top: 20px;">
-                <span>表格間距</span>
-                <span class="bv-value-badge" id="bv-table-spacing-value">標準</span>
-              </div>
-              <select id="bv-table-spacing" class="bv-select">
-                <option value="compact">緊湊</option>
-                <option value="normal" selected>標準</option>
-                <option value="loose">寬鬆</option>
-                <option value="custom">自訂</option>
-              </select>
-              
-              <!-- 自訂間距區塊 -->
-              <div id="bv-custom-spacing" style="display: none; margin-top: 15px; padding: 15px; background: #f0f2f5; border-radius: 8px;">
-                <div class="bv-spacing-item">
-                  <label>標題列上下間距</label>
-                  <div class="bv-input-group">
-                    <input type="number" id="bv-header-padding" value="0.8" min="0" max="5" step="0.1">
-                    <span class="bv-unit">mm</span>
-                  </div>
+              <!-- 表格間距設定 -->
+              <div class="bv-spacing-controls">
+                <div class="bv-control-label" style="margin-top: 20px;">
+                  <span>標題列上下間距</span>
+                  <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
                 </div>
-                <div class="bv-spacing-item">
-                  <label>內容列上下間距</label>
-                  <div class="bv-input-group">
-                    <input type="number" id="bv-row-padding" value="1.0" min="0" max="5" step="0.1">
-                    <span class="bv-unit">mm</span>
-                  </div>
+                <input type="range" id="bv-header-padding" min="0" max="3" step="0.1" value="0.5" class="bv-range">
+                
+                <div class="bv-control-label" style="margin-top: 15px;">
+                  <span>內容列上下間距</span>
+                  <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
                 </div>
-                <div class="bv-spacing-item">
-                  <label>費用表格間距</label>
-                  <div class="bv-input-group">
-                    <input type="number" id="bv-fee-padding" value="1.0" min="0" max="5" step="0.1">
-                    <span class="bv-unit">mm</span>
-                  </div>
+                <input type="range" id="bv-row-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                
+                <div class="bv-control-label" style="margin-top: 15px;">
+                  <span>費用表格間距</span>
+                  <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
                 </div>
+                <input type="range" id="bv-fee-padding" min="0" max="3" step="0.1" value="0.8" class="bv-range">
+                
+                <div class="bv-control-label" style="margin-top: 15px;">
+                  <span>區塊間距</span>
+                  <span class="bv-value-badge" id="bv-section-margin-value">2mm</span>
+                </div>
+                <input type="range" id="bv-section-margin" min="0" max="5" step="0.5" value="2" class="bv-range">
               </div>
               
               <div class="bv-switch-container" style="margin-top: 20px;">
@@ -673,75 +665,11 @@
         border: none;
       }
       
-      /* 選擇框樣式 */
-      .bv-select {
-        width: 100%;
-        background: white;
-        border: 2px solid #e8eaed;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 14px;
-        color: #24292e;
-        transition: all 0.2s ease;
-        font-weight: 500;
-        margin-top: 10px;
-      }
-      
-      .bv-select:hover {
-        border-color: #7289DA;
-      }
-      
-      .bv-select:focus {
-        outline: none;
-        border-color: #5865F2;
-        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-      }
-      
-      /* 自訂間距樣式 */
-      .bv-spacing-item {
-        margin-bottom: 12px;
-      }
-      
-      .bv-spacing-item:last-child {
-        margin-bottom: 0;
-      }
-      
-      .bv-spacing-item label {
-        display: block;
-        font-size: 13px;
-        color: #586069;
-        margin-bottom: 6px;
-        font-weight: 500;
-      }
-      
-      .bv-input-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .bv-input-group input {
-        flex: 1;
-        background: white;
-        border: 2px solid #e8eaed;
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-size: 14px;
-        color: #24292e;
-        font-weight: 500;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-      }
-      
-      .bv-input-group input:focus {
-        outline: none;
-        border-color: #5865F2;
-        box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-      }
-      
-      .bv-unit {
-        font-size: 13px;
-        color: #586069;
-        font-weight: 500;
+      /* 間距控制區 */
+      .bv-spacing-controls {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e8eaed;
       }
       
       /* 開關容器 */
@@ -1043,29 +971,18 @@
       }
     });
     
-    // 表格間距選擇
-    document.getElementById('bv-table-spacing')?.addEventListener('change', function() {
-      const value = this.value;
-      document.getElementById('bv-table-spacing-value').textContent = 
-        value === 'compact' ? '緊湊' :
-        value === 'normal' ? '標準' :
-        value === 'loose' ? '寬鬆' : '自訂';
-      
-      // 顯示/隱藏自訂區塊
-      const customSpacing = document.getElementById('bv-custom-spacing');
-      if (customSpacing) {
-        customSpacing.style.display = value === 'custom' ? 'block' : 'none';
-      }
-      
-      saveSettings();
-      if (isConverted) {
-        updateLabelStyles();
-      }
-    });
+    // 間距調整拉桿
+    const spacingControls = [
+      { id: 'bv-header-padding', valueId: 'bv-header-padding-value', unit: 'mm' },
+      { id: 'bv-row-padding', valueId: 'bv-row-padding-value', unit: 'mm' },
+      { id: 'bv-fee-padding', valueId: 'bv-fee-padding-value', unit: 'mm' },
+      { id: 'bv-section-margin', valueId: 'bv-section-margin-value', unit: 'mm' }
+    ];
     
-    // 自訂間距輸入
-    ['bv-header-padding', 'bv-row-padding', 'bv-fee-padding'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', function() {
+    spacingControls.forEach(control => {
+      document.getElementById(control.id)?.addEventListener('input', function() {
+        document.getElementById(control.valueId).textContent = this.value + control.unit;
+        updateRangeProgress(this);
         saveSettings();
         if (isConverted) {
           updateLabelStyles();
@@ -1280,10 +1197,10 @@
     return {
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
-      tableSpacing: document.getElementById('bv-table-spacing')?.value || 'normal',
-      headerPadding: document.getElementById('bv-header-padding')?.value || '0.8',
-      rowPadding: document.getElementById('bv-row-padding')?.value || '1.0',
-      feePadding: document.getElementById('bv-fee-padding')?.value || '1.0',
+      headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
+      rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
+      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
+      sectionMargin: document.getElementById('bv-section-margin')?.value || '2',
       // 原始頁面的設定
       fontSize: document.getElementById('fontSize')?.value || '14px',
       showProductImage: document.getElementById('showProductImage')?.checked,
@@ -1315,38 +1232,24 @@
       }
     }
     
-    // 表格間距設定
-    if (settings.tableSpacing !== undefined) {
-      const spacingSelect = document.getElementById('bv-table-spacing');
-      if (spacingSelect) {
-        spacingSelect.value = settings.tableSpacing;
-        document.getElementById('bv-table-spacing-value').textContent = 
-          settings.tableSpacing === 'compact' ? '緊湊' :
-          settings.tableSpacing === 'normal' ? '標準' :
-          settings.tableSpacing === 'loose' ? '寬鬆' : '自訂';
-        
-        const customSpacing = document.getElementById('bv-custom-spacing');
-        if (customSpacing) {
-          customSpacing.style.display = settings.tableSpacing === 'custom' ? 'block' : 'none';
+    // 間距設定
+    const spacingSettings = [
+      { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
+      { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
+      { id: 'bv-fee-padding', value: settings.feePadding, valueId: 'bv-fee-padding-value' },
+      { id: 'bv-section-margin', value: settings.sectionMargin, valueId: 'bv-section-margin-value' }
+    ];
+    
+    spacingSettings.forEach(setting => {
+      if (setting.value !== undefined) {
+        const input = document.getElementById(setting.id);
+        if (input) {
+          input.value = setting.value;
+          document.getElementById(setting.valueId).textContent = setting.value + 'mm';
+          updateRangeProgress(input);
         }
       }
-    }
-    
-    // 自訂間距設定
-    if (settings.headerPadding !== undefined) {
-      const headerInput = document.getElementById('bv-header-padding');
-      if (headerInput) headerInput.value = settings.headerPadding;
-    }
-    
-    if (settings.rowPadding !== undefined) {
-      const rowInput = document.getElementById('bv-row-padding');
-      if (rowInput) rowInput.value = settings.rowPadding;
-    }
-    
-    if (settings.feePadding !== undefined) {
-      const feeInput = document.getElementById('bv-fee-padding');
-      if (feeInput) feeInput.value = settings.feePadding;
-    }
+    });
     
     // 原始頁面設定
     if (settings.fontSize && document.getElementById('fontSize')) {
@@ -1386,10 +1289,10 @@
     return {
       highlightQuantity: true,
       labelPadding: '2.5',
-      tableSpacing: 'normal',
-      headerPadding: '0.8',
-      rowPadding: '1.0',
-      feePadding: '1.0',
+      headerPadding: '0.5',
+      rowPadding: '0.8',
+      feePadding: '0.8',
+      sectionMargin: '2',
       fontSize: '14px',
       showProductImage: false,
       showRemark: false,
@@ -1532,26 +1435,10 @@
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
     // 取得間距設定
-    const tableSpacing = document.getElementById('bv-table-spacing')?.value || 'normal';
-    let headerPadding, rowPadding, feePadding;
-    
-    if (tableSpacing === 'custom') {
-      headerPadding = document.getElementById('bv-header-padding')?.value || '0.8';
-      rowPadding = document.getElementById('bv-row-padding')?.value || '1.0';
-      feePadding = document.getElementById('bv-fee-padding')?.value || '1.0';
-    } else {
-      // 預設間距對應
-      const spacingMap = {
-        compact: { header: '0.5', row: '0.8', fee: '0.8' },
-        normal: { header: '0.8', row: '1.0', fee: '1.0' },
-        loose: { header: '1.5', row: '1.8', fee: '1.5' }
-      };
-      
-      const spacing = spacingMap[tableSpacing] || spacingMap.normal;
-      headerPadding = spacing.header;
-      rowPadding = spacing.row;
-      feePadding = spacing.fee;
-    }
+    const headerPadding = document.getElementById('bv-header-padding')?.value || '0.5';
+    const rowPadding = document.getElementById('bv-row-padding')?.value || '0.8';
+    const feePadding = document.getElementById('bv-fee-padding')?.value || '0.8';
+    const sectionMargin = document.getElementById('bv-section-margin')?.value || '2';
     
     // 移除舊樣式
     const oldStyle = document.getElementById('bv-label-styles');
@@ -1577,22 +1464,22 @@
         --label-padding: ${labelPadding}mm;
         box-sizing: border-box !important;
         overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
+        /* 不使用 flex，保持固定間距 */
+        display: block !important;
       }
       
       .bv-converted .title {
         font-size: 5mm !important;
         font-weight: bold !important;
-        margin: 0 0 3mm 0 !important;
+        margin: 0 0 ${sectionMargin}mm 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
       }
       
       .bv-converted .order-info {
-        margin: 0 0 2mm 0 !important;
+        margin: 0 0 ${sectionMargin}mm 0 !important;
       }
       
       .bv-converted .order-info .row {
@@ -1621,9 +1508,8 @@
       
       .bv-converted .list {
         width: 100% !important;
-        margin: 0 0 2mm 0 !important;
+        margin: 0 0 ${sectionMargin}mm 0 !important;
         border-collapse: collapse !important;
-        flex-grow: 1 !important;
       }
       
       .bv-converted .list-title {
@@ -1671,8 +1557,7 @@
       .bv-converted .order-fee {
         width: 100% !important;
         border-collapse: collapse !important;
-        margin-top: auto !important;
-        flex-shrink: 0 !important;
+        margin: 0 0 ${sectionMargin}mm 0 !important;
         border-top: 0.3mm solid #000 !important;
         border-bottom: 0.3mm solid #000 !important;
       }
@@ -1697,10 +1582,9 @@
       .bv-converted .orderPrintRemark {
         font-size: calc(${fontSize} - 3px) !important;
         padding: 2mm !important;
-        margin: 2mm 0 !important;
+        margin: 0 0 ${sectionMargin}mm 0 !important;
         border: 0.2mm solid #ccc !important;
         background-color: #f9f9f9 !important;
-        flex-shrink: 0 !important;
       }
     `;
     
@@ -1801,10 +1685,10 @@
     const settings = {
       highlightQuantity: highlightQuantity,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
-      tableSpacing: document.getElementById('bv-table-spacing')?.value || 'normal',
-      headerPadding: document.getElementById('bv-header-padding')?.value || '0.8',
-      rowPadding: document.getElementById('bv-row-padding')?.value || '1.0',
-      feePadding: document.getElementById('bv-fee-padding')?.value || '1.0'
+      headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
+      rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
+      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
+      sectionMargin: document.getElementById('bv-section-margin')?.value || '2'
     };
     
     chrome.storage.local.set({ bvLabelSettings: settings });
@@ -1829,38 +1713,24 @@
           updateRangeProgress(paddingInput);
         }
         
-        // 載入表格間距設定
-        if (settings.tableSpacing) {
-          const spacingSelect = document.getElementById('bv-table-spacing');
-          if (spacingSelect) {
-            spacingSelect.value = settings.tableSpacing;
-            document.getElementById('bv-table-spacing-value').textContent = 
-              settings.tableSpacing === 'compact' ? '緊湊' :
-              settings.tableSpacing === 'normal' ? '標準' :
-              settings.tableSpacing === 'loose' ? '寬鬆' : '自訂';
-            
-            const customSpacing = document.getElementById('bv-custom-spacing');
-            if (customSpacing) {
-              customSpacing.style.display = settings.tableSpacing === 'custom' ? 'block' : 'none';
+        // 載入間距設定
+        const spacingSettings = [
+          { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
+          { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
+          { id: 'bv-fee-padding', value: settings.feePadding, valueId: 'bv-fee-padding-value' },
+          { id: 'bv-section-margin', value: settings.sectionMargin, valueId: 'bv-section-margin-value' }
+        ];
+        
+        spacingSettings.forEach(setting => {
+          if (setting.value) {
+            const input = document.getElementById(setting.id);
+            if (input) {
+              input.value = setting.value;
+              document.getElementById(setting.valueId).textContent = setting.value + 'mm';
+              updateRangeProgress(input);
             }
           }
-        }
-        
-        // 載入自訂間距設定
-        if (settings.headerPadding) {
-          const headerInput = document.getElementById('bv-header-padding');
-          if (headerInput) headerInput.value = settings.headerPadding;
-        }
-        
-        if (settings.rowPadding) {
-          const rowInput = document.getElementById('bv-row-padding');
-          if (rowInput) rowInput.value = settings.rowPadding;
-        }
-        
-        if (settings.feePadding) {
-          const feeInput = document.getElementById('bv-fee-padding');
-          if (feeInput) feeInput.value = settings.feePadding;
-        }
+        });
       }
       
       // 如果有上次選擇的預設檔，載入它
