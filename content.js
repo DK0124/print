@@ -1649,7 +1649,7 @@
       rowPadding: '0.8',
       feePadding: '0.8',
       sectionMargin: '2',
-      fontSize: '14px',
+      fontSize: '12px',
       showProductImage: false,
       showRemark: false,
       showManageRemark: false,
