@@ -1,38 +1,26 @@
-javascript:(function(){
+// BV SHOP 出貨明細標籤列印工具
+(function() {
   'use strict';
-  
-  /* BV SHOP 出貨明細標籤列印工具 - 書籤版 */
-  
-  if(!window.location.href.includes('order_print')){
-    alert('請在 BV SHOP 出貨列印頁面使用此工具');
-    return;
-  }
-  
-  if(window.BVLabelTool){
-    alert('工具已載入');
-    return;
-  }
-  
-  window.BVLabelTool = true;
   
   let isConverted = false;
   let highlightQuantity = true;
   let originalBodyStyle = null;
   
-  /* 載入外部資源 */
+  // 載入 Material Icons
   const iconLink = document.createElement('link');
   iconLink.rel = 'stylesheet';
   iconLink.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
   document.head.appendChild(iconLink);
   
+  // 載入思源黑體
   const fontLink = document.createElement('link');
   fontLink.rel = 'stylesheet';
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap';
   document.head.appendChild(fontLink);
   
-  /* 創建控制面板 */
-  function createControlPanel(){
-    if(document.getElementById('bv-label-control-panel')) return;
+  // 創建控制面板
+  function createControlPanel() {
+    if (document.getElementById('bv-label-control-panel')) return;
     
     const panel = document.createElement('div');
     panel.id = 'bv-label-control-panel';
@@ -44,12 +32,10 @@ javascript:(function(){
           </div>
           BV SHOP 出貨標籤列印
         </h3>
-        <button class="bv-close-btn" onclick="document.getElementById('bv-label-control-panel').remove();window.BVLabelTool=false;">
-          <span class="material-icons">close</span>
-        </button>
       </div>
       
       <div class="bv-panel-body">
+        <!-- 設定檔區塊 -->
         <div class="bv-preset-section">
           <div class="bv-preset-row">
             <select id="bv-preset-select">
@@ -74,6 +60,7 @@ javascript:(function(){
           </div>
         </div>
         
+        <!-- 轉換按鈕 -->
         <div class="bv-action-section">
           <button id="bv-convert-btn" class="bv-action-button primary">
             <span class="material-icons">transform</span>
@@ -86,6 +73,7 @@ javascript:(function(){
           </button>
         </div>
         
+        <!-- 標籤設定 -->
         <div class="bv-section">
           <div class="bv-section-header" data-section="label">
             <h4>
@@ -113,15 +101,17 @@ javascript:(function(){
           </div>
         </div>
         
+        <!-- 同步原始控制項的提示 -->
         <div class="bv-info-section">
           <h4>
             <span class="material-icons">info</span>
             提示
           </h4>
-          <p>本工具會自動同步原始頁面的顯示設定，您可以使用原本的控制選項來調整顯示內容。</p>
+          <p>本擴充功能會自動同步原始頁面的顯示設定，您可以使用原本的控制選項來調整顯示內容。</p>
         </div>
       </div>
       
+      <!-- 固定在底部的列印按鈕 -->
       <div class="bv-panel-footer">
         <button class="bv-print-button" id="bv-apply-print">
           <span class="material-icons">print</span>
@@ -130,9 +120,10 @@ javascript:(function(){
       </div>
     `;
     
-    /* 添加樣式 */
+    // 添加樣式
     const style = document.createElement('style');
     style.textContent = `
+      /* 控制面板主體 */
       #bv-label-control-panel {
         position: fixed;
         right: 20px;
@@ -154,15 +145,13 @@ javascript:(function(){
         box-shadow: 0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
       }
       
+      /* 面板標題 */
       .bv-panel-header {
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
         color: white;
         padding: 24px 28px;
         box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
         flex-shrink: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
       
       .bv-panel-header h3 {
@@ -173,24 +162,6 @@ javascript:(function(){
         align-items: center;
         gap: 10px;
         letter-spacing: -0.02em;
-      }
-      
-      .bv-close-btn {
-        background: rgba(255,255,255,0.1);
-        border: none;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      
-      .bv-close-btn:hover {
-        background: rgba(255,255,255,0.2);
       }
       
       .bv-icon-wrapper {
@@ -207,6 +178,7 @@ javascript:(function(){
         font-size: 20px;
       }
       
+      /* 面板內容 */
       .bv-panel-body {
         padding: 28px;
         overflow-y: auto;
@@ -214,6 +186,7 @@ javascript:(function(){
         -webkit-overflow-scrolling: touch;
       }
       
+      /* 面板底部 */
       .bv-panel-footer {
         background: linear-gradient(to top, #fafbfc, #ffffff);
         padding: 20px 28px;
@@ -222,6 +195,7 @@ javascript:(function(){
         flex-shrink: 0;
       }
       
+      /* 預設區域 */
       .bv-preset-section {
         background: linear-gradient(135deg, #f8f9ff 0%, #f5f6ff 100%);
         border-radius: 14px;
@@ -237,6 +211,7 @@ javascript:(function(){
         flex-wrap: nowrap;
       }
       
+      /* 儲存設定檔的那一列特別處理 */
       .bv-preset-row.bv-save-row {
         display: flex;
         gap: 10px;
@@ -266,6 +241,7 @@ javascript:(function(){
         box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
       }
       
+      /* 設定檔名稱輸入框 */
       #bv-new-preset-name {
         flex: 1;
         min-width: 0;
@@ -334,6 +310,7 @@ javascript:(function(){
         color: #f04747;
       }
       
+      /* 按鈕群組 */
       .bv-button-group {
         display: flex;
         gap: 8px;
@@ -370,10 +347,12 @@ javascript:(function(){
         box-shadow: 0 4px 10px rgba(88, 101, 242, 0.35);
       }
       
+      /* 動作區域 */
       .bv-action-section {
         margin-bottom: 28px;
       }
       
+      /* 動作按鈕 */
       .bv-action-button {
         width: 100%;
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
@@ -446,6 +425,7 @@ javascript:(function(){
         box-shadow: 0 6px 20px rgba(240, 71, 71, 0.4);
       }
       
+      /* 列印按鈕 */
       .bv-print-button {
         width: 100%;
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
@@ -505,6 +485,7 @@ javascript:(function(){
         flex-shrink: 0;
       }
       
+      /* 區塊樣式 */
       .bv-section {
         margin-bottom: 0;
       }
@@ -570,6 +551,7 @@ javascript:(function(){
         margin-bottom: 0;
       }
       
+      /* 控制群組 */
       .bv-control-group {
         background: #fafbfc;
         border-radius: 14px;
@@ -600,6 +582,7 @@ javascript:(function(){
         box-shadow: 0 2px 4px rgba(88, 101, 242, 0.2);
       }
       
+      /* Range Input */
       input[type="range"] {
         width: 100%;
         height: 6px;
@@ -654,6 +637,7 @@ javascript:(function(){
         border: none;
       }
       
+      /* 開關容器 */
       .bv-switch-container {
         display: flex;
         align-items: center;
@@ -666,6 +650,7 @@ javascript:(function(){
         font-weight: 500;
       }
       
+      /* 開關樣式 */
       .bv-switch {
         position: relative;
         display: inline-block;
@@ -712,6 +697,7 @@ javascript:(function(){
         transform: translateX(20px);
       }
       
+      /* 資訊區塊 */
       .bv-info-section {
         background: #fafbfc;
         border-radius: 14px;
@@ -741,6 +727,7 @@ javascript:(function(){
         line-height: 1.6;
       }
       
+      /* 圓圈數字樣式 */
       .bv-qty-circle {
         display: inline-flex;
         align-items: center;
@@ -755,6 +742,7 @@ javascript:(function(){
         font-size: 12px;
       }
       
+      /* 列印時保持圓圈樣式 */
       @media print {
         .bv-qty-circle {
           border: 2px solid #000 !important;
@@ -764,6 +752,7 @@ javascript:(function(){
         }
       }
       
+      /* 滾動條樣式 */
       .bv-panel-body::-webkit-scrollbar {
         width: 10px;
       }
@@ -782,6 +771,7 @@ javascript:(function(){
         background: linear-gradient(135deg, #b8bcc4 0%, #a8abb3 100%);
       }
       
+      /* 通知樣式 */
       .bv-notification {
         position: fixed;
         top: 20px;
@@ -834,6 +824,7 @@ javascript:(function(){
         }
       }
       
+      /* 覆蓋原始樣式 - 重要！ */
       body.bv-converted {
         width: auto !important;
         max-width: none !important;
@@ -842,6 +833,7 @@ javascript:(function(){
         padding: 0 !important;
       }
       
+      /* 轉換後的樣式 */
       @media screen {
         body.bv-converted {
           background: #f0f0f0;
@@ -859,6 +851,7 @@ javascript:(function(){
           display: none !important;
         }
         
+        /* 最重要的部分：移除所有 body 寬度限制 */
         html, body {
           width: auto !important;
           max-width: none !important;
@@ -888,6 +881,7 @@ javascript:(function(){
           page-break-after: avoid !important;
         }
         
+        /* 隱藏所有非訂單內容 */
         body > *:not(.order-content) {
           display: none !important;
         }
@@ -897,21 +891,31 @@ javascript:(function(){
     document.head.appendChild(style);
     document.body.appendChild(panel);
     
-    /* 設置事件監聽器 */
+    // 綁定事件
     setupEventListeners();
+    
+    // 監聽原始控制項的變更
     observeOriginalControls();
+    
+    // 載入設定
     loadSettings();
+    
+    // 初始化預設系統
     initPresetSystem();
   }
   
-  /* 設置事件監聽器 */
-  function setupEventListeners(){
+  // 設置事件監聽器
+  function setupEventListeners() {
+    // 轉換按鈕
     document.getElementById('bv-convert-btn').addEventListener('click', convertToLabelFormat);
     document.getElementById('bv-revert-btn').addEventListener('click', revertToOriginal);
+    
+    // 數量標示開關
     document.getElementById('bv-highlight-qty').addEventListener('change', toggleQuantityHighlight);
     
+    // 區塊折疊功能
     document.querySelectorAll('.bv-section-header').forEach(header => {
-      header.addEventListener('click', function(){
+      header.addEventListener('click', function() {
         const section = this.dataset.section;
         const content = document.getElementById(section + '-content');
         const toggle = this.querySelector('.bv-section-toggle');
@@ -922,31 +926,37 @@ javascript:(function(){
       });
     });
     
-    document.getElementById('bv-label-padding')?.addEventListener('input', function(){
+    // 內距調整
+    document.getElementById('bv-label-padding')?.addEventListener('input', function() {
       document.getElementById('bv-padding-value').textContent = this.value + 'mm';
       updateRangeProgress(this);
       saveSettings();
-      if(isConverted){
+      if (isConverted) {
         updateLabelStyles();
       }
     });
     
-    document.getElementById('bv-apply-print')?.addEventListener('click', function(){
-      if(!isConverted){
+    // 套用並列印按鈕
+    document.getElementById('bv-apply-print')?.addEventListener('click', function() {
+      if (!isConverted) {
+        // 先轉換格式
         convertToLabelFormat();
+        // 延遲執行列印
         setTimeout(() => {
           window.print();
         }, 500);
-      }else{
+      } else {
+        // 已轉換，直接列印
         window.print();
       }
     });
     
+    // 初始化 range input 進度條
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
   }
   
-  /* 初始化預設系統 */
-  function initPresetSystem(){
+  // 初始化預設系統
+  function initPresetSystem() {
     const presetSelect = document.getElementById('bv-preset-select');
     const savePresetBtn = document.getElementById('bv-save-preset');
     const deletePresetBtn = document.getElementById('bv-delete-preset');
@@ -956,151 +966,184 @@ javascript:(function(){
     const confirmSaveBtn = document.getElementById('bv-confirm-save');
     const cancelSaveBtn = document.getElementById('bv-cancel-save');
     
-    if(!presetSelect) return;
+    if (!presetSelect) return;
     
+    // 載入預設檔列表
     loadPresetList();
     
-    presetSelect.addEventListener('change', function(){
+    // 選擇設定檔時載入設定
+    presetSelect.addEventListener('change', function() {
       const selectedPreset = presetSelect.value;
-      if(selectedPreset){
-        const settings = localStorage.getItem(`bvPreset_${selectedPreset}`);
-        if(settings){
-          applyPresetSettings(JSON.parse(settings));
-          localStorage.setItem('lastSelectedPreset', selectedPreset);
-          showNotification(`已載入設定檔「${selectedPreset}」`);
-        }
+      if (selectedPreset) {
+        chrome.storage.local.get([`bvPreset_${selectedPreset}`], (result) => {
+          const settings = result[`bvPreset_${selectedPreset}`];
+          if (settings) {
+            applyPresetSettings(settings);
+            chrome.storage.local.set({ lastSelectedPreset: selectedPreset });
+            showNotification(`已載入設定檔「${selectedPreset}」`);
+          }
+        });
       }
     });
     
-    if(savePresetBtn){
-      savePresetBtn.addEventListener('click', function(){
-        if(savePresetRow){
+    // 儲存設定按鈕
+    if (savePresetBtn) {
+      savePresetBtn.addEventListener('click', function() {
+        if (savePresetRow) {
           savePresetRow.style.display = 'flex';
         }
-        if(newPresetName){
+        if (newPresetName) {
           newPresetName.value = presetSelect.value || '';
           newPresetName.focus();
         }
       });
     }
     
-    if(confirmSaveBtn){
-      confirmSaveBtn.addEventListener('click', function(){
-        if(!newPresetName) return;
+    // 確認儲存
+    if (confirmSaveBtn) {
+      confirmSaveBtn.addEventListener('click', function() {
+        if (!newPresetName) return;
         
         const presetName = newPresetName.value.trim();
-        if(!presetName){
+        if (!presetName) {
           showNotification('請輸入設定檔名稱', 'warning');
           return;
         }
         
         const settings = getCurrentSettings();
-        const allPresets = JSON.parse(localStorage.getItem('presetList') || '[]');
         
-        if(!allPresets.includes(presetName)){
-          allPresets.push(presetName);
-        }
-        
-        localStorage.setItem(`bvPreset_${presetName}`, JSON.stringify(settings));
-        localStorage.setItem('presetList', JSON.stringify(allPresets));
-        localStorage.setItem('lastSelectedPreset', presetName);
-        
-        loadPresetList();
-        if(savePresetRow){
-          savePresetRow.style.display = 'none';
-        }
-        showNotification(`設定檔「${presetName}」已儲存`);
+        chrome.storage.local.get(['presetList'], (result) => {
+          const allPresets = result.presetList || [];
+          if (!allPresets.includes(presetName)) {
+            allPresets.push(presetName);
+          }
+          
+          const storageData = {
+            [`bvPreset_${presetName}`]: settings,
+            presetList: allPresets,
+            lastSelectedPreset: presetName
+          };
+          
+          chrome.storage.local.set(storageData, () => {
+            loadPresetList();
+            if (savePresetRow) {
+              savePresetRow.style.display = 'none';
+            }
+            showNotification(`設定檔「${presetName}」已儲存`);
+          });
+        });
       });
     }
     
-    if(cancelSaveBtn){
-      cancelSaveBtn.addEventListener('click', function(){
-        if(savePresetRow){
+    // 取消儲存
+    if (cancelSaveBtn) {
+      cancelSaveBtn.addEventListener('click', function() {
+        if (savePresetRow) {
           savePresetRow.style.display = 'none';
         }
       });
     }
     
-    if(deletePresetBtn){
-      deletePresetBtn.addEventListener('click', function(){
+    // 刪除設定檔
+    if (deletePresetBtn) {
+      deletePresetBtn.addEventListener('click', function() {
         const selectedPreset = presetSelect.value;
-        if(!selectedPreset){
+        if (!selectedPreset) {
           showNotification('請先選擇一個設定檔', 'warning');
           return;
         }
         
-        if(confirm(`確定要刪除設定檔「${selectedPreset}」嗎？`)){
-          const allPresets = JSON.parse(localStorage.getItem('presetList') || '[]');
-          const updatedPresets = allPresets.filter(name => name !== selectedPreset);
-          
-          localStorage.setItem('presetList', JSON.stringify(updatedPresets));
-          localStorage.removeItem(`bvPreset_${selectedPreset}`);
-          
-          if(localStorage.getItem('lastSelectedPreset') === selectedPreset){
-            localStorage.removeItem('lastSelectedPreset');
-          }
-          
-          loadPresetList();
-          showNotification(`設定檔「${selectedPreset}」已刪除`);
+        if (confirm(`確定要刪除設定檔「${selectedPreset}」嗎？`)) {
+          chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
+            const allPresets = result.presetList || [];
+            const updatedPresets = allPresets.filter(name => name !== selectedPreset);
+            
+            const storageData = { presetList: updatedPresets };
+            
+            // 如果刪除的是最後選擇的設定檔，清除記錄
+            if (result.lastSelectedPreset === selectedPreset) {
+              chrome.storage.local.remove(['lastSelectedPreset']);
+            }
+            
+            // 移除設定檔數據
+            chrome.storage.local.remove([`bvPreset_${selectedPreset}`], () => {
+              chrome.storage.local.set(storageData, () => {
+                loadPresetList();
+                showNotification(`設定檔「${selectedPreset}」已刪除`);
+              });
+            });
+          });
         }
       });
     }
     
-    if(resetFormatBtn){
-      resetFormatBtn.addEventListener('click', function(){
-        if(confirm('確定要將所有設定重置為預設值嗎？\n\n此操作無法復原。')){
+    // 清除格式按鈕
+    if (resetFormatBtn) {
+      resetFormatBtn.addEventListener('click', function() {
+        if (confirm('確定要將所有設定重置為預設值嗎？\n\n此操作無法復原。')) {
+          // 重置設定
           const defaultSettings = getDefaultSettings();
           applyPresetSettings(defaultSettings);
           
-          if(presetSelect){
+          // 清除預設檔選擇
+          if (presetSelect) {
             presetSelect.value = '';
           }
           
-          localStorage.removeItem('lastSelectedPreset');
+          // 清除最後選擇的預設檔記錄
+          chrome.storage.local.remove(['lastSelectedPreset']);
+          
           saveSettings();
           showNotification('已重置為預設值');
         }
       });
     }
     
-    if(newPresetName){
-      newPresetName.addEventListener('keypress', function(e){
-        if(e.key === 'Enter' && confirmSaveBtn){
+    // Enter 鍵儲存設定檔
+    if (newPresetName) {
+      newPresetName.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && confirmSaveBtn) {
           confirmSaveBtn.click();
         }
       });
     }
   }
   
-  /* 載入預設檔列表 */
-  function loadPresetList(){
+  // 載入預設檔列表
+  function loadPresetList() {
     const presetSelect = document.getElementById('bv-preset-select');
-    if(!presetSelect) return;
+    if (!presetSelect) return;
     
-    const allPresets = JSON.parse(localStorage.getItem('presetList') || '[]');
-    const lastSelected = localStorage.getItem('lastSelectedPreset');
-    
-    while(presetSelect.options.length > 1){
-      presetSelect.remove(1);
-    }
-    
-    allPresets.forEach(presetName => {
-      const option = document.createElement('option');
-      option.value = presetName;
-      option.textContent = presetName;
-      presetSelect.appendChild(option);
+    chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
+      const allPresets = result.presetList || [];
+      const lastSelected = result.lastSelectedPreset;
       
-      if(presetName === lastSelected){
-        option.selected = true;
+      // 清空現有選項
+      while (presetSelect.options.length > 1) {
+        presetSelect.remove(1);
       }
+      
+      // 添加所有設定檔
+      allPresets.forEach(presetName => {
+        const option = document.createElement('option');
+        option.value = presetName;
+        option.textContent = presetName;
+        presetSelect.appendChild(option);
+        
+        // 如果是上次選擇的設定檔，預設選中
+        if (presetName === lastSelected) {
+          option.selected = true;
+        }
+      });
     });
   }
   
-  /* 取得當前設定 */
-  function getCurrentSettings(){
+  // 取得當前設定
+  function getCurrentSettings() {
     return {
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
+      // 原始頁面的設定
       fontSize: document.getElementById('fontSize')?.value || '14px',
       showProductImage: document.getElementById('showProductImage')?.checked,
       showRemark: document.getElementById('showRemark')?.checked,
@@ -1114,26 +1157,29 @@ javascript:(function(){
     };
   }
   
-  /* 套用預設設定 */
-  function applyPresetSettings(settings){
-    if(settings.highlightQuantity !== undefined){
+  // 套用預設設定
+  function applyPresetSettings(settings) {
+    // 擴充功能設定
+    if (settings.highlightQuantity !== undefined) {
       const qtyCheckbox = document.getElementById('bv-highlight-qty');
-      if(qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
+      if (qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
     }
     
-    if(settings.labelPadding !== undefined){
+    if (settings.labelPadding !== undefined) {
       const paddingInput = document.getElementById('bv-label-padding');
-      if(paddingInput){
+      if (paddingInput) {
         paddingInput.value = settings.labelPadding;
         document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
         updateRangeProgress(paddingInput);
       }
     }
     
-    if(settings.fontSize && document.getElementById('fontSize')){
+    // 原始頁面設定
+    if (settings.fontSize && document.getElementById('fontSize')) {
       document.getElementById('fontSize').value = settings.fontSize;
     }
     
+    // Checkbox 設定
     const checkboxSettings = {
       showProductImage: settings.showProductImage,
       showRemark: settings.showRemark,
@@ -1148,20 +1194,21 @@ javascript:(function(){
     
     Object.keys(checkboxSettings).forEach(key => {
       const checkbox = document.getElementById(key);
-      if(checkbox && checkboxSettings[key] !== undefined){
+      if (checkbox && checkboxSettings[key] !== undefined) {
         checkbox.checked = checkboxSettings[key];
+        // 觸發 change 事件
         const event = new Event('change', { bubbles: true });
         checkbox.dispatchEvent(event);
       }
     });
     
-    if(isConverted){
+    if (isConverted) {
       updateLabelStyles();
     }
   }
   
-  /* 取得預設設定 */
-  function getDefaultSettings(){
+  // 取得預設設定
+  function getDefaultSettings() {
     return {
       highlightQuantity: true,
       labelPadding: '2.5',
@@ -1178,45 +1225,50 @@ javascript:(function(){
     };
   }
   
-  /* 監聽原始控制項的變更 */
-  function observeOriginalControls(){
+  // 監聽原始控制項的變更
+  function observeOriginalControls() {
+    // 監聽所有原始 checkbox
     const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        if(isConverted){
+        if (isConverted) {
           updateLabelStyles();
         }
       });
     });
     
+    // 監聽文字大小選擇
     const fontSizeSelect = document.getElementById('fontSize');
-    if(fontSizeSelect){
+    if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
-        if(isConverted){
+        if (isConverted) {
           updateLabelStyles();
         }
       });
     }
     
+    // 監聽底圖透明度
     const opacityInput = document.getElementById('baseImageOpacity');
-    if(opacityInput){
+    if (opacityInput) {
       opacityInput.addEventListener('input', () => {
-        if(isConverted){
+        if (isConverted) {
           updateLabelStyles();
         }
       });
     }
     
+    // 使用 MutationObserver 監聽動態變化
     const observer = new MutationObserver(() => {
-      if(isConverted){
+      if (isConverted) {
         setTimeout(() => {
-          if(highlightQuantity){
+          if (highlightQuantity) {
             applyQuantityHighlight();
           }
         }, 100);
       }
     });
     
+    // 監聽 order-content 的變化
     document.querySelectorAll('.order-content').forEach(content => {
       observer.observe(content, {
         attributes: true,
@@ -1226,24 +1278,26 @@ javascript:(function(){
     });
   }
   
-  /* 更新 Range Input 進度條 */
-  function updateRangeProgress(input){
+  // 更新 Range Input 進度條
+  function updateRangeProgress(input) {
     const value = (input.value - input.min) / (input.max - input.min) * 100;
     input.style.setProperty('--value', value + '%');
   }
   
-  /* 轉換為標籤格式 */
-  function convertToLabelFormat(){
-    if(isConverted) return;
+  // 轉換為標籤格式
+  function convertToLabelFormat() {
+    if (isConverted) return;
     
+    // 移除空白頁
     document.querySelectorAll('.order-content:has(.baseImage)').forEach(e => e.remove());
     
     const contents = document.querySelectorAll('.order-content');
-    if(!contents.length){
+    if (!contents.length) {
       showNotification('沒有找到可轉換的訂單內容', 'warning');
       return;
     }
     
+    // 儲存原始 body 樣式
     originalBodyStyle = {
       width: document.body.style.width,
       maxWidth: document.body.style.maxWidth,
@@ -1252,23 +1306,30 @@ javascript:(function(){
       padding: document.body.style.padding
     };
     
+    // 移除 body 的寬度限制
     document.body.style.width = 'auto';
     document.body.style.maxWidth = 'none';
     document.body.style.minWidth = 'auto';
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     
+    // 添加轉換標記
     document.body.classList.add('bv-converted');
     
+    // 觸發原始頁面的更新
     triggerOriginalPageUpdate();
+    
+    // 更新標籤樣式
     updateLabelStyles();
     
+    // 更新按鈕狀態
     document.getElementById('bv-convert-btn').style.display = 'none';
     document.getElementById('bv-revert-btn').style.display = 'block';
     
     isConverted = true;
     
-    if(highlightQuantity){
+    // 應用數量標示
+    if (highlightQuantity) {
       setTimeout(() => {
         applyQuantityHighlight();
       }, 100);
@@ -1277,25 +1338,30 @@ javascript:(function(){
     showNotification('已成功轉換為10×15cm標籤格式');
   }
   
-  /* 觸發原始頁面的更新事件 */
-  function triggerOriginalPageUpdate(){
+  // 觸發原始頁面的更新事件
+  function triggerOriginalPageUpdate() {
+    // 觸發 change 事件讓原始頁面重新渲染
     const event = new Event('change', { bubbles: true });
     document.querySelectorAll('.ignore-print input, .ignore-print select').forEach(el => {
       el.dispatchEvent(event);
     });
   }
   
-  /* 更新標籤樣式 */
-  function updateLabelStyles(){
+  // 更新標籤樣式
+  function updateLabelStyles() {
+    // 從原始控制項取得設定
     const fontSize = document.getElementById('fontSize')?.value || '14px';
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
+    // 移除舊樣式
     const oldStyle = document.getElementById('bv-label-styles');
-    if(oldStyle) oldStyle.remove();
+    if (oldStyle) oldStyle.remove();
     
+    // 創建新樣式
     const labelStyles = document.createElement('style');
     labelStyles.id = 'bv-label-styles';
     labelStyles.textContent = `
+      /* 關鍵：覆蓋原始 body 寬度設定 */
       body.bv-converted {
         width: auto !important;
         max-width: none !important;
@@ -1436,16 +1502,18 @@ javascript:(function(){
     
     document.head.appendChild(labelStyles);
     
-    if(highlightQuantity){
+    // 重新應用數量標示
+    if (highlightQuantity) {
       applyQuantityHighlight();
     }
   }
   
-  /* 還原原始格式 */
-  function revertToOriginal(){
-    if(!isConverted) return;
+  // 還原原始格式
+  function revertToOriginal() {
+    if (!isConverted) return;
     
-    if(originalBodyStyle){
+    // 還原 body 樣式
+    if (originalBodyStyle) {
       Object.keys(originalBodyStyle).forEach(prop => {
         document.body.style[prop] = originalBodyStyle[prop];
       });
@@ -1454,43 +1522,46 @@ javascript:(function(){
     location.reload();
   }
   
-  /* 切換數量標示 */
-  function toggleQuantityHighlight(e){
+  // 切換數量標示
+  function toggleQuantityHighlight(e) {
     highlightQuantity = e.target.checked;
     saveSettings();
     
-    if(highlightQuantity){
+    if (highlightQuantity) {
       applyQuantityHighlight();
-    }else{
+    } else {
       removeQuantityHighlight();
     }
   }
   
-  /* 應用數量標示 */
-  function applyQuantityHighlight(){
+  // 應用數量標示 - 直接替換數字為圓圈
+  function applyQuantityHighlight() {
     document.querySelectorAll('.list-item').forEach(item => {
+      // 尋找數量欄位
       let qtyCell = null;
       const cells = item.querySelectorAll('td');
       
-      for(let i = cells.length - 2; i >= 0; i--){
+      // 嘗試找出數量欄位（通常在倒數第二欄）
+      for (let i = cells.length - 2; i >= 0; i--) {
         const text = cells[i].textContent.trim();
-        if(/^\d+$/.test(text) && parseInt(text) > 0){
+        if (/^\d+$/.test(text) && parseInt(text) > 0) {
           qtyCell = cells[i];
           break;
         }
       }
       
-      if(qtyCell && !qtyCell.querySelector('.bv-qty-circle')){
+      if (qtyCell && !qtyCell.querySelector('.bv-qty-circle')) {
         const qty = parseInt(qtyCell.textContent.trim());
-        if(qty >= 2){
+        if (qty >= 2) {
+          // 直接替換整個內容為圓圈數字
           qtyCell.innerHTML = `<span class="bv-qty-circle">${qty}</span>`;
         }
       }
     });
   }
   
-  /* 移除數量標示 */
-  function removeQuantityHighlight(){
+  // 移除數量標示
+  function removeQuantityHighlight() {
     document.querySelectorAll('.bv-qty-circle').forEach(circle => {
       const parent = circle.parentElement;
       const qty = circle.textContent;
@@ -1498,10 +1569,11 @@ javascript:(function(){
     });
   }
   
-  /* 顯示通知 */
-  function showNotification(message, type = 'success'){
+  // 顯示通知
+  function showNotification(message, type = 'success') {
+    // 移除現有通知
     const existing = document.querySelector('.bv-notification');
-    if(existing) existing.remove();
+    if (existing) existing.remove();
     
     const notification = document.createElement('div');
     notification.className = `bv-notification ${type}`;
@@ -1520,44 +1592,54 @@ javascript:(function(){
     }, 3000);
   }
   
-  /* 儲存設定 */
-  function saveSettings(){
+  // 儲存設定
+  function saveSettings() {
     const settings = {
       highlightQuantity: highlightQuantity,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5'
     };
     
-    localStorage.setItem('bvLabelSettings', JSON.stringify(settings));
+    chrome.storage.local.set({ bvLabelSettings: settings });
   }
   
-  /* 載入設定 */
-  function loadSettings(){
-    const savedSettings = localStorage.getItem('bvLabelSettings');
-    const lastSelectedPreset = localStorage.getItem('lastSelectedPreset');
-    
-    if(savedSettings){
-      const settings = JSON.parse(savedSettings);
-      
-      highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : true;
-      const qtyCheckbox = document.getElementById('bv-highlight-qty');
-      if(qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
-      
-      const paddingInput = document.getElementById('bv-label-padding');
-      if(paddingInput && settings.labelPadding){
-        paddingInput.value = settings.labelPadding;
-        document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
-        updateRangeProgress(paddingInput);
+  // 載入設定
+  function loadSettings() {
+    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset'], (result) => {
+      if (result.bvLabelSettings) {
+        const settings = result.bvLabelSettings;
+        
+        // 載入基本設定
+        highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : true;
+        const qtyCheckbox = document.getElementById('bv-highlight-qty');
+        if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
+        
+        // 載入內距設定
+        const paddingInput = document.getElementById('bv-label-padding');
+        if (paddingInput && settings.labelPadding) {
+          paddingInput.value = settings.labelPadding;
+          document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
+          updateRangeProgress(paddingInput);
+        }
       }
-    }
-    
-    if(lastSelectedPreset){
-      const presetSettings = localStorage.getItem(`bvPreset_${lastSelectedPreset}`);
-      if(presetSettings){
-        applyPresetSettings(JSON.parse(presetSettings));
+      
+      // 如果有上次選擇的預設檔，載入它
+      if (result.lastSelectedPreset) {
+        chrome.storage.local.get([`bvPreset_${result.lastSelectedPreset}`], (presetResult) => {
+          const presetSettings = presetResult[`bvPreset_${result.lastSelectedPreset}`];
+          if (presetSettings) {
+            applyPresetSettings(presetSettings);
+          }
+        });
       }
-    }
+    });
   }
   
-  /* 初始化 */
-  createControlPanel();
+  // 初始化
+  if (window.location.href.includes('order_print')) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', createControlPanel);
+    } else {
+      createControlPanel();
+    }
+  }
 })();
