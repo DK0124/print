@@ -158,6 +158,31 @@
     // 添加樣式
     const style = document.createElement('style');
     style.textContent = `
+      /* 移除所有元素的 focus outline */
+      button:focus,
+      button:focus-visible,
+      select:focus,
+      select:focus-visible,
+      input:focus,
+      input:focus-visible {
+        outline: none !important;
+      }
+      
+      .bv-header-button:focus,
+      .bv-header-button:focus-visible,
+      .bv-icon-button:focus,
+      .bv-icon-button:focus-visible,
+      .bv-small-button:focus,
+      .bv-small-button:focus-visible,
+      .bv-action-button:focus,
+      .bv-action-button:focus-visible,
+      .bv-print-button:focus,
+      .bv-print-button:focus-visible,
+      .bv-floating-button:focus,
+      .bv-floating-button:focus-visible {
+        outline: none !important;
+      }
+      
       /* 控制面板主體 */
       #bv-label-control-panel {
         position: fixed;
@@ -246,7 +271,6 @@
       .bv-panel-header {
         background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
         color: white;
-        outline: none;
         padding: 20px 24px;
         box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
         flex-shrink: 0;
@@ -297,7 +321,6 @@
       .bv-header-button:hover {
         background: rgba(255, 255, 255, 0.3);
         transform: translateY(-1px);
-        outline: none;
       }
       
       .bv-header-button .material-icons {
@@ -433,14 +456,12 @@
         width: 40px;
         height: 40px;
         flex-shrink: 0;
-        outline: none;
       }
       
       .bv-icon-button:hover {
         background: #f8f9ff;
         border-color: #7289DA;
         transform: translateY(-1px);
-        outline: none;
       }
       
       .bv-icon-button:active {
@@ -785,7 +806,6 @@
         cursor: pointer;
         box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
         transition: all 0.2s ease;
-        border: none;
       }
       
       /* 間距控制區 */
@@ -1997,7 +2017,7 @@
           panel.classList.add('minimized');
           minimizeBtn.querySelector('.material-icons').textContent = 'add';
         }
-      }      
+      }
       
       // 如果有上次選擇的預設檔，載入它
       if (result.lastSelectedPreset) {
