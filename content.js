@@ -158,30 +158,100 @@
     // 添加樣式
     const style = document.createElement('style');
     style.textContent = `
-      /* 移除所有元素的 focus outline */
-      button:focus,
-      button:focus-visible,
-      select:focus,
-      select:focus-visible,
-      input:focus,
-      input:focus-visible {
-        outline: none !important;
-      }
-      
-      .bv-header-button:focus,
-      .bv-header-button:focus-visible,
-      .bv-icon-button:focus,
-      .bv-icon-button:focus-visible,
-      .bv-small-button:focus,
-      .bv-small-button:focus-visible,
-      .bv-action-button:focus,
-      .bv-action-button:focus-visible,
-      .bv-print-button:focus,
-      .bv-print-button:focus-visible,
-      .bv-floating-button:focus,
-      .bv-floating-button:focus-visible {
-        outline: none !important;
-      }
+    /* 移除所有元素的 focus outline 和邊框 */
+    * {
+      outline: none !important;
+    }
+    
+    *:focus,
+    *:focus-visible,
+    *:focus-within,
+    *:active {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    
+    button,
+    button:focus,
+    button:focus-visible,
+    button:active,
+    button:hover {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    
+    select,
+    select:focus,
+    select:focus-visible,
+    select:active {
+      outline: none !important;
+    }
+    
+    input,
+    input:focus,
+    input:focus-visible,
+    input:active {
+      outline: none !important;
+    }
+    
+    .bv-header-button,
+    .bv-header-button:focus,
+    .bv-header-button:focus-visible,
+    .bv-header-button:active,
+    .bv-header-button:hover {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    
+    .bv-icon-button,
+    .bv-icon-button:focus,
+    .bv-icon-button:focus-visible,
+    .bv-icon-button:active,
+    .bv-icon-button:hover {
+      outline: none !important;
+    }
+    
+    .bv-small-button,
+    .bv-small-button:focus,
+    .bv-small-button:focus-visible,
+    .bv-small-button:active,
+    .bv-small-button:hover {
+      outline: none !important;
+    }
+    
+    .bv-action-button,
+    .bv-action-button:focus,
+    .bv-action-button:focus-visible,
+    .bv-action-button:active,
+    .bv-action-button:hover {
+      outline: none !important;
+    }
+    
+    .bv-print-button,
+    .bv-print-button:focus,
+    .bv-print-button:focus-visible,
+    .bv-print-button:active,
+    .bv-print-button:hover {
+      outline: none !important;
+    }
+    
+    .bv-floating-button,
+    .bv-floating-button:focus,
+    .bv-floating-button:focus-visible,
+    .bv-floating-button:active,
+    .bv-floating-button:hover {
+      outline: none !important;
+    }
+    
+    /* 防止瀏覽器預設的 focus 樣式 */
+    :focus {
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+    
+    ::-moz-focus-inner {
+      border: 0 !important;
+    }
       
       /* 控制面板主體 */
       #bv-label-control-panel {
