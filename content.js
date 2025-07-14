@@ -70,7 +70,6 @@
           <!-- 轉換按鈕 -->
           <div class="bv-action-section">
             <button id="bv-convert-btn" class="bv-action-button primary">
-              <span class="material-icons">transform</span>
               <span class="bv-button-text">轉換為10×15cm標籤</span>
             </button>
             
