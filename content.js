@@ -979,14 +979,14 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 1.2em;
-        height: 1.2em;
+        width: 1em;
+        height: 1em;
         padding: 0;
         border: 1.5px solid currentColor;
         color: inherit;
         border-radius: 50%;
         font-weight: bold;
-        font-size: 0.7em;
+        font-size: 0.8em;
         line-height: 1;
         vertical-align: middle;
         position: relative;
