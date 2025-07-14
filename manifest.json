@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BV SHOP 出貨明細標籤列印",
-  "version": "3.1",
+  "version": "3.2.0",
   "description": "將出貨明細轉換為10×15cm標籤格式，支援設定檔儲存與數量標示",
   "permissions": ["storage"],
   "host_permissions": [
