@@ -5,6 +5,8 @@
   let isConverted = false;
   let highlightQuantity = false;
   let boldMode = false;
+  let hideExtraInfo = false;  // 新增：隱藏額外資訊
+  let hideTableHeader = false; // 新增：隱藏表格標題
   let originalBodyStyle = null;
   let isPanelMinimized = false;
   
@@ -125,7 +127,7 @@
                 </div>
               </div>
               
-              <!-- 數量標示開關獨立出來 -->
+              <!-- 數量標示開關 -->
               <div class="bv-switch-container always-enabled" style="margin-top: 20px;">
                 <label class="bv-switch">
                   <input type="checkbox" id="bv-highlight-qty">
@@ -141,6 +143,24 @@
                   <span class="bv-slider"></span>
                 </label>
                 <span class="bv-switch-label">加粗模式（低解析度標籤機）</span>
+              </div>
+              
+              <!-- 隱藏額外資訊開關 -->
+              <div class="bv-switch-container always-enabled" style="margin-top: 15px;">
+                <label class="bv-switch">
+                  <input type="checkbox" id="bv-hide-extra-info">
+                  <span class="bv-slider"></span>
+                </label>
+                <span class="bv-switch-label">精簡模式（只顯示訂單編號、收件人姓名、電話）</span>
+              </div>
+              
+              <!-- 隱藏表格標題開關 -->
+              <div class="bv-switch-container always-enabled" style="margin-top: 15px;">
+                <label class="bv-switch">
+                  <input type="checkbox" id="bv-hide-table-header">
+                  <span class="bv-slider"></span>
+                </label>
+                <span class="bv-switch-label">隱藏表格標題列</span>
               </div>
             </div>
           </div>
@@ -1429,6 +1449,36 @@
       }
     });
     
+    // 隱藏額外資訊開關
+    document.getElementById('bv-hide-extra-info').addEventListener('change', function(e) {
+      hideExtraInfo = e.target.checked;
+      saveSettings();
+      if (isConverted) {
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      }
+    });
+    
+    // 隱藏表格標題開關
+    document.getElementById('bv-hide-table-header').addEventListener('change', function(e) {
+      hideTableHeader = e.target.checked;
+      saveSettings();
+      if (isConverted) {
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      }
+    });
+    
     // 區塊折疊功能
     document.querySelectorAll('.bv-section-header').forEach(header => {
       header.addEventListener('click', function() {
@@ -1660,7 +1710,7 @@
             setTimeout(() => {
               handlePagination();
               if (highlightQuantity) {
-              applyQuantityHighlight();
+                applyQuantityHighlight();
               }
             }, 100);
           }
@@ -1712,6 +1762,8 @@
     return {
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       boldMode: document.getElementById('bv-bold-mode')?.checked,
+      hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
+      hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
@@ -1744,6 +1796,18 @@
       const boldCheckbox = document.getElementById('bv-bold-mode');
       if (boldCheckbox) boldCheckbox.checked = settings.boldMode;
       boldMode = settings.boldMode;
+    }
+    
+    if (settings.hideExtraInfo !== undefined) {
+      const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
+      if (hideExtraCheckbox) hideExtraCheckbox.checked = settings.hideExtraInfo;
+      hideExtraInfo = settings.hideExtraInfo;
+    }
+    
+    if (settings.hideTableHeader !== undefined) {
+      const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
+      if (hideHeaderCheckbox) hideHeaderCheckbox.checked = settings.hideTableHeader;
+      hideTableHeader = settings.hideTableHeader;
     }
     
     if (settings.labelPadding !== undefined) {
@@ -1812,6 +1876,8 @@
     return {
       highlightQuantity: false,
       boldMode: false,
+      hideExtraInfo: false,
+      hideTableHeader: false,
       labelPadding: '2.5',
       headerPadding: '0.5',
       rowPadding: '0.8',
@@ -1963,6 +2029,11 @@
       // 標記為原始內容
       orderContent.classList.add('bv-original');
       
+      // 如果開啟精簡模式，先處理內容
+      if (hideExtraInfo) {
+        processExtraInfoHiding(orderContent);
+      }
+      
       // 複製所有元素到陣列中
       const elements = Array.from(orderContent.children);
       let currentPage = null;
@@ -1979,6 +2050,11 @@
       // 第一次遍歷：計算總頁數
       let tempHeight = 0;
       elements.forEach(element => {
+        // 跳過隱藏的元素
+        if (hideTableHeader && element.classList.contains('list-title')) {
+          return;
+        }
+        
         const clone = element.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.style.cssText = `
@@ -2002,6 +2078,11 @@
       
       // 第二次遍歷：實際創建分頁
       elements.forEach((element, index) => {
+        // 跳過隱藏的元素
+        if (hideTableHeader && element.classList.contains('list-title')) {
+          return;
+        }
+        
         // 測量元素高度
         const clone = element.cloneNode(true);
         const wrapper = document.createElement('div');
@@ -2045,6 +2126,36 @@
         currentPageContent.appendChild(elementClone);
         currentHeight += elementHeight;
       });
+    });
+  }
+  
+  // 處理隱藏額外資訊
+  function processExtraInfoHiding(orderContent) {
+    // 找到 order-info 區塊
+    const orderInfo = orderContent.querySelector('.order-info');
+    if (!orderInfo) return;
+    
+    // 取得所有的資訊項目
+    const allParagraphs = orderInfo.querySelectorAll('p');
+    
+    // 需要保留的欄位關鍵字
+    const keepFields = ['訂單編號', '收件人', '收件人電話'];
+    
+    allParagraphs.forEach(p => {
+      const text = p.textContent;
+      let shouldKeep = false;
+      
+      // 檢查是否包含需要保留的關鍵字
+      keepFields.forEach(field => {
+        if (text.includes(field)) {
+          shouldKeep = true;
+        }
+      });
+      
+      // 如果不需要保留，則隱藏
+      if (!shouldKeep) {
+        p.style.display = 'none';
+      }
     });
   }
   
@@ -2099,6 +2210,22 @@
         font-size: ${fontSize} !important;
         ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
+      
+      /* 隱藏表格標題 */
+      ${hideTableHeader ? `
+        .bv-converted .list-title,
+        .bv-label-page .list-title {
+          display: none !important;
+        }
+      ` : ''}
+      
+      /* 精簡模式隱藏額外資訊 */
+      ${hideExtraInfo ? `
+        .bv-converted .order-info p:not(:has-text("訂單編號")):not(:has-text("收件人")):not(:has-text("收件人電話")),
+        .bv-label-page .order-info p:not(:has-text("訂單編號")):not(:has-text("收件人")):not(:has-text("收件人電話")) {
+          display: none !important;
+        }
+      ` : ''}
       
       /* 加粗模式下的特殊處理 - 只影響訂單內容 */
       ${boldMode ? `
@@ -2382,6 +2509,8 @@
     const settings = {
       highlightQuantity: highlightQuantity,
       boldMode: boldMode,
+      hideExtraInfo: hideExtraInfo,
+      hideTableHeader: hideTableHeader,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
@@ -2407,6 +2536,16 @@
         boldMode = settings.boldMode !== undefined ? settings.boldMode : false;
         const boldCheckbox = document.getElementById('bv-bold-mode');
         if (boldCheckbox) boldCheckbox.checked = boldMode;
+        
+        // 載入隱藏額外資訊設定
+        hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
+        const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
+        if (hideExtraCheckbox) hideExtraCheckbox.checked = hideExtraInfo;
+        
+        // 載入隱藏表格標題設定
+        hideTableHeader = settings.hideTableHeader !== undefined ? settings.hideTableHeader : false;
+        const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
+        if (hideHeaderCheckbox) hideHeaderCheckbox.checked = hideTableHeader;
         
         // 載入內距設定
         const paddingInput = document.getElementById('bv-label-padding');
