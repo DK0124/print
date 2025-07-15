@@ -1533,13 +1533,21 @@
     }
   }
   
-  // 設置標籤模式的事件監聽器
+  // 修正 setupLabelModeEventListeners 函數
   function setupLabelModeEventListeners() {
     // 加粗模式
-    const boldMode = document.getElementById('bv-bold-mode');
-    if (boldMode) {
-      boldMode.addEventListener('change', function(e) {
-        window.boldMode = e.target.checked;
+    const boldModeCheckbox = document.getElementById('bv-bold-mode');
+    if (boldModeCheckbox) {
+      boldModeCheckbox.addEventListener('change', function(e) {
+        boldMode = e.target.checked;
+        
+        // 立即更新 body class
+        if (boldMode) {
+          document.body.classList.add('bold-mode');
+        } else {
+          document.body.classList.remove('bold-mode');
+        }
+        
         saveSettings();
         updateLabelStyles();
         setTimeout(() => {
@@ -1552,12 +1560,24 @@
     }
     
     // 精簡模式
-    const hideExtraInfo = document.getElementById('bv-hide-extra-info');
-    if (hideExtraInfo) {
-      hideExtraInfo.addEventListener('change', function(e) {
-        window.hideExtraInfo = e.target.checked;
+    const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
+    if (hideExtraInfoCheckbox) {
+      hideExtraInfoCheckbox.addEventListener('change', function(e) {
+        hideExtraInfo = e.target.checked;
         saveSettings();
-        updateLabelStyles();
+        
+        // 立即處理所有訂單資訊
+        document.querySelectorAll('.order-info').forEach(orderInfo => {
+          if (hideExtraInfo) {
+            processExtraInfoHiding(orderInfo);
+          } else {
+            // 恢復顯示所有資訊
+            orderInfo.querySelectorAll('p').forEach(p => {
+              p.style.display = '';
+            });
+          }
+        });
+        
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1568,10 +1588,10 @@
     }
     
     // 隱藏標題
-    const hideTableHeader = document.getElementById('bv-hide-table-header');
-    if (hideTableHeader) {
-      hideTableHeader.addEventListener('change', function(e) {
-        window.hideTableHeader = e.target.checked;
+    const hideTableHeaderCheckbox = document.getElementById('bv-hide-table-header');
+    if (hideTableHeaderCheckbox) {
+      hideTableHeaderCheckbox.addEventListener('change', function(e) {
+        hideTableHeader = e.target.checked;
         saveSettings();
         updateLabelStyles();
         setTimeout(() => {
@@ -1925,7 +1945,7 @@
     input.style.setProperty('--value', value + '%');
   }
   
-  // 轉換為標籤格式
+  // 在 convertToLabelFormat 函數中確保正確應用設定
   function convertToLabelFormat() {
     if (isConverted) return;
     
@@ -1952,12 +1972,13 @@
     document.body.style.padding = '0';
     
     document.body.classList.add('bv-converted');
+    
+    // 確保加粗模式正確應用
     if (boldMode) {
       document.body.classList.add('bold-mode');
     }
     
     triggerOriginalPageUpdate();
-    
     updateLabelStyles();
     
     setTimeout(() => {
@@ -1971,8 +1992,6 @@
     }, 100);
     
     isConverted = true;
-    
-    // 更新面板內容
     updatePanelContent();
     
     showNotification('已成功轉換為10×15cm標籤格式');
@@ -1991,11 +2010,18 @@
     document.querySelectorAll('.order-content').forEach((orderContent) => {
       orderContent.classList.add('bv-original');
       
+      // 複製一份用於分頁的內容
+      const orderContentClone = orderContent.cloneNode(true);
+      
+      // 處理精簡模式
       if (hideExtraInfo) {
-        processExtraInfoHiding(orderContent);
+        const clonedOrderInfo = orderContentClone.querySelector('.order-info');
+        if (clonedOrderInfo) {
+          processExtraInfoHiding(clonedOrderInfo);
+        }
       }
       
-      const elements = Array.from(orderContent.children);
+      const elements = Array.from(orderContentClone.children);
       let currentPage = null;
       let currentPageContent = null;
       let currentHeight = 0;
@@ -2006,10 +2032,18 @@
       pageContainer.className = 'bv-page-container';
       orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
       
+      // 計算總頁數
       let tempHeight = 0;
       elements.forEach(element => {
+        // 跳過隱藏的表格標題
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
+        }
+        
+        // 跳過精簡模式下隱藏的段落
+        if (element.classList.contains('order-info') && hideExtraInfo) {
+          const visiblePs = Array.from(element.querySelectorAll('p')).filter(p => p.style.display !== 'none');
+          if (visiblePs.length === 0) return;
         }
         
         const clone = element.cloneNode(true);
@@ -2033,7 +2067,9 @@
         }
       });
       
+      // 創建分頁
       elements.forEach((element, index) => {
+        // 跳過隱藏的表格標題
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
         }
