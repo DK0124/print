@@ -1192,10 +1192,16 @@
     }
   }
   
-  // 初始化拖曳功能
   function initDragFunction() {
     const panel = document.getElementById('bv-label-control-panel');
     const header = panel.querySelector('.bv-panel-header');
+    
+    if (!panel || !header) return;
+    
+    // 移除舊的事件監聽器（如果有的話）
+    const oldHeader = header.cloneNode(true);
+    header.parentNode.replaceChild(oldHeader, header);
+    
     let isDragging = false;
     let currentX;
     let currentY;
@@ -1204,7 +1210,18 @@
     let xOffset = 0;
     let yOffset = 0;
     
+    // 從 transform 中取得當前位置
+    const transform = panel.style.transform;
+    if (transform) {
+      const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
+      if (match) {
+        xOffset = parseFloat(match[1]);
+        yOffset = parseFloat(match[2]);
+      }
+    }
+    
     function dragStart(e) {
+      // 如果點擊的是按鈕，不要開始拖曳
       if (e.target.closest('.bv-glass-button')) return;
       
       if (e.type === "touchstart") {
@@ -1215,18 +1232,22 @@
         initialY = e.clientY - yOffset;
       }
       
-      if (e.target === header || header.contains(e.target)) {
+      if (e.target === oldHeader || oldHeader.contains(e.target)) {
         isDragging = true;
         panel.style.transition = 'none';
+        e.preventDefault(); // 防止選取文字
       }
     }
     
     function dragEnd(e) {
+      if (!isDragging) return;
+      
       initialX = currentX;
       initialY = currentY;
       isDragging = false;
       panel.style.transition = '';
       
+      // 儲存位置
       chrome.storage.local.set({
         bvPanelPosition: {
           x: xOffset,
@@ -1258,6 +1279,7 @@
       el.style.transform = `translate(${xPos}px, ${yPos}px)`;
     }
     
+    // 載入儲存的位置
     chrome.storage.local.get(['bvPanelPosition'], (result) => {
       if (result.bvPanelPosition) {
         xOffset = result.bvPanelPosition.x;
@@ -1266,12 +1288,13 @@
       }
     });
     
-    header.addEventListener('mousedown', dragStart);
+    // 綁定事件
+    oldHeader.addEventListener('mousedown', dragStart);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', dragEnd);
     
-    header.addEventListener('touchstart', dragStart);
-    document.addEventListener('touchmove', drag);
+    oldHeader.addEventListener('touchstart', dragStart, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
     document.addEventListener('touchend', dragEnd);
   }
   
