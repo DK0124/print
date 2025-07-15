@@ -34,197 +34,247 @@
       if (!isConverted) {
         // A4 模式
         return `
-          <div class="bv-panel-header">
-            <h3>
-              <div class="bv-icon-wrapper">
-                <span class="material-icons">local_shipping</span>
+          <div class="bv-glass-panel">
+            <div class="bv-panel-header">
+              <div class="bv-header-content">
+                <div class="bv-icon-wrapper">
+                  <span class="material-icons">description</span>
+                </div>
+                <div class="bv-title-group">
+                  <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                  <span class="bv-panel-subtitle">A4 格式模式</span>
+                </div>
               </div>
-              <span class="bv-panel-title">BV SHOP 標籤機-出貨明細</span>
-            </h3>
-            <div class="bv-header-controls">
-              <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
+              <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
                 <span class="material-icons">remove</span>
               </button>
             </div>
-          </div>
-          
-          <div class="bv-panel-content-wrapper">
-            <div class="bv-panel-body bv-simple-body">
-              <!-- 轉換按鈕 -->
-              <div class="bv-action-section">
-                <button id="bv-convert-btn" class="bv-action-button primary">
-                  <span class="material-icons">transform</span>
-                  <span class="bv-button-text">轉為10×15cm標籤</span>
-                </button>
-              </div>
-              
-              <!-- 數量標示開關 -->
-              <div class="bv-simple-controls">
-                <div class="bv-switch-container">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-highlight-qty">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">數量提示</span>
+            
+            <div class="bv-panel-content-wrapper">
+              <div class="bv-panel-body">
+                <!-- 主要操作區 -->
+                <div class="bv-primary-section">
+                  <button id="bv-convert-btn" class="bv-primary-button">
+                    <div class="bv-button-icon">
+                      <span class="material-icons">transform</span>
+                    </div>
+                    <div class="bv-button-content">
+                      <span class="bv-button-title">轉換為標籤格式</span>
+                      <span class="bv-button-subtitle">10×15cm 熱感標籤</span>
+                    </div>
+                  </button>
+                </div>
+                
+                <!-- 設定區 -->
+                <div class="bv-settings-card">
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">looks_one</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">數量標示</span>
+                        <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-highlight-qty">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <!-- 固定在底部的列印按鈕 -->
-            <div class="bv-panel-footer">
-              <button class="bv-print-button" id="bv-apply-print">
-                <span class="material-icons">print</span>
-                <span class="bv-button-text">套用並列印</span>
-              </button>
+              
+              <div class="bv-panel-footer">
+                <button class="bv-glass-action-button" id="bv-apply-print">
+                  <span class="material-icons">print</span>
+                  <span>套用並列印</span>
+                </button>
+              </div>
             </div>
           </div>
         `;
       } else {
         // 10×15cm 模式
         return `
-          <div class="bv-panel-header">
-            <h3>
-              <div class="bv-icon-wrapper">
-                <span class="material-icons">label</span>
+          <div class="bv-glass-panel">
+            <div class="bv-panel-header">
+              <div class="bv-header-content">
+                <div class="bv-icon-wrapper bv-label-mode">
+                  <span class="material-icons">label</span>
+                </div>
+                <div class="bv-title-group">
+                  <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                  <span class="bv-panel-subtitle">標籤格式模式</span>
+                </div>
               </div>
-              <span class="bv-panel-title">10×15cm 標籤模式</span>
-            </h3>
-            <div class="bv-header-controls">
-              <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
+              <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
                 <span class="material-icons">remove</span>
               </button>
             </div>
-          </div>
-          
-          <div class="bv-panel-content-wrapper">
-            <div class="bv-panel-body">
-              <!-- 還原按鈕 -->
-              <div class="bv-action-section">
-                <button id="bv-revert-btn" class="bv-action-button secondary">
-                  <span class="material-icons">undo</span>
-                  <span class="bv-button-text">還原A4格式</span>
-                </button>
-              </div>
-              
-              <!-- 設定區塊 -->
-              <div class="bv-settings-section">
-                <!-- 間距控制 -->
-                <div class="bv-spacing-group">
-                  <h4 class="bv-group-title">
+            
+            <div class="bv-panel-content-wrapper">
+              <div class="bv-panel-body">
+                <!-- 主要操作區 -->
+                <div class="bv-primary-section">
+                  <button id="bv-revert-btn" class="bv-secondary-button">
+                    <div class="bv-button-icon">
+                      <span class="material-icons">undo</span>
+                    </div>
+                    <div class="bv-button-content">
+                      <span class="bv-button-title">還原 A4 格式</span>
+                      <span class="bv-button-subtitle">返回原始版面</span>
+                    </div>
+                  </button>
+                </div>
+                
+                <!-- 間距設定 -->
+                <div class="bv-settings-card">
+                  <h4 class="bv-card-title">
                     <span class="material-icons">straighten</span>
-                    間距設定
+                    間距調整
                   </h4>
                   
-                  <div class="bv-control-item">
-                    <div class="bv-control-label">
-                      <span>標籤內距</span>
-                      <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
+                  <div class="bv-slider-group">
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>標籤內距</span>
+                        <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                      </div>
+                      <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-range">
-                  </div>
-                  
-                  <div class="bv-control-item">
-                    <div class="bv-control-label">
-                      <span>標題間距</span>
-                      <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>標題間距</span>
+                        <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                      </div>
+                      <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-range">
-                  </div>
-                  
-                  <div class="bv-control-item">
-                    <div class="bv-control-label">
-                      <span>內容間距</span>
-                      <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>內容間距</span>
+                        <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
+                      </div>
+                      <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-range">
-                  </div>
-                  
-                  <div class="bv-control-item">
-                    <div class="bv-control-label">
-                      <span>費用間距</span>
-                      <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>費用間距</span>
+                        <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
+                      </div>
+                      <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-range">
                   </div>
                 </div>
                 
-                <!-- 開關選項 -->
-                <div class="bv-switches-group">
-                  <h4 class="bv-group-title">
-                    <span class="material-icons">tune</span>
+                <!-- 顯示設定 -->
+                <div class="bv-settings-card">
+                  <h4 class="bv-card-title">
+                    <span class="material-icons">visibility</span>
                     顯示設定
                   </h4>
                   
-                  <div class="bv-switch-container">
-                    <label class="bv-switch">
-                      <input type="checkbox" id="bv-highlight-qty">
-                      <span class="bv-slider"></span>
-                    </label>
-                    <span class="bv-switch-label">數量提示</span>
-                  </div>
-                  
-                  <div class="bv-switch-container">
-                    <label class="bv-switch">
-                      <input type="checkbox" id="bv-bold-mode">
-                      <span class="bv-slider"></span>
-                    </label>
-                    <span class="bv-switch-label">整體加粗</span>
-                  </div>
-                  
-                  <div class="bv-switch-container">
-                    <label class="bv-switch">
-                      <input type="checkbox" id="bv-hide-extra-info">
-                      <span class="bv-slider"></span>
-                    </label>
-                    <span class="bv-switch-label">精簡模式</span>
-                  </div>
-                  
-                  <div class="bv-switch-container">
-                    <label class="bv-switch">
-                      <input type="checkbox" id="bv-hide-table-header">
-                      <span class="bv-slider"></span>
-                    </label>
-                    <span class="bv-switch-label">隱藏標題</span>
+                  <div class="bv-settings-list">
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">looks_one</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">數量標示</span>
+                          <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                        </div>
+                      </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-highlight-qty">
+                        <span class="bv-switch-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">format_bold</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">整體加粗</span>
+                          <span class="bv-setting-desc">適用低解析度標籤機</span>
+                        </div>
+                      </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-bold-mode">
+                        <span class="bv-switch-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">compress</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">精簡模式</span>
+                          <span class="bv-setting-desc">僅顯示必要資訊</span>
+                        </div>
+                      </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-hide-extra-info">
+                        <span class="bv-switch-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">view_headline</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">隱藏標題</span>
+                          <span class="bv-setting-desc">隱藏表格標題列</span>
+                        </div>
+                      </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-hide-table-header">
+                        <span class="bv-switch-slider"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
                 
                 <!-- 預設管理 -->
-                <div class="bv-preset-group">
-                  <h4 class="bv-group-title">
+                <div class="bv-settings-card">
+                  <h4 class="bv-card-title">
                     <span class="material-icons">bookmark</span>
                     預設管理
                   </h4>
                   
-                  <div class="bv-preset-row">
-                    <select id="bv-preset-select">
-                      <option value="">選擇預設</option>
+                  <div class="bv-preset-controls">
+                    <select id="bv-preset-select" class="bv-glass-select">
+                      <option value="">選擇預設...</option>
                     </select>
-                    <div class="bv-preset-actions">
-                      <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
+                    <div class="bv-preset-buttons">
+                      <button class="bv-glass-button" id="bv-save-preset" title="儲存">
                         <span class="material-icons">save</span>
                       </button>
-                      <button class="bv-icon-button" id="bv-delete-preset" title="刪除設定">
+                      <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
                         <span class="material-icons">delete</span>
                       </button>
                     </div>
                   </div>
-                  <div class="bv-preset-row bv-save-row" id="bv-save-preset-row" style="display:none;">
-                    <input type="text" id="bv-new-preset-name" placeholder="輸入名稱">
-                    <div class="bv-button-group">
-                      <button class="bv-small-button primary" id="bv-confirm-save">確認</button>
-                      <button class="bv-small-button" id="bv-cancel-save">取消</button>
+                  
+                  <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
+                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
+                    <div class="bv-preset-buttons">
+                      <button class="bv-glass-button bv-primary" id="bv-confirm-save">
+                        <span class="material-icons">check</span>
+                      </button>
+                      <button class="bv-glass-button" id="bv-cancel-save">
+                        <span class="material-icons">close</span>
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <!-- 固定在底部的列印按鈕 -->
-            <div class="bv-panel-footer">
-              <button class="bv-print-button" id="bv-apply-print">
-                <span class="material-icons">print</span>
-                <span class="bv-button-text">套用並列印</span>
-              </button>
+              
+              <div class="bv-panel-footer">
+                <button class="bv-glass-action-button" id="bv-apply-print">
+                  <span class="material-icons">print</span>
+                  <span>套用並列印</span>
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -236,7 +286,7 @@
     // 添加樣式
     const style = document.createElement('style');
     style.textContent = `
-    /* 移除所有元素的 focus outline 和邊框 */
+    /* 移除所有 focus outline */
     * {
       outline: none !important;
     }
@@ -249,45 +299,44 @@
       box-shadow: none !important;
     }
     
-    button:focus,
-    select:focus,
-    input:focus {
-      outline: none !important;
-    }
-      
-    /* 控制面板主體 */
-    #bv-label-control-panel,
-    #bv-label-control-panel * {
-      font-weight: normal !important;
-    }
-    
+    /* 主面板 - Liquid Glass 風格 */
     #bv-label-control-panel {
       position: fixed;
-      right: 20px;
-      top: 20px;
-      bottom: 20px;
-      width: 380px;
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
+      right: 24px;
+      top: 24px;
+      bottom: 24px;
+      width: 420px;
       z-index: 10000;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', Roboto, sans-serif;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans TC', sans-serif;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
-    #bv-label-control-panel:hover {
-      box-shadow: 0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+    .bv-glass-panel {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
-     
+    
     /* 最小化狀態 */
     #bv-label-control-panel.minimized {
       height: auto;
       bottom: auto;
-      width: auto;
-      min-width: 320px;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    #bv-label-control-panel.minimized .bv-glass-panel {
+      height: auto;
     }
     
     #bv-label-control-panel.minimized .bv-panel-content-wrapper {
@@ -297,26 +346,38 @@
     /* 浮動按鈕 */
     .bv-floating-button {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      bottom: 32px;
+      right: 32px;
+      width: 64px;
+      height: 64px;
+      background: rgba(88, 101, 242, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: white;
       border: none;
       border-radius: 50%;
-      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
+      box-shadow: 
+        0 4px 24px rgba(88, 101, 242, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
       cursor: pointer;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     .bv-floating-button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 
+        0 8px 32px rgba(88, 101, 242, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    }
+    
+    .bv-floating-button:active {
+      transform: scale(1.02);
     }
     
     .bv-floating-button .material-icons {
@@ -329,81 +390,109 @@
     
     /* 面板標題 */
     .bv-panel-header {
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
-      color: white;
       padding: 20px 24px;
-      box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
-      flex-shrink: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.5);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
       cursor: move;
       user-select: none;
     }
     
-    .bv-panel-header h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600 !important;
+    .bv-header-content {
       display: flex;
       align-items: center;
-      gap: 10px;
-      letter-spacing: -0.02em;
+      gap: 14px;
+      flex: 1;
+    }
+    
+    .bv-icon-wrapper {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 
+        0 2px 8px rgba(88, 101, 242, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .bv-icon-wrapper.bv-label-mode {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 
+        0 2px 8px rgba(16, 185, 129, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .bv-icon-wrapper .material-icons {
+      font-size: 24px;
+    }
+    
+    .bv-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
     
     .bv-panel-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 600 !important;
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
     }
     
-    /* 標題控制按鈕 */
-    .bv-header-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    .bv-panel-subtitle {
+      font-size: 13px;
+      color: #86868b;
+      font-weight: 400;
     }
     
-    .bv-header-button {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 8px;
+    /* Glass 按鈕 */
+    .bv-glass-button {
       width: 32px;
       height: 32px;
+      background: rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      color: white;
+      color: #424245;
     }
     
-    .bv-header-button:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
+    .bv-glass-button:hover {
+      background: rgba(0, 0, 0, 0.08);
+      transform: scale(1.05);
     }
     
-    .bv-header-button .material-icons {
+    .bv-glass-button:active {
+      transform: scale(0.95);
+    }
+    
+    .bv-glass-button .material-icons {
       font-size: 20px;
     }
     
-    .bv-icon-wrapper {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      flex-shrink: 0;
+    .bv-glass-button.bv-primary {
+      background: rgba(88, 101, 242, 0.1);
+      color: #5865F2;
+      border-color: rgba(88, 101, 242, 0.2);
     }
     
-    .bv-icon-wrapper .material-icons {
-      font-size: 20px;
+    .bv-glass-button.bv-primary:hover {
+      background: rgba(88, 101, 242, 0.15);
     }
     
-    /* 內容包裝器 */
+    /* 內容區域 */
     .bv-panel-content-wrapper {
       display: flex;
       flex-direction: column;
@@ -411,7 +500,6 @@
       overflow: hidden;
     }
     
-    /* 面板內容 */
     .bv-panel-body {
       padding: 24px;
       overflow-y: auto;
@@ -419,192 +507,262 @@
       -webkit-overflow-scrolling: touch;
     }
     
-    /* 簡單模式的內容 */
-    .bv-panel-body.bv-simple-body {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+    /* 主要操作區 */
+    .bv-primary-section {
+      margin-bottom: 24px;
     }
     
-    /* 面板底部 */
-    .bv-panel-footer {
-      background: linear-gradient(to top, #fafbfc, #ffffff);
-      padding: 20px 24px;
-      border-top: 1px solid #eef0f2;
-      border-radius: 0 0 20px 20px;
-      flex-shrink: 0;
-    }
-    
-    /* 動作區域 */
-    .bv-action-section {
-      margin-bottom: 0;
-    }
-    
-    /* 動作按鈕 */
-    .bv-action-button {
+    .bv-primary-button,
+    .bv-secondary-button {
       width: 100%;
+      padding: 0;
       background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
-      color: white;
       border: none;
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600 !important;
+      border-radius: 16px;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 
+        0 4px 16px rgba(88, 101, 242, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .bv-secondary-button {
+      background: linear-gradient(135deg, #f04747 0%, #e74c3c 100%);
+      box-shadow: 
+        0 4px 16px rgba(240, 71, 71, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .bv-primary-button:hover,
+    .bv-secondary-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 24px rgba(88, 101, 242, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    }
+    
+    .bv-secondary-button:hover {
+      box-shadow: 
+        0 8px 24px rgba(240, 71, 71, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    }
+    
+    .bv-primary-button:active,
+    .bv-secondary-button:active {
+      transform: translateY(0);
+    }
+    
+    .bv-primary-button > *,
+    .bv-secondary-button > * {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      color: white;
+    }
+    
+    .bv-button-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
-      position: relative;
-      overflow: hidden;
-      white-space: nowrap;
+      flex-shrink: 0;
     }
     
-    .bv-action-button:before {
-      content: '';
+    .bv-button-icon .material-icons {
+      font-size: 28px;
+    }
+    
+    .bv-button-content {
+      flex: 1;
+      text-align: left;
+    }
+    
+    .bv-button-title {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    .bv-button-subtitle {
+      display: block;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+    
+    /* 設定卡片 */
+    .bv-settings-card {
+      background: rgba(246, 246, 248, 0.5);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .bv-card-title {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    
+    .bv-card-title .material-icons {
+      font-size: 18px;
+      color: #86868b;
+    }
+    
+    /* 設定項目 */
+    .bv-setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+    
+    .bv-setting-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    
+    .bv-setting-item:first-child {
+      padding-top: 0;
+    }
+    
+    .bv-setting-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    
+    .bv-setting-info .material-icons {
+      font-size: 20px;
+      color: #86868b;
+    }
+    
+    .bv-setting-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .bv-setting-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+    
+    .bv-setting-desc {
+      font-size: 12px;
+      color: #86868b;
+    }
+    
+    /* Glass 開關 */
+    .bv-glass-switch {
+      position: relative;
+      display: inline-block;
+      width: 51px;
+      height: 31px;
+      cursor: pointer;
+    }
+    
+    .bv-glass-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .bv-switch-slider {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, #7289DA 0%, #8ea1e1 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 31px;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      backdrop-filter: blur(10px);
     }
     
-    .bv-action-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+    .bv-switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 27px;
+      width: 27px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.1);
     }
     
-    .bv-action-button:hover:before {
-      opacity: 1;
+    .bv-glass-switch input:checked + .bv-switch-slider {
+      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
     }
     
-    .bv-action-button:active {
-      transform: translateY(0);
+    .bv-glass-switch input:checked + .bv-switch-slider:before {
+      transform: translateX(20px);
     }
     
-    .bv-action-button .material-icons {
-      font-size: 24px;
-      position: relative;
-      z-index: 1;
-      flex-shrink: 0;
-    }
-    
-    .bv-action-button .bv-button-text {
-      position: relative;
-      z-index: 1;
-      flex-shrink: 0;
-      font-weight: 600 !important;
-    }
-    
-    .bv-action-button.secondary {
-      background: linear-gradient(135deg, #f04747 0%, #e74c3c 100%);
-      box-shadow: 0 4px 14px rgba(240, 71, 71, 0.3);
-    }
-    
-    .bv-action-button.secondary:before {
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    }
-    
-    .bv-action-button.secondary:hover {
-      box-shadow: 0 6px 20px rgba(240, 71, 71, 0.4);
-    }
-    
-    /* 簡單控制區 */
-    .bv-simple-controls {
+    /* Glass Slider */
+    .bv-slider-group {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 12px;
+      gap: 20px;
     }
     
-    /* 設定區塊 */
-    .bv-settings-section {
+    .bv-slider-item {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      margin-top: 24px;
+      gap: 10px;
     }
     
-    /* 群組標題 */
-    .bv-group-title {
-      margin: 0 0 16px 0;
-      font-size: 14px;
-      font-weight: 600 !important;
-      color: #4a5568;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    
-    .bv-group-title .material-icons {
-      font-size: 18px;
-      color: #7289DA;
-    }
-    
-    /* 間距群組 */
-    .bv-spacing-group,
-    .bv-switches-group,
-    .bv-preset-group {
-      background: #f8f9fa;
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid #e9ecef;
-    }
-    
-    /* 控制項目 */
-    .bv-control-item {
-      margin-bottom: 20px;
-    }
-    
-    .bv-control-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .bv-control-label {
+    .bv-slider-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      font-weight: 500 !important;
-      color: #24292e;
       font-size: 14px;
     }
     
-    .bv-value-badge {
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
-      color: white;
+    .bv-value-label {
+      background: rgba(88, 101, 242, 0.1);
+      color: #5865F2;
       padding: 4px 10px;
-      border-radius: 20px;
+      border-radius: 8px;
       font-size: 12px;
-      font-weight: 600 !important;
-      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-weight: 600;
+      font-family: 'SF Mono', monospace;
       min-width: 45px;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(88, 101, 242, 0.2);
     }
     
-    /* Range Input */
-    input[type="range"] {
+    .bv-glass-slider {
+      -webkit-appearance: none;
       width: 100%;
       height: 6px;
-      background: #e8eaed;
+      background: rgba(0, 0, 0, 0.1);
       border-radius: 3px;
       outline: none;
-      -webkit-appearance: none;
-      margin: 0;
       position: relative;
+      cursor: pointer;
     }
     
-    input[type="range"]:before {
+    .bv-glass-slider:before {
       content: '';
       position: absolute;
       height: 6px;
@@ -614,388 +772,212 @@
       pointer-events: none;
     }
     
-    input[type="range"]::-webkit-slider-thumb {
+    .bv-glass-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 20px;
       height: 20px;
       background: white;
-      border: 3px solid #5865F2;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.04);
       transition: all 0.2s ease;
       position: relative;
       z-index: 1;
     }
     
-    input[type="range"]::-webkit-slider-thumb:hover {
+    .bv-glass-slider::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      box-shadow: 0 3px 8px rgba(88, 101, 242, 0.4);
+      box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        0 2px 4px rgba(0, 0, 0, 0.15),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
     
-    input[type="range"]::-moz-range-thumb {
+    .bv-glass-slider::-moz-range-thumb {
       width: 20px;
       height: 20px;
       background: white;
-      border: 3px solid #5865F2;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease;
-    }
-    
-    /* 開關容器 */
-    .bv-switch-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    
-    .bv-switch-container:last-child {
-      margin-bottom: 0;
-    }
-    
-    .bv-switch-label {
-      font-size: 14px;
-      color: #24292e;
-      font-weight: 500 !important;
-      flex: 1;
-    }
-    
-    /* 開關樣式 */
-    .bv-switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    
-    .bv-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .bv-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #cbd5e1;
-      transition: .3s;
-      border-radius: 24px;
-    }
-    
-    .bv-slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    
-    .bv-switch input:checked + .bv-slider {
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
-    }
-    
-    .bv-switch input:checked + .bv-slider:before {
-      transform: translateX(20px);
+      border: none;
     }
     
     /* 預設管理 */
-    .bv-preset-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .bv-preset-row:last-child {
-      margin-bottom: 0;
-    }
-    
-    #bv-preset-select {
-      flex: 1;
-      min-width: 0;
-      background: white;
-      border: 2px solid #e8eaed;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: #24292e;
-      transition: all 0.2s ease;
-      font-weight: 500 !important;
-    }
-    
-    #bv-preset-select:hover {
-      border-color: #7289DA;
-    }
-    
-    #bv-preset-select:focus {
-      outline: none;
-      border-color: #5865F2;
-      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-    }
-    
-    .bv-preset-actions {
+    .bv-preset-controls {
       display: flex;
       gap: 8px;
-    }
-    
-    /* 設定檔名稱輸入框 */
-    #bv-new-preset-name {
-      flex: 1;
-      min-width: 0;
-      background: white;
-      border: 2px solid #e8eaed;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: #24292e;
-      transition: all 0.2s ease;
-      font-weight: 500 !important;
-    }
-    
-    #bv-new-preset-name:hover {
-      border-color: #7289DA;
-    }
-    
-    #bv-new-preset-name:focus {
-      outline: none;
-      border-color: #5865F2;
-      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-    }
-    
-    #bv-new-preset-name::placeholder {
-      color: #9ca3af;
-      font-weight: 400 !important;
-    }
-    
-    .bv-icon-button {
-      background: white;
-      border: 2px solid #e8eaed;
-      border-radius: 8px;
-      padding: 8px;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      width: 36px;
+    }
+    
+    .bv-glass-select {
+      flex: 1;
       height: 36px;
-      flex-shrink: 0;
-    }
-    
-    .bv-icon-button:hover {
-      background: #f8f9ff;
-      border-color: #7289DA;
-      transform: translateY(-1px);
-    }
-    
-    .bv-icon-button:active {
-      transform: translateY(0);
-    }
-    
-    .bv-icon-button .material-icons {
-      font-size: 18px;
-      color: #5865F2;
-    }
-    
-    /* 按鈕群組 */
-    .bv-button-group {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    
-    .bv-small-button {
-      padding: 8px 16px;
-      background: white;
-      border: 2px solid #e8eaed;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600 !important;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #1a1a1a;
       cursor: pointer;
       transition: all 0.2s ease;
-      white-space: nowrap;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
     }
     
-    .bv-small-button:hover {
-      background: #f8f9ff;
-      border-color: #7289DA;
-      color: #5865F2;
+    .bv-glass-select:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.12);
     }
     
-    .bv-small-button.primary {
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
+    .bv-glass-select:focus {
+      background-color: white;
+      border-color: #5865F2;
+      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
     }
     
-    .bv-small-button.primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(88, 101, 242, 0.35);
+    .bv-preset-buttons {
+      display: flex;
+      gap: 6px;
     }
     
-    /* 列印按鈕 */
-    .bv-print-button {
+    .bv-preset-save-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .bv-glass-input {
+      flex: 1;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #1a1a1a;
+      transition: all 0.2s ease;
+    }
+    
+    .bv-glass-input::placeholder {
+      color: #86868b;
+    }
+    
+    .bv-glass-input:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.12);
+    }
+    
+    .bv-glass-input:focus {
+      background-color: white;
+      border-color: #5865F2;
+      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+    }
+    
+    /* 底部區域 */
+    .bv-panel-footer {
+      padding: 16px 24px 24px;
+      background: rgba(255, 255, 255, 0.5);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+    }
+    
+    .bv-glass-action-button {
       width: 100%;
+      height: 48px;
       background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
       color: white;
       border: none;
-      padding: 16px 24px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 16px;
-      font-weight: 600 !important;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
-      position: relative;
-      overflow: hidden;
-      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 
+        0 4px 16px rgba(88, 101, 242, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
     }
     
-    .bv-print-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, #7289DA 0%, #8ea1e1 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .bv-print-button:hover {
+    .bv-glass-action-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+      box-shadow: 
+        0 8px 24px rgba(88, 101, 242, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
-    .bv-print-button:hover:before {
-      opacity: 1;
-    }
-    
-    .bv-print-button:active {
+    .bv-glass-action-button:active {
       transform: translateY(0);
     }
     
-    .bv-print-button .material-icons {
+    .bv-glass-action-button .material-icons {
       font-size: 24px;
-      position: relative;
-      z-index: 1;
-      flex-shrink: 0;
     }
     
-    .bv-print-button .bv-button-text {
-      position: relative;
-      z-index: 1;
-      flex-shrink: 0;
-      font-weight: 600 !important;
-    }
-    
-    /* 圓圈數字樣式 */
-    .bv-qty-circle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.2em;
-      height: 1.2em;
-      padding: 0;
-      border: 1.5px solid currentColor;
-      color: inherit;
-      border-radius: 50%;
-      font-weight: bold;
-      font-size: 0.9em;
-      line-height: 1;
-      vertical-align: middle;
-      position: relative;
-      top: -0.05em;
-    }
-    
-    .bv-qty-circle.transparent {
-      border-color: transparent;
-    }
-    
-    /* 列印時保持圓圈樣式 */
-    @media print {
-      .bv-qty-circle {
-        border: 1.5px solid currentColor !important;
-        color: inherit !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      
-      .bv-qty-circle.transparent {
-        border-color: transparent !important;
-      }
-      
-      .bv-converted.bold-mode .order-content * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        font-weight: 700 !important;
-      }
-    }
-    
-    /* 滾動條樣式 */
+    /* 滾動條 */
     .bv-panel-body::-webkit-scrollbar {
-      width: 8px;
+      width: 10px;
     }
     
     .bv-panel-body::-webkit-scrollbar-track {
-      background: #f8f9fa;
-      border-radius: 4px;
+      background: transparent;
     }
     
     .bv-panel-body::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #d4d7dd 0%, #c1c4cb 100%);
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
     }
     
     .bv-panel-body::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #b8bcc4 0%, #a8abb3 100%);
+      background: rgba(0, 0, 0, 0.25);
+      background-clip: padding-box;
     }
     
-    /* 通知樣式 */
+    /* 通知 */
     .bv-notification {
       position: fixed;
-      top: 20px;
+      top: 32px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      color: #059669;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       padding: 16px 24px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 14px;
-      font-weight: 500 !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      font-weight: 500;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
       z-index: 100001;
       display: flex;
       align-items: center;
-      gap: 10px;
-      backdrop-filter: blur(10px);
-      border-left: 4px solid #10b981;
-      animation: slideDown 0.3s ease-out;
+      gap: 12px;
+      animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .bv-notification.success {
+      color: #059669;
     }
     
     .bv-notification.warning {
       color: #d97706;
-      border-left-color: #f59e0b;
     }
     
     .bv-notification .material-icons {
@@ -1024,7 +1006,30 @@
       }
     }
     
-    /* 覆蓋原始樣式 */
+    /* 圓圈數字樣式 */
+    .bv-qty-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.2em;
+      height: 1.2em;
+      padding: 0;
+      border: 1.5px solid currentColor;
+      color: inherit;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 0.9em;
+      line-height: 1;
+      vertical-align: middle;
+      position: relative;
+      top: -0.05em;
+    }
+    
+    .bv-qty-circle.transparent {
+      border-color: transparent;
+    }
+    
+    /* 轉換後的樣式 */
     body.bv-converted {
       width: auto !important;
       max-width: none !important;
@@ -1033,7 +1038,6 @@
       padding: 0 !important;
     }
     
-    /* 轉換後的樣式 */
     @media screen {
       body.bv-converted {
         background: #f0f0f0;
@@ -1118,6 +1122,23 @@
       body > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
       }
+      
+      .bv-qty-circle {
+        border: 1.5px solid currentColor !important;
+        color: inherit !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .bv-qty-circle.transparent {
+        border-color: transparent !important;
+      }
+      
+      .bv-converted.bold-mode .order-content * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-weight: 700 !important;
+      }
     }
     `;
     
@@ -1150,25 +1171,16 @@
     const panel = document.getElementById('bv-label-control-panel');
     if (!panel) return;
     
-    // 保存最小化狀態
     const wasMinimized = panel.classList.contains('minimized');
     
-    // 更新內容
     panel.innerHTML = getPanelContent();
     
-    // 恢復最小化狀態
     if (wasMinimized) {
       panel.classList.add('minimized');
-      const minimizeBtn = panel.querySelector('#bv-minimize-btn');
-      if (minimizeBtn) {
-        minimizeBtn.querySelector('.material-icons').textContent = 'add';
-      }
     }
     
-    // 重新綁定事件
     setupEventListeners();
     
-    // 重新載入設定
     if (isConverted) {
       loadSettings();
       initPresetSystem();
@@ -1180,197 +1192,247 @@
     if (!isConverted) {
       // A4 模式
       return `
-        <div class="bv-panel-header">
-          <h3>
-            <div class="bv-icon-wrapper">
-              <span class="material-icons">local_shipping</span>
+        <div class="bv-glass-panel">
+          <div class="bv-panel-header">
+            <div class="bv-header-content">
+              <div class="bv-icon-wrapper">
+                <span class="material-icons">description</span>
+              </div>
+              <div class="bv-title-group">
+                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                <span class="bv-panel-subtitle">A4 格式模式</span>
+              </div>
             </div>
-            <span class="bv-panel-title">BV SHOP 標籤機-出貨明細</span>
-          </h3>
-          <div class="bv-header-controls">
-            <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
+            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
               <span class="material-icons">remove</span>
             </button>
           </div>
-        </div>
-        
-        <div class="bv-panel-content-wrapper">
-          <div class="bv-panel-body bv-simple-body">
-            <!-- 轉換按鈕 -->
-            <div class="bv-action-section">
-              <button id="bv-convert-btn" class="bv-action-button primary">
-                <span class="material-icons">transform</span>
-                <span class="bv-button-text">轉為10×15cm標籤</span>
-              </button>
-            </div>
-            
-            <!-- 數量標示開關 -->
-            <div class="bv-simple-controls">
-              <div class="bv-switch-container">
-                <label class="bv-switch">
-                  <input type="checkbox" id="bv-highlight-qty">
-                  <span class="bv-slider"></span>
-                </label>
-                <span class="bv-switch-label">數量提示</span>
+          
+          <div class="bv-panel-content-wrapper">
+            <div class="bv-panel-body">
+              <!-- 主要操作區 -->
+              <div class="bv-primary-section">
+                <button id="bv-convert-btn" class="bv-primary-button">
+                  <div class="bv-button-icon">
+                    <span class="material-icons">transform</span>
+                  </div>
+                  <div class="bv-button-content">
+                    <span class="bv-button-title">轉換為標籤格式</span>
+                    <span class="bv-button-subtitle">10×15cm 熱感標籤</span>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- 設定區 -->
+              <div class="bv-settings-card">
+                <div class="bv-setting-item">
+                  <div class="bv-setting-info">
+                    <span class="material-icons">looks_one</span>
+                    <div class="bv-setting-text">
+                      <span class="bv-setting-label">數量標示</span>
+                      <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                    </div>
+                  </div>
+                  <label class="bv-glass-switch">
+                    <input type="checkbox" id="bv-highlight-qty">
+                    <span class="bv-switch-slider"></span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- 固定在底部的列印按鈕 -->
-          <div class="bv-panel-footer">
-            <button class="bv-print-button" id="bv-apply-print">
-              <span class="material-icons">print</span>
-              <span class="bv-button-text">套用並列印</span>
-            </button>
+            
+            <div class="bv-panel-footer">
+              <button class="bv-glass-action-button" id="bv-apply-print">
+                <span class="material-icons">print</span>
+                <span>套用並列印</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
     } else {
       // 10×15cm 模式
       return `
-        <div class="bv-panel-header">
-          <h3>
-            <div class="bv-icon-wrapper">
-              <span class="material-icons">label</span>
+        <div class="bv-glass-panel">
+          <div class="bv-panel-header">
+            <div class="bv-header-content">
+              <div class="bv-icon-wrapper bv-label-mode">
+                <span class="material-icons">label</span>
+              </div>
+              <div class="bv-title-group">
+                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                <span class="bv-panel-subtitle">標籤格式模式</span>
+              </div>
             </div>
-            <span class="bv-panel-title">10×15cm 標籤模式</span>
-          </h3>
-          <div class="bv-header-controls">
-            <button class="bv-header-button" id="bv-minimize-btn" title="最小化">
+            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
               <span class="material-icons">remove</span>
             </button>
           </div>
-        </div>
-        
-        <div class="bv-panel-content-wrapper">
-          <div class="bv-panel-body">
-            <!-- 還原按鈕 -->
-            <div class="bv-action-section">
-              <button id="bv-revert-btn" class="bv-action-button secondary">
-                <span class="material-icons">undo</span>
-                <span class="bv-button-text">還原A4格式</span>
-              </button>
-            </div>
-            
-            <!-- 設定區塊 -->
-            <div class="bv-settings-section">
-              <!-- 間距控制 -->
-              <div class="bv-spacing-group">
-                <h4 class="bv-group-title">
+          
+          <div class="bv-panel-content-wrapper">
+            <div class="bv-panel-body">
+              <!-- 主要操作區 -->
+              <div class="bv-primary-section">
+                <button id="bv-revert-btn" class="bv-secondary-button">
+                  <div class="bv-button-icon">
+                    <span class="material-icons">undo</span>
+                  </div>
+                  <div class="bv-button-content">
+                    <span class="bv-button-title">還原 A4 格式</span>
+                    <span class="bv-button-subtitle">返回原始版面</span>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- 間距設定 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
                   <span class="material-icons">straighten</span>
-                  間距設定
+                  間距調整
                 </h4>
                 
-                <div class="bv-control-item">
-                  <div class="bv-control-label">
-                    <span>標籤內距</span>
-                    <span class="bv-value-badge" id="bv-padding-value">2.5mm</span>
+                <div class="bv-slider-group">
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>標籤內距</span>
+                      <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                    </div>
+                    <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
                   </div>
-                  <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-range">
-                </div>
-                
-                <div class="bv-control-item">
-                  <div class="bv-control-label">
-                    <span>標題間距</span>
-                    <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>標題間距</span>
+                      <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                    </div>
+                    <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
                   </div>
-                  <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-range">
-                </div>
-                
-                <div class="bv-control-item">
-                  <div class="bv-control-label">
-                    <span>內容間距</span>
-                    <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>內容間距</span>
+                      <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
+                    </div>
+                    <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                   </div>
-                  <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-range">
-                </div>
-                
-                <div class="bv-control-item">
-                  <div class="bv-control-label">
-                    <span>費用間距</span>
-                    <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>費用間距</span>
+                      <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
+                    </div>
+                    <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                   </div>
-                  <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-range">
                 </div>
               </div>
               
-              <!-- 開關選項 -->
-              <div class="bv-switches-group">
-                <h4 class="bv-group-title">
-                  <span class="material-icons">tune</span>
+              <!-- 顯示設定 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">visibility</span>
                   顯示設定
                 </h4>
                 
-                <div class="bv-switch-container">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-highlight-qty">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">數量提示</span>
-                </div>
-                
-                <div class="bv-switch-container">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-bold-mode">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">整體加粗</span>
-                </div>
-                
-                <div class="bv-switch-container">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-hide-extra-info">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">精簡模式</span>
-                </div>
-                
-                <div class="bv-switch-container">
-                  <label class="bv-switch">
-                    <input type="checkbox" id="bv-hide-table-header">
-                    <span class="bv-slider"></span>
-                  </label>
-                  <span class="bv-switch-label">隱藏標題</span>
+                <div class="bv-settings-list">
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">looks_one</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">數量標示</span>
+                        <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-highlight-qty">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">format_bold</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">整體加粗</span>
+                        <span class="bv-setting-desc">適用低解析度標籤機</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-bold-mode">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">compress</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">精簡模式</span>
+                        <span class="bv-setting-desc">僅顯示必要資訊</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-hide-extra-info">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">view_headline</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">隱藏標題</span>
+                        <span class="bv-setting-desc">隱藏表格標題列</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-hide-table-header">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
               
               <!-- 預設管理 -->
-              <div class="bv-preset-group">
-                <h4 class="bv-group-title">
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
                   預設管理
                 </h4>
                 
-                <div class="bv-preset-row">
-                  <select id="bv-preset-select">
-                    <option value="">選擇預設</option>
+                <div class="bv-preset-controls">
+                  <select id="bv-preset-select" class="bv-glass-select">
+                    <option value="">選擇預設...</option>
                   </select>
-                  <div class="bv-preset-actions">
-                    <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
+                  <div class="bv-preset-buttons">
+                    <button class="bv-glass-button" id="bv-save-preset" title="儲存">
                       <span class="material-icons">save</span>
                     </button>
-                    <button class="bv-icon-button" id="bv-delete-preset" title="刪除設定">
+                    <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
                       <span class="material-icons">delete</span>
                     </button>
                   </div>
                 </div>
-                <div class="bv-preset-row bv-save-row" id="bv-save-preset-row" style="display:none;">
-                  <input type="text" id="bv-new-preset-name" placeholder="輸入名稱">
-                  <div class="bv-button-group">
-                    <button class="bv-small-button primary" id="bv-confirm-save">確認</button>
-                    <button class="bv-small-button" id="bv-cancel-save">取消</button>
+                
+                <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
+                  <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
+                  <div class="bv-preset-buttons">
+                    <button class="bv-glass-button bv-primary" id="bv-confirm-save">
+                      <span class="material-icons">check</span>
+                    </button>
+                    <button class="bv-glass-button" id="bv-cancel-save">
+                      <span class="material-icons">close</span>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <!-- 固定在底部的列印按鈕 -->
-          <div class="bv-panel-footer">
-            <button class="bv-print-button" id="bv-apply-print">
-              <span class="material-icons">print</span>
-              <span class="bv-button-text">套用並列印</span>
-            </button>
+            
+            <div class="bv-panel-footer">
+              <button class="bv-glass-action-button" id="bv-apply-print">
+                <span class="material-icons">print</span>
+                <span>套用並列印</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -1390,7 +1452,7 @@
     let yOffset = 0;
     
     function dragStart(e) {
-      if (e.target.closest('.bv-header-button')) return;
+      if (e.target.closest('.bv-glass-button')) return;
       
       if (e.type === "touchstart") {
         initialX = e.touches[0].clientX - xOffset;
@@ -1501,9 +1563,11 @@
         if (!isConverted) {
           convertToLabelFormat();
           setTimeout(() => {
+            preparePrintStyles();
             window.print();
           }, 500);
         } else {
+          preparePrintStyles();
           window.print();
         }
       });
@@ -1518,9 +1582,11 @@
         if (!isConverted) {
           convertToLabelFormat();
           setTimeout(() => {
+            preparePrintStyles();
             window.print();
           }, 500);
         } else {
+          preparePrintStyles();
           window.print();
         }
       });
@@ -1532,7 +1598,7 @@
     }
   }
   
-  // 修正 setupLabelModeEventListeners 函數
+  // 設置標籤模式的事件監聽器
   function setupLabelModeEventListeners() {
     // 加粗模式
     const boldModeCheckbox = document.getElementById('bv-bold-mode');
@@ -1540,7 +1606,6 @@
       boldModeCheckbox.addEventListener('change', function(e) {
         boldMode = e.target.checked;
         
-        // 立即更新 body class
         if (boldMode) {
           document.body.classList.add('bold-mode');
         } else {
@@ -1557,7 +1622,7 @@
         }, 100);
       });
     }
-      
+    
     // 精簡模式
     const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
     if (hideExtraInfoCheckbox) {
@@ -1565,24 +1630,7 @@
         hideExtraInfo = e.target.checked;
         saveSettings();
         
-        // 處理原始內容和所有分頁內容
-        const allContainers = document.querySelectorAll('.order-content, .bv-label-page');
-        
-        allContainers.forEach(container => {
-          const orderInfo = container.querySelector('.order-info');
-          if (orderInfo) {
-            if (hideExtraInfo) {
-              processExtraInfoHiding(container);
-            } else {
-              // 恢復顯示所有資訊
-              orderInfo.querySelectorAll('p').forEach(p => {
-                p.style.display = '';
-              });
-            }
-          }
-        });
-        
-        // 重新分頁
+        // 重新分頁以應用精簡模式
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1591,7 +1639,7 @@
         }, 100);
       });
     }
-      
+    
     // 隱藏標題
     const hideTableHeaderCheckbox = document.getElementById('bv-hide-table-header');
     if (hideTableHeaderCheckbox) {
@@ -1639,6 +1687,25 @@
     
     // 初始化預設系統
     initPresetSystem();
+  }
+  
+  // 準備列印樣式
+  function preparePrintStyles() {
+    const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
+    
+    const oldPrintStyle = document.getElementById('bv-print-styles');
+    if (oldPrintStyle) oldPrintStyle.remove();
+    
+    const printStyle = document.createElement('style');
+    printStyle.id = 'bv-print-styles';
+    printStyle.textContent = `
+      @media print {
+        .bv-label-page {
+          padding: ${labelPadding}mm !important;
+        }
+      }
+    `;
+    document.head.appendChild(printStyle);
   }
   
   // 初始化預設系統
@@ -1950,7 +2017,7 @@
     input.style.setProperty('--value', value + '%');
   }
   
-  // 在 convertToLabelFormat 函數中確保正確應用設定
+  // 轉換為標籤格式
   function convertToLabelFormat() {
     if (isConverted) return;
     
@@ -1977,13 +2044,12 @@
     document.body.style.padding = '0';
     
     document.body.classList.add('bv-converted');
-    
-    // 確保加粗模式正確應用
     if (boldMode) {
       document.body.classList.add('bold-mode');
     }
     
     triggerOriginalPageUpdate();
+    
     updateLabelStyles();
     
     setTimeout(() => {
@@ -1997,17 +2063,19 @@
     }, 100);
     
     isConverted = true;
+    
     updatePanelContent();
     
     showNotification('已成功轉換為10×15cm標籤格式');
   }
   
-  // 同時修正 handlePagination 函數中的處理
+  // 處理分頁
   function handlePagination() {
     document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
     document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
     
     const labelPadding = parseFloat(document.getElementById('bv-label-padding')?.value || '2.5');
+    const paddingMm = labelPadding;
     const paddingPx = labelPadding * 3.78;
     const pageHeight = 566;
     const contentHeight = pageHeight - (paddingPx * 2);
@@ -2015,12 +2083,15 @@
     document.querySelectorAll('.order-content').forEach((orderContent) => {
       orderContent.classList.add('bv-original');
       
-      // 如果開啟精簡模式，先處理原始內容
+      // 複製一份用於處理
+      const orderContentClone = orderContent.cloneNode(true);
+      
+      // 處理精簡模式
       if (hideExtraInfo) {
-        processExtraInfoHiding(orderContent);
+        processExtraInfoHiding(orderContentClone);
       }
       
-      const elements = Array.from(orderContent.children);
+      const elements = Array.from(orderContentClone.children);
       let currentPage = null;
       let currentPageContent = null;
       let currentHeight = 0;
@@ -2031,40 +2102,21 @@
       pageContainer.className = 'bv-page-container';
       orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
       
-      // 計算總頁數時考慮隱藏的元素
+      // 計算總頁數
       let tempHeight = 0;
       elements.forEach(element => {
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
         }
         
-        // 如果是 order-info 且開啟精簡模式，計算實際顯示的高度
-        let actualElement = element.cloneNode(true);
-        if (element.classList.contains('order-info') && hideExtraInfo) {
-          // 移除隱藏的段落
-          actualElement.querySelectorAll('p').forEach(p => {
-            const text = p.textContent.trim();
-            let shouldShow = false;
-            const keepPatterns = [/訂單編號/, /送貨方式/, /物流編號/, /收件人(?!地址|電話)/, /收件人電話/];
-            for (let pattern of keepPatterns) {
-              if (pattern.test(text)) {
-                shouldShow = true;
-                break;
-              }
-            }
-            if (!shouldShow) {
-              p.remove();
-            }
-          });
-        }
-        
+        const clone = element.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.style.cssText = `
           position: absolute;
           visibility: hidden;
           width: ${377 - paddingPx * 2}px;
         `;
-        wrapper.appendChild(actualElement);
+        wrapper.appendChild(clone);
         document.body.appendChild(wrapper);
         
         const elementHeight = wrapper.offsetHeight;
@@ -2086,19 +2138,14 @@
           return;
         }
         
-        // 複製元素並應用精簡模式
-        let elementClone = element.cloneNode(true);
-        if (element.classList.contains('order-info') && hideExtraInfo) {
-          processExtraInfoHiding({ querySelector: () => elementClone });
-        }
-        
+        const clone = element.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.style.cssText = `
           position: absolute;
           visibility: hidden;
           width: ${377 - paddingPx * 2}px;
         `;
-        wrapper.appendChild(elementClone.cloneNode(true));
+        wrapper.appendChild(clone);
         document.body.appendChild(wrapper);
         
         const elementHeight = wrapper.offsetHeight;
@@ -2109,12 +2156,7 @@
         if (!currentPage || (currentHeight + elementHeight > contentHeight && currentHeight > 0)) {
           currentPage = document.createElement('div');
           currentPage.className = 'bv-label-page';
-          
-          // 使用內聯樣式設定 padding，確保列印時保持
           currentPage.style.padding = `${paddingMm}mm`;
-          
-          // 同時設定 data 屬性作為備份
-          currentPage.setAttribute('data-padding-mm', paddingMm);
           
           currentPageContent = document.createElement('div');
           currentPageContent.className = 'bv-page-content';
@@ -2132,30 +2174,26 @@
           pageNumber++;
         }
         
+        const elementClone = element.cloneNode(true);
         currentPageContent.appendChild(elementClone);
         currentHeight += elementHeight;
-        
-        // 確保新增的內容也套用精簡模式
-        if (hideExtraInfo && elementClone.classList.contains('order-info')) {
-          processExtraInfoHiding({ querySelector: () => elementClone });
-        }
       });
     });
   }
   
-  // 處理隱藏額外資訊
-  function processExtraInfoHiding(orderContent) {
-    const orderInfo = orderContent.querySelector('.order-info');
+  // 處理隱藏額外資訊（精簡模式）
+  function processExtraInfoHiding(container) {
+    const orderInfo = container.querySelector('.order-info');
     if (!orderInfo) return;
     
     const allParagraphs = orderInfo.querySelectorAll('p');
     
-    // 定義要保留的欄位關鍵字（更精確的匹配）
+    // 要保留的欄位
     const keepPatterns = [
       /訂單編號/,
       /送貨方式/,
       /物流編號/,
-      /收件人(?!地址|電話)/,  // 收件人但不包含收件人地址
+      /收件人(?!地址|電話)/,
       /收件人電話/
     ];
     
@@ -2163,7 +2201,6 @@
       const text = p.textContent.trim();
       let shouldKeep = false;
       
-      // 檢查是否符合任何保留模式
       for (let pattern of keepPatterns) {
         if (pattern.test(text)) {
           shouldKeep = true;
@@ -2171,11 +2208,12 @@
         }
       }
       
-      // 設定顯示或隱藏
-      p.style.display = shouldKeep ? '' : 'none';
+      if (!shouldKeep) {
+        p.remove();
+      }
     });
   }
-
+  
   // 觸發原始頁面的更新事件
   function triggerOriginalPageUpdate() {
     const event = new Event('change', { bubbles: true });
@@ -2488,8 +2526,8 @@
     document.body.appendChild(notification);
     
     setTimeout(() => {
-      notification.style.animation = 'slideUp 0.3s ease-out';
-      setTimeout(() => notification.remove(), 300);
+      notification.style.animation = 'slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      setTimeout(() => notification.remove(), 400);
     }, 3000);
   }
   
@@ -2515,28 +2553,24 @@
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
-        highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
-        const qtyCheckbox = document.getElementById('bv-highlight-qty');
-        if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
-        
-        if (isConverted) {
+        // A4 模式下只載入數量標示設定（預設為關閉）
+        if (!isConverted) {
+          highlightQuantity = false; // 確保 A4 模式下預設關閉
+          const qtyCheckbox = document.getElementById('bv-highlight-qty');
+          if (qtyCheckbox) qtyCheckbox.checked = false;
+        } else {
+          // 10×15cm 模式下載入所有設定
+          highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
+          const qtyCheckbox = document.getElementById('bv-highlight-qty');
+          if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
+          
           boldMode = settings.boldMode !== undefined ? settings.boldMode : false;
           const boldCheckbox = document.getElementById('bv-bold-mode');
           if (boldCheckbox) boldCheckbox.checked = boldMode;
           
-          // 載入精簡模式設定
-                  hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
-                  const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
-                  if (hideExtraCheckbox) {
-                    hideExtraCheckbox.checked = hideExtraInfo;
-                    
-                    // 如果已經轉換且開啟精簡模式，立即應用
-                    if (hideExtraInfo) {
-                      document.querySelectorAll('.order-content, .bv-label-page').forEach(container => {
-                        processExtraInfoHiding(container);
-                      });
-                    }
-                  }
+          hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
+          const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
+          if (hideExtraCheckbox) hideExtraCheckbox.checked = hideExtraInfo;
           
           hideTableHeader = settings.hideTableHeader !== undefined ? settings.hideTableHeader : false;
           const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
@@ -2599,3 +2633,4 @@
     }
   }
 })();
+    
