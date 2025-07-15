@@ -1178,11 +1178,17 @@
     
     const wasMinimized = panel.classList.contains('minimized');
     
+    // 保存當前位置
+    const currentTransform = panel.style.transform;
+    
     panel.innerHTML = getPanelContent();
     
     if (wasMinimized) {
       panel.classList.add('minimized');
     }
+    
+    // 恢復位置
+    panel.style.transform = currentTransform;
     
     setupEventListeners();
     
@@ -1190,8 +1196,10 @@
       loadSettings();
       initPresetSystem();
     }
+    
+    // 重新初始化拖曳功能
+    initDragFunction();
   }
-  
   function initDragFunction() {
     const panel = document.getElementById('bv-label-control-panel');
     const header = panel.querySelector('.bv-panel-header');
