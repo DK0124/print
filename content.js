@@ -1104,7 +1104,6 @@
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
-        padding: 0 !important;
         box-sizing: border-box !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
@@ -2110,7 +2109,12 @@
         if (!currentPage || (currentHeight + elementHeight > contentHeight && currentHeight > 0)) {
           currentPage = document.createElement('div');
           currentPage.className = 'bv-label-page';
-          currentPage.style.padding = `${paddingPx}px`;
+          
+          // 使用內聯樣式設定 padding，確保列印時保持
+          currentPage.style.padding = `${paddingMm}mm`;
+          
+          // 同時設定 data 屬性作為備份
+          currentPage.setAttribute('data-padding-mm', paddingMm);
           
           currentPageContent = document.createElement('div');
           currentPageContent.className = 'bv-page-content';
