@@ -102,25 +102,25 @@
                 <!-- 表格間距設定 -->
                 <div class="bv-spacing-controls">
                   <div class="bv-control-label" style="margin-top: 20px;">
-                    <span>標題列間距</span>
+                    <span>標題間距</span>
                     <span class="bv-value-badge" id="bv-header-padding-value">0.5mm</span>
                   </div>
                   <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
-                    <span>內容列間距</span>
+                    <span>內容間距</span>
                     <span class="bv-value-badge" id="bv-row-padding-value">0.8mm</span>
                   </div>
                   <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
-                    <span>費用列間距</span>
+                    <span>費用間距</span>
                     <span class="bv-value-badge" id="bv-fee-padding-value">0.8mm</span>
                   </div>
                   <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="1.5" class="bv-range">
                   
                   <div class="bv-control-label" style="margin-top: 15px;">
-                    <span>區塊間距</span>
+                    <span>各區間距</span>
                     <span class="bv-value-badge" id="bv-section-margin-value">2mm</span>
                   </div>
                   <input type="range" id="bv-section-margin" min="0" max="10" step="0.5" value="5" class="bv-range">
@@ -133,7 +133,7 @@
                   <input type="checkbox" id="bv-highlight-qty">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">將數量 ≥ 2 顯示為圓圈數字</span>
+                <span class="bv-switch-label">提示商品數量 ≥ 2</span>
               </div>
               
               <!-- 加粗模式開關 -->
@@ -142,7 +142,7 @@
                   <input type="checkbox" id="bv-bold-mode">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">加粗模式（低解析度標籤機）</span>
+                <span class="bv-switch-label">加粗模式</span>
               </div>
               
               <!-- 精簡模式開關 -->
@@ -151,7 +151,7 @@
                   <input type="checkbox" id="bv-hide-extra-info">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">精簡模式（訂單編號、送貨方式、物流編號、收件人、電話）</span>
+                <span class="bv-switch-label">精簡模式</span>
               </div>
               
               <!-- 隱藏表格標題開關 -->
@@ -160,7 +160,7 @@
                   <input type="checkbox" id="bv-hide-table-header">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">隱藏表格標題列</span>
+                <span class="bv-switch-label">隱藏標題</span>
               </div>
             </div>
           </div>
