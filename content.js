@@ -525,6 +525,11 @@
       box-shadow: 
         0 4px 16px rgba(88, 101, 242, 0.25),
         inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      color: white;
     }
     
     .bv-secondary-button {
@@ -551,15 +556,6 @@
     .bv-primary-button:active,
     .bv-secondary-button:active {
       transform: translateY(0);
-    }
-    
-    .bv-primary-button > *,
-    .bv-secondary-button > * {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      color: white;
     }
     
     .bv-button-icon {
@@ -1085,18 +1081,38 @@
     }
     
     @media print {
+      /* A4 模式的列印樣式 */
+      body:not(.bv-converted) {
+        /* 保持原始的 A4 格式 */
+      }
+      
+      /* 隱藏控制面板 */
       #bv-label-control-panel,
-      .bv-floating-button,
-      .bv-page-indicator {
+      .bv-floating-button {
         display: none !important;
       }
       
-      html, body {
-        width: auto !important;
-        max-width: none !important;
-        min-width: auto !important;
+      /* 確保數量圓圈在 A4 列印時也正常顯示 */
+      .bv-qty-circle {
+        border: 1.5px solid currentColor !important;
+        color: inherit !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .bv-qty-circle.transparent {
+        border-color: transparent !important;
+      }
+      
+      /* 標籤模式的列印樣式 */
+      body.bv-converted .bv-page-indicator {
+        display: none !important;
+      }
+      
+      body.bv-converted {
         margin: 0 !important;
         padding: 0 !important;
+        background: white !important;
       }
       
       @page {
@@ -1104,7 +1120,7 @@
         margin: 0;
       }
       
-      .bv-label-page {
+      body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
@@ -1115,23 +1131,12 @@
         border: none !important;
       }
       
-      .bv-label-page:last-child {
+      body.bv-converted .bv-label-page:last-child {
         page-break-after: auto !important;
       }
       
-      body > *:not(.bv-page-container):not(.bv-label-page) {
+      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
-      }
-      
-      .bv-qty-circle {
-        border: 1.5px solid currentColor !important;
-        color: inherit !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      
-      .bv-qty-circle.transparent {
-        border-color: transparent !important;
       }
       
       .bv-converted.bold-mode .order-content * {
@@ -1184,258 +1189,6 @@
     if (isConverted) {
       loadSettings();
       initPresetSystem();
-    }
-  }
-  
-  // 取得面板內容的函數
-  function getPanelContent() {
-    if (!isConverted) {
-      // A4 模式
-      return `
-        <div class="bv-glass-panel">
-          <div class="bv-panel-header">
-            <div class="bv-header-content">
-              <div class="bv-icon-wrapper">
-                <span class="material-icons">description</span>
-              </div>
-              <div class="bv-title-group">
-                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
-                <span class="bv-panel-subtitle">A4 格式模式</span>
-              </div>
-            </div>
-            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
-              <span class="material-icons">remove</span>
-            </button>
-          </div>
-          
-          <div class="bv-panel-content-wrapper">
-            <div class="bv-panel-body">
-              <!-- 主要操作區 -->
-              <div class="bv-primary-section">
-                <button id="bv-convert-btn" class="bv-primary-button">
-                  <div class="bv-button-icon">
-                    <span class="material-icons">transform</span>
-                  </div>
-                  <div class="bv-button-content">
-                    <span class="bv-button-title">轉換為標籤格式</span>
-                    <span class="bv-button-subtitle">10×15cm 熱感標籤</span>
-                  </div>
-                </button>
-              </div>
-              
-              <!-- 設定區 -->
-              <div class="bv-settings-card">
-                <div class="bv-setting-item">
-                  <div class="bv-setting-info">
-                    <span class="material-icons">looks_one</span>
-                    <div class="bv-setting-text">
-                      <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
-                    </div>
-                  </div>
-                  <label class="bv-glass-switch">
-                    <input type="checkbox" id="bv-highlight-qty">
-                    <span class="bv-switch-slider"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="bv-panel-footer">
-              <button class="bv-glass-action-button" id="bv-apply-print">
-                <span class="material-icons">print</span>
-                <span>套用並列印</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      // 10×15cm 模式
-      return `
-        <div class="bv-glass-panel">
-          <div class="bv-panel-header">
-            <div class="bv-header-content">
-              <div class="bv-icon-wrapper bv-label-mode">
-                <span class="material-icons">label</span>
-              </div>
-              <div class="bv-title-group">
-                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
-                <span class="bv-panel-subtitle">標籤格式模式</span>
-              </div>
-            </div>
-            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
-              <span class="material-icons">remove</span>
-            </button>
-          </div>
-          
-          <div class="bv-panel-content-wrapper">
-            <div class="bv-panel-body">
-              <!-- 主要操作區 -->
-              <div class="bv-primary-section">
-                <button id="bv-revert-btn" class="bv-secondary-button">
-                  <div class="bv-button-icon">
-                    <span class="material-icons">undo</span>
-                  </div>
-                  <div class="bv-button-content">
-                    <span class="bv-button-title">還原 A4 格式</span>
-                    <span class="bv-button-subtitle">返回原始版面</span>
-                  </div>
-                </button>
-              </div>
-              
-              <!-- 間距設定 -->
-              <div class="bv-settings-card">
-                <h4 class="bv-card-title">
-                  <span class="material-icons">straighten</span>
-                  間距調整
-                </h4>
-                
-                <div class="bv-slider-group">
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>標籤內距</span>
-                      <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
-                    </div>
-                    <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>標題間距</span>
-                      <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
-                    </div>
-                    <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>內容間距</span>
-                      <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
-                    </div>
-                    <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>費用間距</span>
-                      <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
-                    </div>
-                    <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
-                  </div>
-                </div>
-              </div>
-              
-              <!-- 顯示設定 -->
-              <div class="bv-settings-card">
-                <h4 class="bv-card-title">
-                  <span class="material-icons">visibility</span>
-                  顯示設定
-                </h4>
-                
-                <div class="bv-settings-list">
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">looks_one</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-highlight-qty">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">format_bold</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">整體加粗</span>
-                        <span class="bv-setting-desc">適用低解析度標籤機</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-bold-mode">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">compress</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">精簡模式</span>
-                        <span class="bv-setting-desc">僅顯示必要資訊</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-hide-extra-info">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">view_headline</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏標題</span>
-                        <span class="bv-setting-desc">隱藏表格標題列</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-hide-table-header">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- 預設管理 -->
-              <div class="bv-settings-card">
-                <h4 class="bv-card-title">
-                  <span class="material-icons">bookmark</span>
-                  預設管理
-                </h4>
-                
-                <div class="bv-preset-controls">
-                  <select id="bv-preset-select" class="bv-glass-select">
-                    <option value="">選擇預設...</option>
-                  </select>
-                  <div class="bv-preset-buttons">
-                    <button class="bv-glass-button" id="bv-save-preset" title="儲存">
-                      <span class="material-icons">save</span>
-                    </button>
-                    <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
-                      <span class="material-icons">delete</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
-                  <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
-                  <div class="bv-preset-buttons">
-                    <button class="bv-glass-button bv-primary" id="bv-confirm-save">
-                      <span class="material-icons">check</span>
-                    </button>
-                    <button class="bv-glass-button" id="bv-cancel-save">
-                      <span class="material-icons">close</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="bv-panel-footer">
-              <button class="bv-glass-action-button" id="bv-apply-print">
-                <span class="material-icons">print</span>
-                <span>套用並列印</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
     }
   }
   
@@ -1561,12 +1314,10 @@
     if (floatingPrint) {
       floatingPrint.addEventListener('click', function() {
         if (!isConverted) {
-          convertToLabelFormat();
-          setTimeout(() => {
-            preparePrintStyles();
-            window.print();
-          }, 500);
+          // A4 模式下直接列印 A4 格式
+          window.print();
         } else {
+          // 標籤模式下列印標籤
           preparePrintStyles();
           window.print();
         }
@@ -1580,12 +1331,13 @@
     if (applyPrint) {
       applyPrint.addEventListener('click', function() {
         if (!isConverted) {
-          convertToLabelFormat();
-          setTimeout(() => {
-            preparePrintStyles();
-            window.print();
-          }, 500);
+          // A4 模式：套用數量標示（如果啟用）然後列印 A4 格式
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+          window.print();
         } else {
+          // 標籤模式：準備列印樣式然後列印標籤
           preparePrintStyles();
           window.print();
         }
@@ -2015,6 +1767,258 @@
   function updateRangeProgress(input) {
     const value = (input.value - input.min) / (input.max - input.min) * 100;
     input.style.setProperty('--value', value + '%');
+  }
+  
+  // 取得面板內容的函數
+  function getPanelContent() {
+    if (!isConverted) {
+      // A4 模式
+      return `
+        <div class="bv-glass-panel">
+          <div class="bv-panel-header">
+            <div class="bv-header-content">
+              <div class="bv-icon-wrapper">
+                <span class="material-icons">description</span>
+              </div>
+              <div class="bv-title-group">
+                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                <span class="bv-panel-subtitle">A4 格式模式</span>
+              </div>
+            </div>
+            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
+              <span class="material-icons">remove</span>
+            </button>
+          </div>
+          
+          <div class="bv-panel-content-wrapper">
+            <div class="bv-panel-body">
+              <!-- 主要操作區 -->
+              <div class="bv-primary-section">
+                <button id="bv-convert-btn" class="bv-primary-button">
+                  <div class="bv-button-icon">
+                    <span class="material-icons">transform</span>
+                  </div>
+                  <div class="bv-button-content">
+                    <span class="bv-button-title">轉換為標籤格式</span>
+                    <span class="bv-button-subtitle">10×15cm 熱感標籤</span>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- 設定區 -->
+              <div class="bv-settings-card">
+                <div class="bv-setting-item">
+                  <div class="bv-setting-info">
+                    <span class="material-icons">looks_one</span>
+                    <div class="bv-setting-text">
+                      <span class="bv-setting-label">數量標示</span>
+                      <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                    </div>
+                  </div>
+                  <label class="bv-glass-switch">
+                    <input type="checkbox" id="bv-highlight-qty">
+                    <span class="bv-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bv-panel-footer">
+              <button class="bv-glass-action-button" id="bv-apply-print">
+                <span class="material-icons">print</span>
+                <span>套用並列印</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // 10×15cm 模式
+      return `
+        <div class="bv-glass-panel">
+          <div class="bv-panel-header">
+            <div class="bv-header-content">
+              <div class="bv-icon-wrapper bv-label-mode">
+                <span class="material-icons">label</span>
+              </div>
+              <div class="bv-title-group">
+                <h3 class="bv-panel-title">BV SHOP 出貨明細</h3>
+                <span class="bv-panel-subtitle">標籤格式模式</span>
+              </div>
+            </div>
+            <button class="bv-glass-button bv-minimize-btn" id="bv-minimize-btn">
+              <span class="material-icons">remove</span>
+            </button>
+          </div>
+          
+          <div class="bv-panel-content-wrapper">
+            <div class="bv-panel-body">
+              <!-- 主要操作區 -->
+              <div class="bv-primary-section">
+                <button id="bv-revert-btn" class="bv-secondary-button">
+                  <div class="bv-button-icon">
+                    <span class="material-icons">undo</span>
+                  </div>
+                  <div class="bv-button-content">
+                    <span class="bv-button-title">還原 A4 格式</span>
+                    <span class="bv-button-subtitle">返回原始版面</span>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- 間距設定 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">straighten</span>
+                  間距調整
+                </h4>
+                
+                <div class="bv-slider-group">
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>標籤內距</span>
+                      <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                    </div>
+                    <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
+                  </div>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>標題間距</span>
+                      <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                    </div>
+                    <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
+                  </div>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>內容間距</span>
+                      <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
+                    </div>
+                    <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
+                  </div>
+                  
+                  <div class="bv-slider-item">
+                    <div class="bv-slider-header">
+                      <span>費用間距</span>
+                      <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
+                    </div>
+                    <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 顯示設定 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">visibility</span>
+                  顯示設定
+                </h4>
+                
+                <div class="bv-settings-list">
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">looks_one</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">數量標示</span>
+                        <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-highlight-qty">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">format_bold</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">整體加粗</span>
+                        <span class="bv-setting-desc">適用低解析度標籤機</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-bold-mode">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">compress</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">精簡模式</span>
+                        <span class="bv-setting-desc">僅顯示必要資訊</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-hide-extra-info">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">view_headline</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">隱藏標題</span>
+                        <span class="bv-setting-desc">隱藏表格標題列</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="bv-hide-table-header">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 預設管理 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">bookmark</span>
+                  預設管理
+                </h4>
+                
+                <div class="bv-preset-controls">
+                  <select id="bv-preset-select" class="bv-glass-select">
+                    <option value="">選擇預設...</option>
+                  </select>
+                  <div class="bv-preset-buttons">
+                    <button class="bv-glass-button" id="bv-save-preset" title="儲存">
+                      <span class="material-icons">save</span>
+                    </button>
+                    <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
+                      <span class="material-icons">delete</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
+                  <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
+                  <div class="bv-preset-buttons">
+                    <button class="bv-glass-button bv-primary" id="bv-confirm-save">
+                      <span class="material-icons">check</span>
+                    </button>
+                    <button class="bv-glass-button" id="bv-cancel-save">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bv-panel-footer">
+              <button class="bv-glass-action-button" id="bv-apply-print">
+                <span class="material-icons">print</span>
+                <span>套用並列印</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
   }
   
   // 轉換為標籤格式
@@ -2473,7 +2477,10 @@
     
   // 應用數量標示
   function applyQuantityHighlight() {
-    const containers = document.querySelectorAll('.order-content, .bv-label-page');
+    // 選擇所有可能的容器（包括 A4 模式的 .order-content）
+    const containers = isConverted ? 
+      document.querySelectorAll('.bv-label-page') : 
+      document.querySelectorAll('.order-content');
     
     containers.forEach(container => {
       container.querySelectorAll('.list-item').forEach(item => {
@@ -2633,4 +2640,3 @@
     }
   }
 })();
-    
