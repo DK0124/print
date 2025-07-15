@@ -940,11 +940,17 @@
     
     if (wasMinimized) {
       panel.classList.add('minimized');
+      // 確保最小化按鈕圖標正確
+      const minimizeBtn = panel.querySelector('#bv-minimize-btn .material-icons');
+      if (minimizeBtn) {
+        minimizeBtn.textContent = 'add';
+      }
     }
     
     // 恢復位置
     panel.style.transform = currentTransform;
     
+    // 重新綁定事件
     setupEventListeners();
     
     if (isConverted) {
