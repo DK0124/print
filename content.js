@@ -263,7 +263,12 @@
       border: 0 !important;
     }
       
-      /* 控制面板主體 */
+      /* 控制面板主體 - 確保不受加粗模式影響 */
+      #bv-label-control-panel,
+      #bv-label-control-panel * {
+        font-weight: normal !important;
+      }
+      
       #bv-label-control-panel {
         position: fixed;
         right: 20px;
@@ -332,6 +337,7 @@
         justify-content: center;
         z-index: 9999;
         transition: all 0.3s ease;
+        font-weight: normal !important;
       }
       
       .bv-floating-button:hover {
@@ -364,7 +370,7 @@
       .bv-panel-header h3 {
         margin: 0;
         font-size: 18px;
-        font-weight: 600;
+        font-weight: 600 !important;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -375,6 +381,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-weight: 600 !important;
       }
       
       /* 標題控制按鈕 */
@@ -480,7 +487,7 @@
         font-size: 14px;
         color: #24292e;
         transition: all 0.2s ease;
-        font-weight: 500;
+        font-weight: 500 !important;
       }
       
       #bv-preset-select:hover {
@@ -504,7 +511,7 @@
         font-size: 14px;
         color: #24292e;
         transition: all 0.2s ease;
-        font-weight: 500;
+        font-weight: 500 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', Roboto, sans-serif;
       }
       
@@ -520,7 +527,7 @@
       
       #bv-new-preset-name::placeholder {
         color: #9ca3af;
-        font-weight: 400;
+        font-weight: 400 !important;
       }
       
       .bv-icon-button {
@@ -575,7 +582,7 @@
         border: 2px solid #e8eaed;
         border-radius: 8px;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 600 !important;
         cursor: pointer;
         transition: all 0.2s ease;
         white-space: nowrap;
@@ -613,7 +620,7 @@
         padding: 16px 24px;
         border-radius: 12px;
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 600 !important;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
@@ -662,6 +669,7 @@
         position: relative;
         z-index: 1;
         flex-shrink: 0;
+        font-weight: 600 !important;
       }
       
       .bv-action-button.secondary {
@@ -686,7 +694,7 @@
         padding: 16px 24px;
         border-radius: 12px;
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 600 !important;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
@@ -735,6 +743,7 @@
         position: relative;
         z-index: 1;
         flex-shrink: 0;
+        font-weight: 600 !important;
       }
       
       /* 區塊樣式 */
@@ -764,7 +773,7 @@
       .bv-section-header h4 {
         margin: 0;
         font-size: 15px;
-        font-weight: 600;
+        font-weight: 600 !important;
         color: #24292e;
         display: flex;
         align-items: center;
@@ -816,7 +825,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 14px;
-        font-weight: 500;
+        font-weight: 500 !important;
         color: #24292e;
         font-size: 14px;
       }
@@ -827,7 +836,7 @@
         padding: 5px 12px;
         border-radius: 20px;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 600 !important;
         font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
         min-width: 50px;
         text-align: center;
@@ -905,7 +914,7 @@
       .bv-switch-label {
         font-size: 14px;
         color: #24292e;
-        font-weight: 500;
+        font-weight: 500 !important;
       }
       
       /* 開關樣式 */
@@ -989,7 +998,7 @@
         margin: 0 0 12px 0;
         color: #24292e;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 600 !important;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -1005,6 +1014,7 @@
         color: #586069;
         font-size: 13px;
         line-height: 1.6;
+        font-weight: normal !important;
       }
       
       /* 圓圈數字樣式 */
@@ -1045,7 +1055,7 @@
         }
         
         /* 加粗模式的列印優化 */
-        .bv-converted.bold-mode * {
+        .bv-converted.bold-mode .order-content * {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
           font-weight: 700 !important;
@@ -1082,7 +1092,7 @@
         padding: 16px 24px;
         border-radius: 12px;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 500 !important;
         box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         z-index: 100001;
         display: flex;
@@ -1168,18 +1178,18 @@
         
         .bv-converted .order-content {
           width: 100mm !important;
-          height: 150mm !important;
+          min-height: 150mm !important;  /* 使用 min-height 而不是固定 height */
           margin: 0 !important;
           padding: var(--label-padding, 2.5mm) !important;
           box-sizing: border-box !important;
           page-break-after: always !important;
-          page-break-inside: avoid !important;
+          page-break-inside: auto !important;  /* 允許內容分頁 */
           box-shadow: none !important;
           border: none !important;
         }
         
         .bv-converted .order-content:last-child {
-          page-break-after: avoid !important;
+          page-break-after: auto !important;
         }
         
         /* 隱藏所有非訂單內容 */
@@ -1898,20 +1908,53 @@
       
       .bv-converted .order-content {
         width: 10cm !important;
-        height: 15cm !important;
+        min-height: 15cm !important;  /* 改為 min-height 而不是固定 height */
         padding: ${labelPadding}mm !important;
         --label-padding: ${labelPadding}mm;
         box-sizing: border-box !important;
-        overflow: hidden !important;
+        /* 移除 overflow: hidden，讓內容可以自然流動 */
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
         display: block !important;
         ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
       
-      /* 加粗模式下的特殊處理 */
+      /* 加入分頁控制 */
+      @media print {
+        .bv-converted .order-content {
+          page-break-inside: auto !important;  /* 允許在元素內分頁 */
+          page-break-after: always !important;  /* 每個訂單後分頁 */
+        }
+        
+        .bv-converted .order-content:last-child {
+          page-break-after: auto !important;  /* 最後一個訂單不強制分頁 */
+        }
+        
+        /* 避免標題與內容分離 */
+        .bv-converted .title,
+        .bv-converted .order-info {
+          page-break-after: avoid !important;
+        }
+        
+        /* 避免表格標題與內容分離 */
+        .bv-converted .list-title {
+          page-break-after: avoid !important;
+        }
+        
+        /* 允許表格內容在需要時分頁 */
+        .bv-converted .list-item {
+          page-break-inside: avoid !important;  /* 盡量避免單一項目被分割 */
+        }
+        
+        /* 費用區塊盡量保持完整 */
+        .bv-converted .order-fee {
+          page-break-inside: avoid !important;
+        }
+      }
+      
+      /* 加粗模式下的特殊處理 - 只影響訂單內容 */
       ${boldMode ? `
-        .bv-converted * {
+        .bv-converted .order-content * {
           font-weight: 700 !important;
         }
         
