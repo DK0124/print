@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "BV SHOP 出貨明細標籤列印",
-  "version": "3.2.0",
-  "description": "將出貨明細轉換為10×15cm標籤格式，支援設定檔儲存與數量標示",
+  "name": "BV SHOP 標籤機-出貨明細",
+  "version": "3.2.5",
+  "description": "將出貨明細轉換為10×15cm標籤格式，支援熱感標籤機列印",
+  "author": "Derek Yu",
   "permissions": ["storage"],
   "host_permissions": [
     "https://bvshop-manage.bvshop.tw/*"
@@ -16,7 +17,7 @@
     {
       "matches": ["https://bvshop-manage.bvshop.tw/order_print*"],
       "js": ["content.js"],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
   ]
 }
