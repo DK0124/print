@@ -1086,13 +1086,13 @@
         /* 保持原始的 A4 格式 */
       }
       
-      /* 隱藏控制面板 */
+      /* 隱藏控制面板和浮動按鈕 */
       #bv-label-control-panel,
       .bv-floating-button {
         display: none !important;
       }
       
-      /* 確保數量圓圈在 A4 列印時也正常顯示 */
+      /* 確保數量圓圈在列印時正常顯示 */
       .bv-qty-circle {
         border: 1.5px solid currentColor !important;
         color: inherit !important;
@@ -1105,10 +1105,6 @@
       }
       
       /* 標籤模式的列印樣式 */
-      body.bv-converted .bv-page-indicator {
-        display: none !important;
-      }
-      
       body.bv-converted {
         margin: 0 !important;
         padding: 0 !important;
@@ -1139,6 +1135,23 @@
         display: none !important;
       }
       
+      /* 確保頁碼在列印時正確顯示 */
+      .bv-page-indicator {
+        position: absolute !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        background: rgba(0,0,0,0.7) !important;
+        color: white !important;
+        padding: 4px 12px !important;
+        border-radius: 4px !important;
+        font-size: 12px !important;
+        font-weight: normal !important;
+        z-index: 100 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      /* 加粗模式的列印樣式 */
       .bv-converted.bold-mode .order-content * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
