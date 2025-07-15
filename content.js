@@ -5,8 +5,8 @@
   let isConverted = false;
   let highlightQuantity = false;
   let boldMode = false;
-  let hideExtraInfo = false;  // 新增：隱藏額外資訊
-  let hideTableHeader = false; // 新增：隱藏表格標題
+  let hideExtraInfo = false;
+  let hideTableHeader = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
   
@@ -137,7 +137,7 @@
               </div>
               
               <!-- 加粗模式開關 -->
-              <div class="bv-switch-container always-enabled" style="margin-top: 15px;">
+              <div class="bv-switch-container" id="bv-bold-container" style="margin-top: 15px;">
                 <label class="bv-switch">
                   <input type="checkbox" id="bv-bold-mode">
                   <span class="bv-slider"></span>
@@ -145,17 +145,17 @@
                 <span class="bv-switch-label">加粗模式（低解析度標籤機）</span>
               </div>
               
-              <!-- 隱藏額外資訊開關 -->
-              <div class="bv-switch-container always-enabled" style="margin-top: 15px;">
+              <!-- 精簡模式開關 -->
+              <div class="bv-switch-container" id="bv-simple-container" style="margin-top: 15px;">
                 <label class="bv-switch">
                   <input type="checkbox" id="bv-hide-extra-info">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">精簡模式（只顯示訂單編號、收件人姓名、電話）</span>
+                <span class="bv-switch-label">精簡模式（訂單編號、送貨方式、物流編號、收件人、電話）</span>
               </div>
               
               <!-- 隱藏表格標題開關 -->
-              <div class="bv-switch-container always-enabled" style="margin-top: 15px;">
+              <div class="bv-switch-container" id="bv-hide-header-container" style="margin-top: 15px;">
                 <label class="bv-switch">
                   <input type="checkbox" id="bv-hide-table-header">
                   <span class="bv-slider"></span>
@@ -163,15 +163,6 @@
                 <span class="bv-switch-label">隱藏表格標題列</span>
               </div>
             </div>
-          </div>
-          
-          <!-- 同步原始控制項的提示 -->
-          <div class="bv-info-section">
-            <h4>
-              <span class="material-icons">info</span>
-              提示
-            </h4>
-            <p>您可使用原本的控制選項來調整顯示內容。</p>
           </div>
         </div>
         
@@ -1000,41 +991,15 @@
         pointer-events: none;
       }
       
+      .bv-switch-container.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      
       /* 數量標示開關保持可用 */
       .bv-switch-container.always-enabled {
         opacity: 1 !important;
         pointer-events: auto !important;
-      }
-      
-      /* 資訊區塊 */
-      .bv-info-section {
-        background: #fafbfc;
-        border-radius: 14px;
-        padding: 18px;
-        border: 1px solid #eef0f2;
-      }
-      
-      .bv-info-section h4 {
-        margin: 0 0 12px 0;
-        color: #24292e;
-        font-size: 14px;
-        font-weight: 600 !important;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .bv-info-section h4 .material-icons {
-        font-size: 18px;
-        color: #5865F2;
-      }
-      
-      .bv-info-section p {
-        margin: 0;
-        color: #586069;
-        font-size: 13px;
-        line-height: 1.6;
-        font-weight: normal !important;
       }
       
       /* 圓圈數字樣式 */
@@ -1293,15 +1258,22 @@
   function updateControlsState() {
     const spacingControls = document.getElementById('bv-spacing-controls');
     const presetSection = document.querySelector('.bv-preset-section');
+    const boldContainer = document.getElementById('bv-bold-container');
+    const simpleContainer = document.getElementById('bv-simple-container');
+    const hideHeaderContainer = document.getElementById('bv-hide-header-container');
     
     if (!isConverted) {
-      // 原始格式時禁用間距控制項和預設檔功能
       if (spacingControls) spacingControls.classList.add('disabled');
       if (presetSection) presetSection.classList.add('disabled');
+      if (boldContainer) boldContainer.classList.add('disabled');
+      if (simpleContainer) simpleContainer.classList.add('disabled');
+      if (hideHeaderContainer) hideHeaderContainer.classList.add('disabled');
     } else {
-      // 轉換後啟用間距控制項和預設檔功能
       if (spacingControls) spacingControls.classList.remove('disabled');
       if (presetSection) presetSection.classList.remove('disabled');
+      if (boldContainer) boldContainer.classList.remove('disabled');
+      if (simpleContainer) simpleContainer.classList.remove('disabled');
+      if (hideHeaderContainer) hideHeaderContainer.classList.remove('disabled');
     }
   }
   
@@ -1318,7 +1290,6 @@
     let yOffset = 0;
     
     function dragStart(e) {
-      // 檢查是否點擊在按鈕上
       if (e.target.closest('.bv-header-button')) return;
       
       if (e.type === "touchstart") {
@@ -1341,7 +1312,6 @@
       isDragging = false;
       panel.style.transition = '';
       
-      // 儲存位置
       chrome.storage.local.set({
         bvPanelPosition: {
           x: xOffset,
@@ -1373,7 +1343,6 @@
       el.style.transform = `translate(${xPos}px, ${yPos}px)`;
     }
     
-    // 載入儲存的位置
     chrome.storage.local.get(['bvPanelPosition'], (result) => {
       if (result.bvPanelPosition) {
         xOffset = result.bvPanelPosition.x;
@@ -1382,12 +1351,10 @@
       }
     });
     
-    // 添加事件監聽器
     header.addEventListener('mousedown', dragStart);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', dragEnd);
     
-    // 觸控支援
     header.addEventListener('touchstart', dragStart);
     document.addEventListener('touchmove', drag);
     document.addEventListener('touchend', dragEnd);
@@ -1395,11 +1362,9 @@
   
   // 設置事件監聽器
   function setupEventListeners() {
-    // 轉換按鈕
     document.getElementById('bv-convert-btn').addEventListener('click', convertToLabelFormat);
     document.getElementById('bv-revert-btn').addEventListener('click', revertToOriginal);
     
-    // 最小化按鈕
     document.getElementById('bv-minimize-btn')?.addEventListener('click', function() {
       const panel = document.getElementById('bv-label-control-panel');
       const icon = this.querySelector('.material-icons');
@@ -1414,11 +1379,9 @@
         isPanelMinimized = true;
       }
       
-      // 儲存狀態
       chrome.storage.local.set({ bvPanelMinimized: isPanelMinimized });
     });
        
-    // 浮動列印按鈕
     document.getElementById('bv-floating-print')?.addEventListener('click', function() {
       if (!isConverted) {
         convertToLabelFormat();
@@ -1430,16 +1393,13 @@
       }
     });
     
-    // 數量標示開關
     document.getElementById('bv-highlight-qty').addEventListener('change', toggleQuantityHighlight);
     
-    // 加粗模式開關
     document.getElementById('bv-bold-mode').addEventListener('change', function(e) {
       boldMode = e.target.checked;
       saveSettings();
       if (isConverted) {
         updateLabelStyles();
-        // 重新處理分頁
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1449,7 +1409,6 @@
       }
     });
     
-    // 隱藏額外資訊開關
     document.getElementById('bv-hide-extra-info').addEventListener('change', function(e) {
       hideExtraInfo = e.target.checked;
       saveSettings();
@@ -1464,7 +1423,6 @@
       }
     });
     
-    // 隱藏表格標題開關
     document.getElementById('bv-hide-table-header').addEventListener('change', function(e) {
       hideTableHeader = e.target.checked;
       saveSettings();
@@ -1479,7 +1437,6 @@
       }
     });
     
-    // 區塊折疊功能
     document.querySelectorAll('.bv-section-header').forEach(header => {
       header.addEventListener('click', function() {
         const section = this.dataset.section;
@@ -1492,14 +1449,12 @@
       });
     });
     
-    // 內距調整
     document.getElementById('bv-label-padding')?.addEventListener('input', function() {
       document.getElementById('bv-padding-value').textContent = this.value + 'mm';
       updateRangeProgress(this);
       saveSettings();
       if (isConverted) {
         updateLabelStyles();
-        // 重新處理分頁
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1509,7 +1464,6 @@
       }
     });
     
-    // 間距調整拉桿
     const spacingControls = [
       { id: 'bv-header-padding', valueId: 'bv-header-padding-value', unit: 'mm' },
       { id: 'bv-row-padding', valueId: 'bv-row-padding-value', unit: 'mm' },
@@ -1524,7 +1478,6 @@
         saveSettings();
         if (isConverted) {
           updateLabelStyles();
-          // 重新處理分頁
           setTimeout(() => {
             handlePagination();
             if (highlightQuantity) {
@@ -1535,22 +1488,17 @@
       });
     });
     
-    // 套用並列印按鈕
     document.getElementById('bv-apply-print')?.addEventListener('click', function() {
       if (!isConverted) {
-        // 先轉換格式
         convertToLabelFormat();
-        // 延遲執行列印
         setTimeout(() => {
           window.print();
         }, 500);
       } else {
-        // 已轉換，直接列印
         window.print();
       }
     });
     
-    // 初始化 range input 進度條
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
   }
   
@@ -1567,10 +1515,8 @@
     
     if (!presetSelect) return;
     
-    // 載入預設檔列表
     loadPresetList();
     
-    // 選擇設定檔時載入設定
     presetSelect.addEventListener('change', function() {
       const selectedPreset = presetSelect.value;
       if (selectedPreset) {
@@ -1581,7 +1527,6 @@
             chrome.storage.local.set({ lastSelectedPreset: selectedPreset });
             showNotification(`已載入設定檔「${selectedPreset}」`);
             
-            // 如果已轉換，重新處理分頁
             if (isConverted) {
               setTimeout(() => {
                 handlePagination();
@@ -1595,7 +1540,6 @@
       }
     });
     
-    // 儲存設定按鈕
     if (savePresetBtn) {
       savePresetBtn.addEventListener('click', function() {
         if (savePresetRow) {
@@ -1608,7 +1552,6 @@
       });
     }
     
-    // 確認儲存
     if (confirmSaveBtn) {
       confirmSaveBtn.addEventListener('click', function() {
         if (!newPresetName) return;
@@ -1644,7 +1587,6 @@
       });
     }
     
-    // 取消儲存
     if (cancelSaveBtn) {
       cancelSaveBtn.addEventListener('click', function() {
         if (savePresetRow) {
@@ -1653,7 +1595,6 @@
       });
     }
     
-    // 刪除設定檔
     if (deletePresetBtn) {
       deletePresetBtn.addEventListener('click', function() {
         const selectedPreset = presetSelect.value;
@@ -1669,12 +1610,10 @@
             
             const storageData = { presetList: updatedPresets };
             
-            // 如果刪除的是最後選擇的設定檔，清除記錄
             if (result.lastSelectedPreset === selectedPreset) {
               chrome.storage.local.remove(['lastSelectedPreset']);
             }
             
-            // 移除設定檔數據
             chrome.storage.local.remove([`bvPreset_${selectedPreset}`], () => {
               chrome.storage.local.set(storageData, () => {
                 loadPresetList();
@@ -1686,26 +1625,21 @@
       });
     }
     
-    // 清除格式按鈕
     if (resetFormatBtn) {
       resetFormatBtn.addEventListener('click', function() {
         if (confirm('確定要將所有設定重置為預設值嗎？\n\n此操作無法復原。')) {
-          // 重置設定
           const defaultSettings = getDefaultSettings();
           applyPresetSettings(defaultSettings);
           
-          // 清除預設檔選擇
           if (presetSelect) {
             presetSelect.value = '';
           }
           
-          // 清除最後選擇的預設檔記錄
           chrome.storage.local.remove(['lastSelectedPreset']);
           
           saveSettings();
           showNotification('已重置為預設值');
           
-          // 如果已轉換，重新處理分頁
           if (isConverted) {
             setTimeout(() => {
               handlePagination();
@@ -1718,7 +1652,6 @@
       });
     }
     
-    // Enter 鍵儲存設定檔
     if (newPresetName) {
       newPresetName.addEventListener('keypress', function(e) {
         if (e.key === 'Enter' && confirmSaveBtn) {
@@ -1737,19 +1670,16 @@
       const allPresets = result.presetList || [];
       const lastSelected = result.lastSelectedPreset;
       
-      // 清空現有選項
       while (presetSelect.options.length > 1) {
         presetSelect.remove(1);
       }
       
-      // 添加所有設定檔
       allPresets.forEach(presetName => {
         const option = document.createElement('option');
         option.value = presetName;
         option.textContent = presetName;
         presetSelect.appendChild(option);
         
-        // 如果是上次選擇的設定檔，預設選中
         if (presetName === lastSelected) {
           option.selected = true;
         }
@@ -1769,7 +1699,6 @@
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
       feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
       sectionMargin: document.getElementById('bv-section-margin')?.value || '2',
-      // 原始頁面的設定
       fontSize: document.getElementById('fontSize')?.value || '14px',
       showProductImage: document.getElementById('showProductImage')?.checked,
       showRemark: document.getElementById('showRemark')?.checked,
@@ -1785,7 +1714,6 @@
   
   // 套用預設設定
   function applyPresetSettings(settings) {
-    // 擴充功能設定
     if (settings.highlightQuantity !== undefined) {
       const qtyCheckbox = document.getElementById('bv-highlight-qty');
       if (qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
@@ -1819,7 +1747,6 @@
       }
     }
     
-    // 間距設定
     const spacingSettings = [
       { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
       { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
@@ -1838,12 +1765,10 @@
       }
     });
     
-    // 原始頁面設定
     if (settings.fontSize && document.getElementById('fontSize')) {
       document.getElementById('fontSize').value = settings.fontSize;
     }
     
-    // Checkbox 設定
     const checkboxSettings = {
       showProductImage: settings.showProductImage,
       showRemark: settings.showRemark,
@@ -1860,7 +1785,6 @@
       const checkbox = document.getElementById(key);
       if (checkbox && checkboxSettings[key] !== undefined) {
         checkbox.checked = checkboxSettings[key];
-        // 觸發 change 事件
         const event = new Event('change', { bubbles: true });
         checkbox.dispatchEvent(event);
       }
@@ -1898,13 +1822,11 @@
   
   // 監聽原始控制項的變更
   function observeOriginalControls() {
-    // 監聽所有原始 checkbox
     const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         if (isConverted) {
           updateLabelStyles();
-          // 重新處理分頁
           setTimeout(() => {
             handlePagination();
             if (highlightQuantity) {
@@ -1915,13 +1837,11 @@
       });
     });
     
-    // 監聽文字大小選擇
     const fontSizeSelect = document.getElementById('fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
         if (isConverted) {
           updateLabelStyles();
-          // 重新處理分頁
           setTimeout(() => {
             handlePagination();
             if (highlightQuantity) {
@@ -1932,7 +1852,6 @@
       });
     }
     
-    // 監聽底圖透明度
     const opacityInput = document.getElementById('baseImageOpacity');
     if (opacityInput) {
       opacityInput.addEventListener('input', () => {
@@ -1953,7 +1872,6 @@
   function convertToLabelFormat() {
     if (isConverted) return;
     
-    // 移除空白頁
     document.querySelectorAll('.order-content:has(.baseImage)').forEach(e => e.remove());
     
     const contents = document.querySelectorAll('.order-content');
@@ -1962,7 +1880,6 @@
       return;
     }
     
-    // 儲存原始 body 樣式
     originalBodyStyle = {
       width: document.body.style.width,
       maxWidth: document.body.style.maxWidth,
@@ -1971,30 +1888,24 @@
       padding: document.body.style.padding
     };
     
-    // 移除 body 的寬度限制
     document.body.style.width = 'auto';
     document.body.style.maxWidth = 'none';
     document.body.style.minWidth = 'auto';
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     
-    // 添加轉換標記
     document.body.classList.add('bv-converted');
     if (boldMode) {
       document.body.classList.add('bold-mode');
     }
     
-    // 觸發原始頁面的更新
     triggerOriginalPageUpdate();
     
-    // 更新標籤樣式
     updateLabelStyles();
     
-    // 處理分頁（延遲執行確保樣式已套用）
     setTimeout(() => {
       handlePagination();
       
-      // 應用數量標示
       if (highlightQuantity) {
         setTimeout(() => {
           applyQuantityHighlight();
@@ -2002,55 +1913,46 @@
       }
     }, 100);
     
-    // 更新按鈕狀態
     document.getElementById('bv-convert-btn').style.display = 'none';
     document.getElementById('bv-revert-btn').style.display = 'block';
     
     isConverted = true;
     
-    // 更新控制項狀態
     updateControlsState();
     
     showNotification('已成功轉換為10×15cm標籤格式');
   }
   
-  // 處理分頁 - 修正版本
+  // 處理分頁
   function handlePagination() {
-    // 清除之前的分頁
     document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
     document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
     
     const labelPadding = parseFloat(document.getElementById('bv-label-padding')?.value || '2.5');
-    const paddingPx = labelPadding * 3.78; // mm to px at 96dpi
-    const pageHeight = 566; // 15cm at 96dpi
+    const paddingPx = labelPadding * 3.78;
+    const pageHeight = 566;
     const contentHeight = pageHeight - (paddingPx * 2);
     
     document.querySelectorAll('.order-content').forEach((orderContent) => {
-      // 標記為原始內容
       orderContent.classList.add('bv-original');
       
-      // 如果開啟精簡模式，先處理內容
       if (hideExtraInfo) {
         processExtraInfoHiding(orderContent);
       }
       
-      // 複製所有元素到陣列中
       const elements = Array.from(orderContent.children);
       let currentPage = null;
       let currentPageContent = null;
       let currentHeight = 0;
       let pageNumber = 1;
-      let totalPages = 1; // 先預估為1頁
+      let totalPages = 1;
       
-      // 創建分頁容器
       const pageContainer = document.createElement('div');
       pageContainer.className = 'bv-page-container';
       orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
       
-      // 第一次遍歷：計算總頁數
       let tempHeight = 0;
       elements.forEach(element => {
-        // 跳過隱藏的元素
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
         }
@@ -2076,14 +1978,11 @@
         }
       });
       
-      // 第二次遍歷：實際創建分頁
       elements.forEach((element, index) => {
-        // 跳過隱藏的元素
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
         }
         
-        // 測量元素高度
         const clone = element.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.style.cssText = `
@@ -2097,9 +1996,7 @@
         const elementHeight = wrapper.offsetHeight;
         document.body.removeChild(wrapper);
         
-        // 檢查是否需要新頁面
         if (!currentPage || (currentHeight + elementHeight > contentHeight && currentHeight > 0)) {
-          // 創建新頁面
           currentPage = document.createElement('div');
           currentPage.className = 'bv-label-page';
           currentPage.style.padding = `${paddingPx}px`;
@@ -2108,7 +2005,6 @@
           currentPageContent.className = 'bv-page-content';
           currentPage.appendChild(currentPageContent);
           
-          // 添加頁碼指示器
           if (totalPages > 1) {
             const indicator = document.createElement('div');
             indicator.className = 'bv-page-indicator';
@@ -2121,7 +2017,6 @@
           pageNumber++;
         }
         
-        // 將元素添加到當前頁面
         const elementClone = element.cloneNode(true);
         currentPageContent.appendChild(elementClone);
         currentHeight += elementHeight;
@@ -2131,37 +2026,33 @@
   
   // 處理隱藏額外資訊
   function processExtraInfoHiding(orderContent) {
-    // 找到 order-info 區塊
     const orderInfo = orderContent.querySelector('.order-info');
     if (!orderInfo) return;
     
-    // 取得所有的資訊項目
     const allParagraphs = orderInfo.querySelectorAll('p');
     
-    // 需要保留的欄位關鍵字
-    const keepFields = ['訂單編號', '收件人', '收件人電話'];
+    const keepFields = ['訂單編號', '送貨方式', '物流編號', '收件人', '收件人電話'];
     
     allParagraphs.forEach(p => {
       const text = p.textContent;
       let shouldKeep = false;
       
-      // 檢查是否包含需要保留的關鍵字
       keepFields.forEach(field => {
         if (text.includes(field)) {
           shouldKeep = true;
         }
       });
       
-      // 如果不需要保留，則隱藏
       if (!shouldKeep) {
         p.style.display = 'none';
+      } else {
+        p.style.display = '';
       }
     });
   }
   
   // 觸發原始頁面的更新事件
   function triggerOriginalPageUpdate() {
-    // 觸發 change 事件讓原始頁面重新渲染
     const event = new Event('change', { bubbles: true });
     document.querySelectorAll('.ignore-print input, .ignore-print select').forEach(el => {
       el.dispatchEvent(event);
@@ -2170,25 +2061,20 @@
   
   // 更新標籤樣式
   function updateLabelStyles() {
-    // 從原始控制項取得設定
     const fontSize = document.getElementById('fontSize')?.value || '14px';
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
-    // 取得間距設定
     const headerPadding = document.getElementById('bv-header-padding')?.value || '0.5';
     const rowPadding = document.getElementById('bv-row-padding')?.value || '0.8';
     const feePadding = document.getElementById('bv-fee-padding')?.value || '0.8';
     const sectionMargin = document.getElementById('bv-section-margin')?.value || '2';
     
-    // 移除舊樣式
     const oldStyle = document.getElementById('bv-label-styles');
     if (oldStyle) oldStyle.remove();
     
-    // 創建新樣式
     const labelStyles = document.createElement('style');
     labelStyles.id = 'bv-label-styles';
     labelStyles.textContent = `
-      /* 關鍵：覆蓋原始 body 寬度設定 */
       body.bv-converted {
         width: auto !important;
         max-width: none !important;
@@ -2197,21 +2083,18 @@
         padding: 0 !important;
       }
       
-      /* 原始內容樣式 */
       .bv-converted .order-content {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
         ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
       
-      /* 分頁內容樣式 */
       .bv-label-page * {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
         ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
       
-      /* 隱藏表格標題 */
       ${hideTableHeader ? `
         .bv-converted .list-title,
         .bv-label-page .list-title {
@@ -2219,15 +2102,6 @@
         }
       ` : ''}
       
-      /* 精簡模式隱藏額外資訊 */
-      ${hideExtraInfo ? `
-        .bv-converted .order-info p:not(:has-text("訂單編號")):not(:has-text("收件人")):not(:has-text("收件人電話")),
-        .bv-label-page .order-info p:not(:has-text("訂單編號")):not(:has-text("收件人")):not(:has-text("收件人電話")) {
-          display: none !important;
-        }
-      ` : ''}
-      
-      /* 加粗模式下的特殊處理 - 只影響訂單內容 */
       ${boldMode ? `
         .bv-converted .order-content *,
         .bv-label-page * {
@@ -2260,7 +2134,6 @@
           border: 0.5mm solid #999 !important;
         }
         
-        /* 圓圈數字在加粗模式下的特殊處理 */
         .bv-converted .bv-qty-circle,
         .bv-label-page .bv-qty-circle {
           border-width: 2px !important;
@@ -2324,7 +2197,6 @@
         border-bottom: ${boldMode ? '1mm' : '0.5mm'} solid #000 !important;
       }
       
-      /* 使用自訂的間距設定 */
       .bv-converted .list-title th,
       .bv-label-page .list-title th {
         padding: ${headerPadding}mm 1mm !important;
@@ -2416,7 +2288,6 @@
   function revertToOriginal() {
     if (!isConverted) return;
     
-    // 還原 body 樣式
     if (originalBodyStyle) {
       Object.keys(originalBodyStyle).forEach(prop => {
         document.body.style[prop] = originalBodyStyle[prop];
@@ -2438,18 +2309,15 @@
     }
   }
     
-  // 應用數量標示 - 直接替換數字為圓圈
+  // 應用數量標示
   function applyQuantityHighlight() {
-    // 處理原始內容和分頁內容
     const containers = document.querySelectorAll('.order-content, .bv-label-page');
     
     containers.forEach(container => {
       container.querySelectorAll('.list-item').forEach(item => {
-        // 尋找數量欄位
         let qtyCell = null;
         const cells = item.querySelectorAll('td');
         
-        // 嘗試找出數量欄位（通常在倒數第二欄）
         for (let i = cells.length - 2; i >= 0; i--) {
           const text = cells[i].textContent.trim();
           if (/^\d+$/.test(text) && parseInt(text) > 0) {
@@ -2461,10 +2329,8 @@
         if (qtyCell && !qtyCell.querySelector('.bv-qty-circle')) {
           const qty = parseInt(qtyCell.textContent.trim());
           if (qty >= 2) {
-            // 2 以上顯示有邊框的圓圈
             qtyCell.innerHTML = `<span class="bv-qty-circle">${qty}</span>`;
           } else if (qty === 1) {
-            // 1 顯示透明邊框的圓圈
             qtyCell.innerHTML = `<span class="bv-qty-circle transparent">${qty}</span>`;
           }
         }
@@ -2483,7 +2349,6 @@
   
   // 顯示通知
   function showNotification(message, type = 'success') {
-    // 移除現有通知
     const existing = document.querySelector('.bv-notification');
     if (existing) existing.remove();
     
@@ -2527,27 +2392,22 @@
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
-        // 載入基本設定
         highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
         const qtyCheckbox = document.getElementById('bv-highlight-qty');
         if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
         
-        // 載入加粗模式設定
         boldMode = settings.boldMode !== undefined ? settings.boldMode : false;
         const boldCheckbox = document.getElementById('bv-bold-mode');
         if (boldCheckbox) boldCheckbox.checked = boldMode;
         
-        // 載入隱藏額外資訊設定
         hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
         const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
         if (hideExtraCheckbox) hideExtraCheckbox.checked = hideExtraInfo;
         
-        // 載入隱藏表格標題設定
         hideTableHeader = settings.hideTableHeader !== undefined ? settings.hideTableHeader : false;
         const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
         if (hideHeaderCheckbox) hideHeaderCheckbox.checked = hideTableHeader;
         
-        // 載入內距設定
         const paddingInput = document.getElementById('bv-label-padding');
         if (paddingInput && settings.labelPadding) {
           paddingInput.value = settings.labelPadding;
@@ -2555,7 +2415,6 @@
           updateRangeProgress(paddingInput);
         }
         
-        // 載入間距設定
         const spacingSettings = [
           { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
           { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
@@ -2575,7 +2434,6 @@
         });
       }
       
-      // 載入面板狀態
       if (result.bvPanelMinimized !== undefined) {
         isPanelMinimized = result.bvPanelMinimized;
         const panel = document.getElementById('bv-label-control-panel');
@@ -2587,7 +2445,6 @@
         }
       }
       
-      // 如果有上次選擇的預設檔，載入它
       if (result.lastSelectedPreset) {
         chrome.storage.local.get([`bvPreset_${result.lastSelectedPreset}`], (presetResult) => {
           const presetSettings = presetResult[`bvPreset_${result.lastSelectedPreset}`];
