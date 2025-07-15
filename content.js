@@ -306,7 +306,7 @@
         height: auto;
         bottom: auto;
         width: auto;
-        min-width: 280px;
+        min-width: 300px;
       }
       
       #bv-label-control-panel.minimized .bv-panel-header {
