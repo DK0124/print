@@ -956,16 +956,12 @@
     initDragFunction();
   }
   
-  // 初始化拖曳功能
+  // 修改 initDragFunction 函數
   function initDragFunction() {
     const panel = document.getElementById('bv-label-control-panel');
     const header = panel.querySelector('.bv-panel-header');
     
     if (!panel || !header) return;
-    
-    // 移除舊的事件監聽器（如果有的話）
-    const oldHeader = header.cloneNode(true);
-    header.parentNode.replaceChild(oldHeader, header);
     
     let isDragging = false;
     let currentX;
@@ -986,8 +982,8 @@
     }
     
     function dragStart(e) {
-      // 如果點擊的是按鈕，不要開始拖曳
-      if (e.target.closest('.bv-glass-button')) return;
+      // 如果點擊的是按鈕或其子元素，不要開始拖曳
+      if (e.target.closest('.bv-glass-button') || e.target.closest('.bv-minimize-btn')) return;
       
       if (e.type === "touchstart") {
         initialX = e.touches[0].clientX - xOffset;
@@ -997,7 +993,7 @@
         initialY = e.clientY - yOffset;
       }
       
-      if (e.target === oldHeader || oldHeader.contains(e.target)) {
+      if (e.target === header || (header.contains(e.target) && !e.target.closest('.bv-glass-button'))) {
         isDragging = true;
         panel.style.transition = 'none';
         e.preventDefault(); // 防止選取文字
@@ -1053,12 +1049,12 @@
       }
     });
     
-    // 綁定事件
-    oldHeader.addEventListener('mousedown', dragStart);
+    // 直接綁定事件，不替換元素
+    header.addEventListener('mousedown', dragStart);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', dragEnd);
     
-    oldHeader.addEventListener('touchstart', dragStart, { passive: false });
+    header.addEventListener('touchstart', dragStart, { passive: false });
     document.addEventListener('touchmove', drag, { passive: false });
     document.addEventListener('touchend', dragEnd);
   }
