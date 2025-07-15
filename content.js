@@ -49,7 +49,7 @@
           <div class="bv-preset-section">
             <div class="bv-preset-row">
               <select id="bv-preset-select">
-                <option value="">選擇設定檔</option>
+                <option value="">選擇設定</option>
               </select>
               <button class="bv-icon-button" id="bv-save-preset" title="儲存設定">
                 <span class="material-icons">save</span>
@@ -77,7 +77,7 @@
             </button>
             
             <button id="bv-revert-btn" class="bv-action-button secondary" style="display: none;">
-              <span class="bv-button-text">還原原始格式</span>
+              <span class="bv-button-text">還原A4格式</span>
             </button>
           </div>
           
@@ -133,7 +133,7 @@
                   <input type="checkbox" id="bv-highlight-qty">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">提示商品數量 ≥ 2</span>
+                <span class="bv-switch-label">數量提示</span>
               </div>
               
               <!-- 加粗模式開關 -->
@@ -142,7 +142,7 @@
                   <input type="checkbox" id="bv-bold-mode">
                   <span class="bv-slider"></span>
                 </label>
-                <span class="bv-switch-label">加粗模式</span>
+                <span class="bv-switch-label">整體加粗</span>
               </div>
               
               <!-- 精簡模式開關 -->
