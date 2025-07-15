@@ -1054,6 +1054,7 @@
         position: relative;
         overflow: hidden;
         box-sizing: border-box;
+        position: relative !important;
       }
       
       .bv-page-content {
@@ -1062,6 +1063,7 @@
         position: relative;
       }
       
+      /* 修正頁碼顯示樣式 */
       .bv-page-indicator {
         position: absolute;
         bottom: 10px;
@@ -1073,8 +1075,9 @@
         font-size: 12px;
         font-weight: normal !important;
         z-index: 100;
+        font-family: 'Noto Sans TC', Arial, sans-serif !important;
       }
-      
+             
       .bv-converted .order-content.bv-original {
         display: none !important;
       }
@@ -2119,97 +2122,94 @@
   
   // 處理分頁
   function handlePagination() {
-    document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
-    document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
-    
-    const labelPadding = parseFloat(document.getElementById('bv-label-padding')?.value || '2.5');
-    const paddingMm = labelPadding;
-    const paddingPx = labelPadding * 3.78;
-    const pageHeight = 566;
-    const contentHeight = pageHeight - (paddingPx * 2);
-    
-    document.querySelectorAll('.order-content').forEach((orderContent) => {
-      orderContent.classList.add('bv-original');
+      document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
+      document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
       
-      // 複製一份用於處理
-      const orderContentClone = orderContent.cloneNode(true);
+      const labelPadding = parseFloat(document.getElementById('bv-label-padding')?.value || '2.5');
+      const paddingMm = labelPadding;
+      const paddingPx = labelPadding * 3.78;
+      const pageHeight = 566;
+      const contentHeight = pageHeight - (paddingPx * 2);
       
-      // 處理精簡模式
-      if (hideExtraInfo) {
-        processExtraInfoHiding(orderContentClone);
-      }
-      
-      const elements = Array.from(orderContentClone.children);
-      let currentPage = null;
-      let currentPageContent = null;
-      let currentHeight = 0;
-      let pageNumber = 1;
-      let totalPages = 1;
-      
-      const pageContainer = document.createElement('div');
-      pageContainer.className = 'bv-page-container';
-      orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
-      
-      // 計算總頁數
-      let tempHeight = 0;
-      elements.forEach(element => {
-        if (hideTableHeader && element.classList.contains('list-title')) {
-          return;
+      document.querySelectorAll('.order-content').forEach((orderContent) => {
+        orderContent.classList.add('bv-original');
+        
+        // 複製一份用於處理
+        const orderContentClone = orderContent.cloneNode(true);
+        
+        // 處理精簡模式
+        if (hideExtraInfo) {
+          processExtraInfoHiding(orderContentClone);
         }
         
-        const clone = element.cloneNode(true);
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = `
-          position: absolute;
-          visibility: hidden;
-          width: ${377 - paddingPx * 2}px;
-        `;
-        wrapper.appendChild(clone);
-        document.body.appendChild(wrapper);
+        const elements = Array.from(orderContentClone.children);
+        const pageContainer = document.createElement('div');
+        pageContainer.className = 'bv-page-container';
+        orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
         
-        const elementHeight = wrapper.offsetHeight;
-        document.body.removeChild(wrapper);
+        // 先收集所有頁面的內容
+        const pages = [];
+        let currentPageElements = [];
+        let currentHeight = 0;
         
-        if (elementHeight > 0) {
-          if (tempHeight + elementHeight > contentHeight && tempHeight > 0) {
-            totalPages++;
-            tempHeight = elementHeight;
-          } else {
-            tempHeight += elementHeight;
+        // 第一步：計算並分配內容到頁面
+        elements.forEach((element) => {
+          if (hideTableHeader && element.classList.contains('list-title')) {
+            return;
           }
+          
+          const clone = element.cloneNode(true);
+          const wrapper = document.createElement('div');
+          wrapper.style.cssText = `
+            position: absolute;
+            visibility: hidden;
+            width: ${377 - paddingPx * 2}px;
+          `;
+          wrapper.appendChild(clone);
+          document.body.appendChild(wrapper);
+          
+          const elementHeight = wrapper.offsetHeight;
+          document.body.removeChild(wrapper);
+          
+          if (elementHeight === 0) return;
+          
+          // 如果當前元素會超出頁面高度，創建新頁面
+          if (currentHeight + elementHeight > contentHeight && currentHeight > 0) {
+            pages.push([...currentPageElements]);
+            currentPageElements = [];
+            currentHeight = 0;
+          }
+          
+          currentPageElements.push(element.cloneNode(true));
+          currentHeight += elementHeight;
+        });
+        
+        // 添加最後一頁
+        if (currentPageElements.length > 0) {
+          pages.push(currentPageElements);
         }
-      });
-      
-      // 創建分頁
-      elements.forEach((element, index) => {
-        if (hideTableHeader && element.classList.contains('list-title')) {
-          return;
-        }
         
-        const clone = element.cloneNode(true);
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = `
-          position: absolute;
-          visibility: hidden;
-          width: ${377 - paddingPx * 2}px;
-        `;
-        wrapper.appendChild(clone);
-        document.body.appendChild(wrapper);
+        const totalPages = pages.length;
         
-        const elementHeight = wrapper.offsetHeight;
-        document.body.removeChild(wrapper);
-        
-        if (elementHeight === 0) return;
-        
-        if (!currentPage || (currentHeight + elementHeight > contentHeight && currentHeight > 0)) {
-          currentPage = document.createElement('div');
+        // 第二步：創建所有頁面並添加正確的頁碼
+        pages.forEach((pageElements, index) => {
+          const pageNumber = index + 1;
+          
+          const currentPage = document.createElement('div');
           currentPage.className = 'bv-label-page';
           currentPage.style.padding = `${paddingMm}mm`;
           
-          currentPageContent = document.createElement('div');
+          const currentPageContent = document.createElement('div');
           currentPageContent.className = 'bv-page-content';
+          
+          // 添加頁面內容
+          pageElements.forEach(element => {
+            currentPageContent.appendChild(element);
+          });
+          
           currentPage.appendChild(currentPageContent);
           
+          // 只在有多頁時顯示頁碼
           if (totalPages > 1) {
             const indicator = document.createElement('div');
             indicator.className = 'bv-page-indicator';
@@ -2218,15 +2218,8 @@
           }
           
           pageContainer.appendChild(currentPage);
-          currentHeight = 0;
-          pageNumber++;
-        }
-        
-        const elementClone = element.cloneNode(true);
-        currentPageContent.appendChild(elementClone);
-        currentHeight += elementHeight;
+        });
       });
-    });
   }
   
   // 處理隱藏額外資訊（精簡模式）
