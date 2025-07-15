@@ -98,14 +98,14 @@
       right: 28px;
       width: 56px;
       height: 56px;
-      background: rgba(88, 101, 242, 0.9);
+      background: rgba(81, 138, 255, 0.9);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: white;
       border: none;
       border-radius: 50%;
       box-shadow: 
-        0 4px 24px rgba(88, 101, 242, 0.4),
+        0 4px 24px rgba(81, 138, 255, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.2),
         inset 0 0 0 1px rgba(255, 255, 255, 0.3);
       cursor: pointer;
@@ -119,7 +119,7 @@
     .bv-floating-button:hover {
       transform: scale(1.08) translateY(-2px);
       box-shadow: 
-        0 8px 32px rgba(88, 101, 242, 0.5),
+        0 8px 32px rgba(81, 138, 255, 0.5),
         0 0 0 1px rgba(255, 255, 255, 0.3),
         inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     }
@@ -159,14 +159,14 @@
     .bv-icon-wrapper {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       box-shadow: 
-        0 2px 8px rgba(88, 101, 242, 0.25),
+        0 2px 8px rgba(81, 138, 255, 0.25),
         inset 0 0 0 1px rgba(255, 255, 255, 0.2);
     }
     
@@ -231,13 +231,13 @@
     }
     
     .bv-glass-button.bv-primary {
-      background: rgba(88, 101, 242, 0.1);
-      color: #5865F2;
-      border-color: rgba(88, 101, 242, 0.2);
+      background: rgba(81, 138, 255, 0.1);
+      color: #518aff;
+      border-color: rgba(81, 138, 255, 0.2);
     }
     
     .bv-glass-button.bv-primary:hover {
-      background: rgba(88, 101, 242, 0.15);
+      background: rgba(81, 138, 255, 0.15);
     }
     
     /* 內容區域 (縮小版) */
@@ -264,14 +264,14 @@
     .bv-secondary-button {
       width: 100%;
       padding: 0;
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
       border: none;
       border-radius: 14px;
       cursor: pointer;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 16px rgba(88, 101, 242, 0.25),
+        0 4px 16px rgba(81, 138, 255, 0.25),
         inset 0 0 0 1px rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
@@ -281,23 +281,23 @@
     }
     
     .bv-secondary-button {
-      background: linear-gradient(135deg, #f04747 0%, #e74c3c 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       box-shadow: 
-        0 4px 16px rgba(240, 71, 71, 0.25),
+        0 4px 16px rgba(16, 185, 129, 0.25),
         inset 0 0 0 1px rgba(255, 255, 255, 0.2);
     }
     
-    .bv-primary-button:hover,
-    .bv-secondary-button:hover {
+    .bv-primary-button:hover {
       transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(88, 101, 242, 0.35),
+        0 8px 24px rgba(81, 138, 255, 0.35),
         inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
     .bv-secondary-button:hover {
+      transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(240, 71, 71, 0.35),
+        0 8px 24px rgba(16, 185, 129, 0.35),
         inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
@@ -456,7 +456,7 @@
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider {
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider:before {
@@ -484,8 +484,8 @@
     }
     
     .bv-value-label {
-      background: rgba(88, 101, 242, 0.1);
-      color: #5865F2;
+      background: rgba(81, 138, 255, 0.1);
+      color: #518aff;
       padding: 3px 8px;
       border-radius: 6px;
       font-size: 11px;
@@ -511,7 +511,7 @@
       position: absolute;
       height: 5px;
       border-radius: 2.5px;
-      background: linear-gradient(90deg, #5865F2 0%, #7289DA 100%);
+      background: linear-gradient(90deg, #518aff 0%, #0040ff 100%);
       width: var(--value, 0%);
       pointer-events: none;
     }
@@ -586,8 +586,8 @@
     
     .bv-glass-select:focus {
       background-color: white;
-      border-color: #5865F2;
-      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+      border-color: #518aff;
+      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
     }
     
     .bv-preset-buttons {
@@ -624,8 +624,8 @@
     
     .bv-glass-input:focus {
       background-color: white;
-      border-color: #5865F2;
-      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+      border-color: #518aff;
+      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
     }
     
     /* 底部區域 (縮小版) */
@@ -639,7 +639,7 @@
     .bv-glass-action-button {
       width: 100%;
       height: 42px;
-      background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
       color: white;
       border: none;
       border-radius: 12px;
@@ -652,14 +652,14 @@
       gap: 8px;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 16px rgba(88, 101, 242, 0.25),
+        0 4px 16px rgba(81, 138, 255, 0.25),
         inset 0 0 0 1px rgba(255, 255, 255, 0.2);
     }
     
     .bv-glass-action-button:hover {
       transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(88, 101, 242, 0.35),
+        0 8px 24px rgba(81, 138, 255, 0.35),
         inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
@@ -771,6 +771,29 @@
     
     .bv-qty-circle.transparent {
       border-color: transparent;
+    }
+    
+    /* 數量圖標樣式 - 使用文字而非圖標 */
+    .bv-counter-icon {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 18px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'liga';
+    }
+    
+    .bv-counter-icon::before {
+      content: "filter_2";
     }
     
     /* 轉換後的樣式 */
@@ -1574,7 +1597,7 @@
               <div class="bv-settings-card">
                 <div class="bv-setting-item">
                   <div class="bv-setting-info">
-                    <span class="material-icons">counter_2</span>
+                    <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
                       <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
@@ -1683,7 +1706,7 @@
                 <div class="bv-settings-list">
                   <div class="bv-setting-item">
                     <div class="bv-setting-info">
-                      <span class="material-icons">counter_2</span>
+                      <span class="bv-counter-icon"></span>
                       <div class="bv-setting-text">
                         <span class="bv-setting-label">數量標示</span>
                         <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
