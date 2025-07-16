@@ -811,7 +811,9 @@
       font-weight: 500;
       font-size: 0.85em;
       line-height: 1;
-      vertical-align: middle;
+      vertical-align: text-bottom;  /* 對齊文字底部 */
+      position: relative;
+      top: 0.1em;
       letter-spacing: -0.02em;
       white-space: nowrap;
       margin: 0 0.2em;  /* 左右邊距 */
