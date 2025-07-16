@@ -25,29 +25,9 @@
   let logoDataUrl = null;
   let logoAspectRatio = 1;
   
-  // 儲存原始控制項的參考
-  let originalControlsElement = null;
-  
-  // 防止事件循環的標記
-  let isUpdatingFromPanel = false;
-  let isUpdatingFromOriginal = false;
-  
   // 創建控制面板
   function createControlPanel() {
     if (document.getElementById('bv-label-control-panel')) return;
-    
-    // 隱藏原始控制選項，並移除 baseImageOpacity 相關元素
-    const ignoreArea = document.querySelector('.ignore-print');
-    if (ignoreArea) {
-      originalControlsElement = ignoreArea;
-      ignoreArea.style.display = 'none';
-      
-      // 移除 baseImageOpacity 相關元素
-      const baseImageOpacityLabel = ignoreArea.querySelector('#baseImageOpacityLabel');
-      if (baseImageOpacityLabel) {
-        baseImageOpacityLabel.remove();
-      }
-    }
     
     const panel = document.createElement('div');
     panel.id = 'bv-label-control-panel';
@@ -579,40 +559,6 @@
       border: none;
     }
     
-    /* 收折功能樣式 */
-    .bv-collapsible {
-      cursor: pointer;
-      user-select: none;
-    }
-    
-    .bv-collapsible:hover {
-      background: rgba(0, 0, 0, 0.02);
-      margin: -4px -8px;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-    
-    .bv-card-title.bv-collapsible::after {
-      content: 'expand_more';
-      font-family: 'Material Icons';
-      font-size: 20px;
-      margin-left: auto;
-      transition: transform 0.3s ease;
-    }
-    
-    .bv-settings-card.collapsed .bv-card-title.bv-collapsible::after {
-      transform: rotate(-90deg);
-    }
-    
-    .bv-settings-card.collapsed .bv-settings-list,
-    .bv-settings-card.collapsed .bv-slider-group,
-    .bv-settings-card.collapsed .bv-logo-upload-area,
-    .bv-settings-card.collapsed .bv-logo-controls,
-    .bv-settings-card.collapsed .bv-preset-controls,
-    .bv-settings-card.collapsed .bv-preset-save-row {
-      display: none;
-    }
-    
     /* 預設管理 (縮小版) */
     .bv-preset-controls {
       display: flex;
@@ -895,44 +841,6 @@
       content: "filter_2";
     }
     
-    /* 數字輸入框樣式 */
-    .bv-number-input {
-      width: 60px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 8px;
-      padding: 0 10px;
-      font-size: 12px;
-      color: #1a1a1a;
-      text-align: center;
-      transition: all 0.2s ease;
-    }
-    
-    .bv-number-input:hover {
-      background-color: rgba(255, 255, 255, 0.8);
-      border-color: rgba(0, 0, 0, 0.12);
-    }
-    
-    .bv-number-input:focus {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.15);
-    }
-    
-    /* 帶單位的輸入框容器 */
-    .bv-input-with-unit {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .bv-unit-label {
-      font-size: 12px;
-      color: #86868b;
-    }
-    
     /* 轉換後的樣式 */
     body.bv-converted {
       width: auto !important;
@@ -1049,19 +957,6 @@
       z-index: 2 !important;
     }
     
-    /* A4 模式的底圖樣式 */
-    .order-content .label-background-logo {
-      position: absolute !important;
-      z-index: 1 !important;
-      pointer-events: none;
-      object-fit: contain !important;
-    }
-    
-    .order-content > *:not(.label-background-logo) {
-      position: relative !important;
-      z-index: 2 !important;
-    }
-    
     @media screen {
       body.bv-converted {
         background: #f0f0f0;
@@ -1167,85 +1062,6 @@
     
     // 初始化拖曳功能
     initDragFunction();
-    
-    // 同步原始控制項的值到面板
-    syncOriginalControlsToPanel();
-    
-    // A4 模式下也要更新樣式
-    if (!isConverted) {
-      updateA4Styles();
-    }
-    
-    // 初始化收折功能
-    initCollapsibles();
-  }
-  
-  // 初始化收折功能
-  function initCollapsibles() {
-    document.querySelectorAll('.bv-card-title.bv-collapsible').forEach(title => {
-      title.addEventListener('click', function() {
-        const card = this.closest('.bv-settings-card');
-        if (card) {
-          card.classList.toggle('collapsed');
-          // 儲存收折狀態
-          const cardId = Array.from(card.parentElement.children).indexOf(card);
-          const collapsedCards = JSON.parse(localStorage.getItem('bvCollapsedCards') || '[]');
-          if (card.classList.contains('collapsed')) {
-            if (!collapsedCards.includes(cardId)) {
-              collapsedCards.push(cardId);
-            }
-          } else {
-            const index = collapsedCards.indexOf(cardId);
-            if (index > -1) {
-              collapsedCards.splice(index, 1);
-            }
-          }
-          localStorage.setItem('bvCollapsedCards', JSON.stringify(collapsedCards));
-        }
-      });
-    });
-    
-    // 恢復收折狀態
-    const collapsedCards = JSON.parse(localStorage.getItem('bvCollapsedCards') || '[]');
-    const cards = document.querySelectorAll('.bv-settings-card');
-    collapsedCards.forEach(cardId => {
-      if (cards[cardId]) {
-        cards[cardId].classList.add('collapsed');
-      }
-    });
-  }
-  
-  // 同步原始控制項的值到面板
-  function syncOriginalControlsToPanel() {
-    if (!originalControlsElement) return;
-    
-    // 同步 checkbox
-    const checkboxes = [
-      'showProductImage',
-      'showRemark',
-      'showManageRemark',
-      'showPrintRemark',
-      'showDeliveryTime',
-      'hideInfo',
-      'hidePrice',
-      'showShippingTime',
-      'showLogTraceId'
-    ];
-    
-    checkboxes.forEach(id => {
-      const originalCheckbox = originalControlsElement.querySelector(`#${id}`);
-      const panelCheckbox = document.getElementById(id);
-      if (originalCheckbox && panelCheckbox) {
-        panelCheckbox.checked = originalCheckbox.checked;
-      }
-    });
-    
-    // 同步文字大小
-    const originalFontSize = originalControlsElement.querySelector('#fontSize');
-    const panelFontSize = document.getElementById('fontSize');
-    if (originalFontSize && panelFontSize) {
-      panelFontSize.value = originalFontSize.value;
-    }
   }
   
   // 更新面板內容
@@ -1279,16 +1095,10 @@
       loadSettings();
       initPresetSystem();
       initLogoUpload();
-    } else {
-      syncOriginalControlsToPanel();
-      initLogoUpload();
     }
     
     // 重新初始化拖曳功能
     initDragFunction();
-    
-    // 重新初始化收折功能
-    initCollapsibles();
   }
   
   // 初始化拖曳功能（修復版）
@@ -1435,19 +1245,13 @@
               logoControls.classList.add('active');
               
               saveSettings();
-              
-              if (isConverted) {
-                updateLabelStyles();
-                setTimeout(() => {
-                  handlePagination();
-                  if (highlightQuantity) {
-                    applyQuantityHighlight();
-                  }
-                }, 100);
-              } else {
-                updateA4Styles();
-                updateA4Logos();
-              }
+              updateLabelStyles();
+              setTimeout(() => {
+                handlePagination();
+                if (highlightQuantity) {
+                  applyQuantityHighlight();
+                }
+              }, 100);
             };
             img.src = logoDataUrl;
           };
@@ -1470,19 +1274,13 @@
         logoInput.value = '';
         
         saveSettings();
-        
-        if (isConverted) {
-          updateLabelStyles();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        } else {
-          updateA4Styles();
-          updateA4Logos();
-        }
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
       });
     }
     
@@ -1493,12 +1291,7 @@
           document.getElementById(this.id.replace('-slider', '')).textContent = this.value + '%';
           updateRangeProgress(this);
           saveSettings();
-          
-          if (isConverted) {
-            updateLabelStyles();
-          } else {
-            updateA4Styles();
-          }
+          updateLabelStyles();
         });
       }
     });
@@ -1582,68 +1375,10 @@
       });
     }
     
-    // 根據模式設置事件監聽器
+    // 10×15cm 模式的事件
     if (isConverted) {
       setupLabelModeEventListeners();
-    } else {
-      setupA4ModeEventListeners();
     }
-  }
-  
-  // 設置 A4 模式的事件監聽器
-  function setupA4ModeEventListeners() {
-    // 原本的顯示控制選項
-    const controlIds = [
-      'showProductImage',
-      'showRemark',
-      'showManageRemark',
-      'showPrintRemark',
-      'showDeliveryTime',
-      'hideInfo',
-      'hidePrice',
-      'showShippingTime',
-      'showLogTraceId',
-      'fontSize'
-    ];
-    
-    controlIds.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener('change', function() {
-          // 防止事件循環
-          if (isUpdatingFromOriginal) return;
-          
-          isUpdatingFromPanel = true;
-          
-          // 同步到原始控制項
-          if (originalControlsElement) {
-            const originalElement = originalControlsElement.querySelector(`#${id}`);
-            if (originalElement) {
-              if (element.type === 'checkbox') {
-                originalElement.checked = element.checked;
-              } else {
-                originalElement.value = element.value;
-              }
-              // 觸發原始元素的 change 事件
-              const event = new Event('change', { bubbles: true });
-              originalElement.dispatchEvent(event);
-            }
-          }
-          
-          isUpdatingFromPanel = false;
-          
-          saveSettings();
-          updateA4Styles();
-          
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        });
-      }
-    });
-    
-    // 初始化 Logo 上傳
-    initLogoUpload();
   }
   
   // 設置標籤模式的事件監聽器
@@ -1708,7 +1443,7 @@
     });
     
     // 原本的顯示控制選項
-    const controlIds = [
+    const originalControls = [
       'showProductImage',
       'showRemark',
       'showManageRemark',
@@ -1721,28 +1456,18 @@
       'fontSize'
     ];
     
-    controlIds.forEach(id => {
+    originalControls.forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
-          // 防止事件循環
-          if (isUpdatingFromOriginal) return;
-          
-          isUpdatingFromPanel = true;
-          
           // 觸發原本的更新事件
           const event = new Event('change', { bubbles: true });
           const originalElement = document.querySelector(`.ignore-print #${id}`);
           if (originalElement) {
-            if (element.type === 'checkbox') {
-              originalElement.checked = element.checked;
-            } else {
-              originalElement.value = element.value;
-            }
+            originalElement.checked = element.checked;
+            originalElement.value = element.value;
             originalElement.dispatchEvent(event);
           }
-          
-          isUpdatingFromPanel = false;
           
           saveSettings();
           updateLabelStyles();
@@ -2015,9 +1740,8 @@
       }
     });
     
-    if (settings.fontSize) {
-      const fontSizeSelect = document.getElementById('fontSize');
-      if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
+    if (settings.fontSize && document.getElementById('fontSize')) {
+      document.getElementById('fontSize').value = settings.fontSize;
     }
     
     const checkboxSettings = {
@@ -2036,6 +1760,8 @@
       const checkbox = document.getElementById(key);
       if (checkbox && checkboxSettings[key] !== undefined) {
         checkbox.checked = checkboxSettings[key];
+        const event = new Event('change', { bubbles: true });
+        checkbox.dispatchEvent(event);
       }
     });
     
@@ -2078,31 +1804,14 @@
     
     if (isConverted) {
       updateLabelStyles();
-    } else {
-      updateA4Styles();
     }
   }
   
   // 監聽原始控制項的變更
   function observeOriginalControls() {
-    if (!originalControlsElement) return;
-    
-    const checkboxes = originalControlsElement.querySelectorAll('input[type="checkbox"]');
+    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        // 防止事件循環
-        if (isUpdatingFromPanel) return;
-        
-        isUpdatingFromOriginal = true;
-        
-        // 同步到面板
-        const panelCheckbox = document.getElementById(checkbox.id);
-        if (panelCheckbox) {
-          panelCheckbox.checked = checkbox.checked;
-        }
-        
-        isUpdatingFromOriginal = false;
-        
         if (isConverted) {
           updateLabelStyles();
           setTimeout(() => {
@@ -2111,31 +1820,13 @@
               applyQuantityHighlight();
             }
           }, 100);
-        } else {
-          updateA4Styles();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
         }
       });
     });
     
-    const fontSizeSelect = originalControlsElement.querySelector('#fontSize');
+    const fontSizeSelect = document.getElementById('fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
-        // 防止事件循環
-        if (isUpdatingFromPanel) return;
-        
-        isUpdatingFromOriginal = true;
-        
-        // 同步到面板
-        const panelFontSize = document.getElementById('fontSize');
-        if (panelFontSize) {
-          panelFontSize.value = fontSizeSelect.value;
-        }
-        
-        isUpdatingFromOriginal = false;
-        
         if (isConverted) {
           updateLabelStyles();
           setTimeout(() => {
@@ -2144,11 +1835,6 @@
               applyQuantityHighlight();
             }
           }, 100);
-        } else {
-          updateA4Styles();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
         }
       });
     }
@@ -2196,218 +1882,20 @@
                 </button>
               </div>
               
-              <!-- 顯示設定 -->
+              <!-- 設定區 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
-                  <span class="material-icons">visibility</span>
-                  顯示設定
-                </h4>
-                
-                <div class="bv-settings-list">
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="bv-counter-icon"></span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-highlight-qty">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">image</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示商品圖片</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showProductImage">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">comment</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示顧客備註</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">admin_panel_settings</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示後台備註</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showManageRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">print</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示列印備註</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showPrintRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">schedule</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示指定配送時段</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showDeliveryTime" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">visibility_off</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏個人資訊</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="hideInfo">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">money_off</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏價格</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="hidePrice">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">local_shipping</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示預計出貨日</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showShippingTime" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">qr_code</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示物流編號</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showLogTraceId" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">text_fields</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">文字大小</span>
-                      </div>
-                    </div>
-                    <select id="fontSize" class="bv-glass-select" style="width: 100px;">
-                      <option value="12px">12 px</option>
-                      <option value="13px">13 px</option>
-                      <option value="14px" selected>14 px</option>
-                      <option value="15px">15 px</option>
-                      <option value="16px">16 px</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- 底圖設定 -->
-              <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
-                  <span class="material-icons">image</span>
-                  底圖設定
-                </h4>
-                
-                <div class="bv-logo-upload-area" id="logo-upload-area">
-                  <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" style="display:none;">
-                  <img id="logo-preview" class="bv-logo-preview" style="display:none;">
-                  <div id="upload-prompt">
-                    <span class="material-icons" style="font-size:36px; color: #86868b;">add_photo_alternate</span>
-                    <div class="bv-upload-hint">點擊上傳底圖（支援 PNG/JPG）</div>
-                  </div>
-                </div>
-                
-                <div class="bv-logo-controls" id="logo-controls">
-                  <div class="bv-slider-group">
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>底圖大小</span>
-                        <span class="bv-value-label" id="logo-size">30%</span>
-                      </div>
-                      <input type="range" id="logo-size-slider" min="10" max="100" value="30" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>水平位置</span>
-                        <span class="bv-value-label" id="logo-x">50%</span>
-                      </div>
-                      <input type="range" id="logo-x-slider" min="0" max="100" value="50" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>垂直位置</span>
-                        <span class="bv-value-label" id="logo-y">50%</span>
-                      </div>
-                      <input type="range" id="logo-y-slider" min="0" max="100" value="50" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>淡化程度</span>
-                        <span class="bv-value-label" id="logo-opacity">20%</span>
-                      </div>
-                      <input type="range" id="logo-opacity-slider" min="0" max="100" value="20" class="bv-glass-slider">
+                <div class="bv-setting-item">
+                  <div class="bv-setting-info">
+                    <span class="bv-counter-icon"></span>
+                    <div class="bv-setting-text">
+                      <span class="bv-setting-label">數量標示</span>
+                      <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
                     </div>
                   </div>
-                  
-                  <button class="bv-remove-logo-btn" id="remove-logo-btn">
-                    <span class="material-icons">delete</span>
-                    移除底圖
-                  </button>
+                  <label class="bv-glass-switch">
+                    <input type="checkbox" id="bv-highlight-qty">
+                    <span class="bv-switch-slider"></span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -2457,7 +1945,7 @@
               
               <!-- 間距設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
+                <h4 class="bv-card-title">
                   <span class="material-icons">straighten</span>
                   間距調整
                 </h4>
@@ -2499,7 +1987,7 @@
               
               <!-- 顯示設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
+                <h4 class="bv-card-title">
                   <span class="material-icons">visibility</span>
                   顯示設定
                 </h4>
@@ -2568,7 +2056,7 @@
               
               <!-- 原本的顯示控制選項 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
+                <h4 class="bv-card-title">
                   <span class="material-icons">settings</span>
                   詳細設定
                 </h4>
@@ -2695,7 +2183,7 @@
               
               <!-- 底圖設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
+                <h4 class="bv-card-title">
                   <span class="material-icons">image</span>
                   底圖設定
                 </h4>
@@ -2753,7 +2241,7 @@
               
               <!-- 預設管理 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title bv-collapsible">
+                <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
                   預設管理
                 </h4>
@@ -2795,70 +2283,6 @@
           </div>
         </div>
       `;
-    }
-  }
-  
-  // 更新 A4 模式的樣式
-  function updateA4Styles() {
-    if (isConverted) return;
-    
-    const fontSize = document.getElementById('fontSize')?.value || '14px';
-    
-    // Logo 設定
-    const logoSize = document.getElementById('logo-size-slider')?.value || '30';
-    const logoX = document.getElementById('logo-x-slider')?.value || '50';
-    const logoY = document.getElementById('logo-y-slider')?.value || '50';
-    const logoOpacity = document.getElementById('logo-opacity-slider')?.value || '20';
-    
-    // 隱藏原本的 baseImage
-    document.querySelectorAll('.baseImage').forEach(img => {
-      img.style.display = 'none';
-    });
-    
-    const oldA4Style = document.getElementById('bv-a4-styles');
-    if (oldA4Style) oldA4Style.remove();
-    
-    const a4Styles = document.createElement('style');
-    a4Styles.id = 'bv-a4-styles';
-    a4Styles.textContent = `
-      /* A4 底圖樣式 */
-      .order-content {
-        position: relative !important;
-      }
-      
-      .order-content .label-background-logo {
-        width: ${logoSize}% !important;
-        height: auto !important;
-        left: ${logoX}% !important;
-        top: ${logoY}% !important;
-        transform: translate(-50%, -50%) !important;
-        opacity: ${(100 - logoOpacity) / 100} !important;
-      }
-    `;
-    
-    document.head.appendChild(a4Styles);
-    
-    // 更新底圖
-    updateA4Logos();
-  }
-  
-  // 更新 A4 模式的底圖
-  function updateA4Logos() {
-    if (isConverted) return;
-    
-    // 移除現有的底圖
-    document.querySelectorAll('.order-content .label-background-logo').forEach(logo => logo.remove());
-    
-    if (logoDataUrl) {
-      document.querySelectorAll('.order-content').forEach(content => {
-        // 跳過有 baseImage 的 order-content
-        if (content.querySelector('.baseImage')) return;
-        
-        const logo = document.createElement('img');
-        logo.className = 'label-background-logo';
-        logo.src = logoDataUrl;
-        content.insertBefore(logo, content.firstChild);
-      });
     }
   }
   
@@ -3097,11 +2521,6 @@
         margin: 0 0 3mm 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
-      }
-      
-      .bv-converted .order-info,
-      .bv-label-page .order-info {
-        margin: 0 0 3mm 0 !important;
       }
       
       .bv-converted .order-info,
@@ -3392,38 +2811,17 @@
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
-        // 共通設定
-        highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
-        const qtyCheckbox = document.getElementById('bv-highlight-qty');
-        if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
-        
-        // 載入其他設定
-        if (settings.fontSize) {
-          const fontSizeSelect = document.getElementById('fontSize');
-          if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
-        }
-        
-        const checkboxSettings = {
-          showProductImage: settings.showProductImage,
-          showRemark: settings.showRemark,
-          showManageRemark: settings.showManageRemark,
-          showPrintRemark: settings.showPrintRemark,
-          showDeliveryTime: settings.showDeliveryTime,
-          hideInfo: settings.hideInfo,
-          hidePrice: settings.hidePrice,
-          showShippingTime: settings.showShippingTime,
-          showLogTraceId: settings.showLogTraceId
-        };
-        
-        Object.keys(checkboxSettings).forEach(key => {
-          const checkbox = document.getElementById(key);
-          if (checkbox && checkboxSettings[key] !== undefined) {
-            checkbox.checked = checkboxSettings[key];
-          }
-        });
-        
-        // 標籤模式專屬設定
-        if (isConverted) {
+        // A4 模式下只載入數量標示設定（預設為關閉）
+        if (!isConverted) {
+          highlightQuantity = false; // 確保 A4 模式下預設關閉
+          const qtyCheckbox = document.getElementById('bv-highlight-qty');
+          if (qtyCheckbox) qtyCheckbox.checked = false;
+        } else {
+          // 10×15cm 模式下載入所有設定
+          highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
+          const qtyCheckbox = document.getElementById('bv-highlight-qty');
+          if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
+          
           hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
           const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
           if (hideExtraCheckbox) hideExtraCheckbox.checked = hideExtraInfo;
@@ -3446,7 +2844,7 @@
           ];
           
           spacingSettings.forEach(setting => {
-            if (setting.value !== undefined) {
+            if (setting.value) {
               const input = document.getElementById(setting.id);
               if (input) {
                 input.value = setting.value;
@@ -3455,58 +2853,55 @@
               }
             }
           });
-        }
-        
-        // Logo 設定
-        if (settings.logoDataUrl) {
-          logoDataUrl = settings.logoDataUrl;
-          logoAspectRatio = settings.logoAspectRatio || 1;
           
-          const logoPreview = document.getElementById('logo-preview');
-          const uploadPrompt = document.getElementById('upload-prompt');
-          const logoUploadArea = document.getElementById('logo-upload-area');
-          const logoControls = document.getElementById('logo-controls');
+          // 載入其他設定
+          if (settings.fontSize) {
+            const fontSizeSelect = document.getElementById('fontSize');
+            if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
+          }
           
-          if (logoPreview) {
-            logoPreview.src = logoDataUrl;
-            logoPreview.style.display = 'block';
-          }
-          if (uploadPrompt) uploadPrompt.style.display = 'none';
-          if (logoUploadArea) logoUploadArea.classList.add('has-logo');
-          if (logoControls) logoControls.classList.add('active');
-        }
-        
-        const logoSettings = [
-          { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
-          { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
-          { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
-          { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
-        ];
-        
-        logoSettings.forEach(setting => {
-          if (setting.value !== undefined) {
-            const input = document.getElementById(setting.id);
-            if (input) {
-              input.value = setting.value;
-              document.getElementById(setting.valueId).textContent = setting.value + '%';
-              updateRangeProgress(input);
-            }
-          }
-        });
-        
-        // 同步到原始控制項（如果在 A4 模式）
-        if (!isConverted && originalControlsElement) {
+          const checkboxSettings = {
+            showProductImage: settings.showProductImage,
+            showRemark: settings.showRemark,
+            showManageRemark: settings.showManageRemark,
+            showPrintRemark: settings.showPrintRemark,
+            showDeliveryTime: settings.showDeliveryTime,
+            hideInfo: settings.hideInfo,
+            hidePrice: settings.hidePrice,
+            showShippingTime: settings.showShippingTime,
+            showLogTraceId: settings.showLogTraceId
+          };
+          
           Object.keys(checkboxSettings).forEach(key => {
-            const originalCheckbox = originalControlsElement.querySelector(`#${key}`);
-            if (originalCheckbox && checkboxSettings[key] !== undefined) {
-              originalCheckbox.checked = checkboxSettings[key];
+            const checkbox = document.getElementById(key);
+            if (checkbox && checkboxSettings[key] !== undefined) {
+              checkbox.checked = checkboxSettings[key];
             }
           });
           
-          const originalFontSize = originalControlsElement.querySelector('#fontSize');
-          if (originalFontSize && settings.fontSize) {
-            originalFontSize.value = settings.fontSize;
+          // 載入 Logo 設定
+          if (settings.logoDataUrl) {
+            logoDataUrl = settings.logoDataUrl;
+            logoAspectRatio = settings.logoAspectRatio || 1;
           }
+          
+          const logoSettings = [
+            { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
+            { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
+            { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
+            { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
+          ];
+          
+          logoSettings.forEach(setting => {
+            if (setting.value) {
+              const input = document.getElementById(setting.id);
+              if (input) {
+                input.value = setting.value;
+                document.getElementById(setting.valueId).textContent = setting.value + '%';
+                updateRangeProgress(input);
+              }
+            }
+          });
         }
       }
       
