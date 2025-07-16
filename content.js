@@ -788,7 +788,6 @@
     /* 加粗模式樣式 */
     .bold-mode .bv-qty-badge {
       font-weight: inherit !important;
-      border-width: 1.5px;  /* 加粗模式外框更粗 */
     }
     
     .bold-mode .bv-qty-badge.qty-one {
