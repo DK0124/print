@@ -28,6 +28,10 @@
   // 儲存原始控制項的參考
   let originalControlsElement = null;
   
+  // 防止事件循環的標記
+  let isUpdatingFromPanel = false;
+  let isUpdatingFromOriginal = false;
+  
   // 創建控制面板
   function createControlPanel() {
     if (document.getElementById('bv-label-control-panel')) return;
@@ -1606,6 +1610,11 @@
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
+          // 防止事件循環
+          if (isUpdatingFromOriginal) return;
+          
+          isUpdatingFromPanel = true;
+          
           // 同步到原始控制項
           if (originalControlsElement) {
             const originalElement = originalControlsElement.querySelector(`#${id}`);
@@ -1620,6 +1629,8 @@
               originalElement.dispatchEvent(event);
             }
           }
+          
+          isUpdatingFromPanel = false;
           
           saveSettings();
           updateA4Styles();
@@ -1714,6 +1725,11 @@
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
+          // 防止事件循環
+          if (isUpdatingFromOriginal) return;
+          
+          isUpdatingFromPanel = true;
+          
           // 觸發原本的更新事件
           const event = new Event('change', { bubbles: true });
           const originalElement = document.querySelector(`.ignore-print #${id}`);
@@ -1725,6 +1741,8 @@
             }
             originalElement.dispatchEvent(event);
           }
+          
+          isUpdatingFromPanel = false;
           
           saveSettings();
           updateLabelStyles();
@@ -2072,6 +2090,19 @@
     const checkboxes = originalControlsElement.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
+        // 防止事件循環
+        if (isUpdatingFromPanel) return;
+        
+        isUpdatingFromOriginal = true;
+        
+        // 同步到面板
+        const panelCheckbox = document.getElementById(checkbox.id);
+        if (panelCheckbox) {
+          panelCheckbox.checked = checkbox.checked;
+        }
+        
+        isUpdatingFromOriginal = false;
+        
         if (isConverted) {
           updateLabelStyles();
           setTimeout(() => {
@@ -2092,6 +2123,19 @@
     const fontSizeSelect = originalControlsElement.querySelector('#fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
+        // 防止事件循環
+        if (isUpdatingFromPanel) return;
+        
+        isUpdatingFromOriginal = true;
+        
+        // 同步到面板
+        const panelFontSize = document.getElementById('fontSize');
+        if (panelFontSize) {
+          panelFontSize.value = fontSizeSelect.value;
+        }
+        
+        isUpdatingFromOriginal = false;
+        
         if (isConverted) {
           updateLabelStyles();
           setTimeout(() => {
@@ -3053,6 +3097,11 @@
         margin: 0 0 3mm 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
+      }
+      
+      .bv-converted .order-info,
+      .bv-label-page .order-info {
+        margin: 0 0 3mm 0 !important;
       }
       
       .bv-converted .order-info,
