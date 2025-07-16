@@ -823,31 +823,6 @@
       }
     }
     
-    /* 列印樣式確保顏色正確 */
-    @media print {
-      .bv-qty-badge {
-        background: #333333 !important;
-        color: white !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      
-      .bv-qty-badge.qty-one {
-        background: transparent !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-      }
-      
-      .bold-mode .bv-qty-badge {
-        background: #000000 !important;
-      }
-      
-      .bold-mode .bv-qty-badge.qty-one {
-        background: transparent !important;
-        border: 1px solid #666 !important;
-      }
-    }
-    
     /* 數量圖標樣式 - 使用文字而非圖標 */
     .bv-counter-icon {
       font-family: 'Material Icons';
