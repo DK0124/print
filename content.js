@@ -380,19 +380,25 @@
     }
     
     /* 收摺圖標 */
-    .bv-card-title::after {
-      content: 'expand_more';
-      font-family: 'Material Icons';
+    .bv-collapse-icon {
       position: absolute;
       right: 0;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 18px;
-      color: #86868b;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.3s ease;
     }
     
-    .bv-settings-card.collapsed .bv-card-title::after {
+    .bv-collapse-icon .material-icons {
+      font-size: 18px;
+      color: #86868b;
+    }
+    
+    .bv-settings-card.collapsed .bv-collapse-icon {
       transform: translateY(-50%) rotate(-90deg);
     }
     
@@ -1091,9 +1097,6 @@
     // 綁定事件
     setupEventListeners();
     
-    // 監聽原始控制項的變更
-    observeOriginalControls();
-    
     // 載入設定
     loadSettings();
     
@@ -1468,7 +1471,7 @@
     });
   }
   
-  // 設置標籤模式的事件監聽器（修復版）
+  // 設置標籤模式的事件監聽器（使用原始控制項）
   function setupLabelModeEventListeners() {
     // 精簡模式
     const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
@@ -1529,21 +1532,19 @@
       }
     });
     
-    // 文字大小設定（修復）
+    // 文字大小設定（直接操作原始控制項）
     const fontSizeSelect = document.getElementById('fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', function() {
-        // 同步更新原始控制項
+        // 找到原始的 fontSize 控制項並更新
         const originalFontSize = document.querySelector('.ignore-print #fontSize');
-        if (originalFontSize) {
+        if (originalFontSize && originalFontSize !== this) {
           originalFontSize.value = this.value;
-          // 觸發原始頁面的更新
-          const event = new Event('change', { bubbles: true });
-          originalFontSize.dispatchEvent(event);
+          // 觸發原始頁面的 change 事件
+          $(originalFontSize).trigger('change');
         }
         
         saveSettings();
-        updateLabelStyles();
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1553,7 +1554,7 @@
       });
     }
     
-    // 原本的顯示控制選項（修復）
+    // 原本的顯示控制選項（直接操作原始控制項）
     const originalControls = [
       'showProductImage',
       'showRemark',
@@ -1570,17 +1571,15 @@
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
-          // 同步更新原始控制項
+          // 找到原始的控制項並更新
           const originalElement = document.querySelector(`.ignore-print #${id}`);
-          if (originalElement) {
-            originalElement.checked = element.checked;
-            // 觸發原始頁面的更新
-            const event = new Event('change', { bubbles: true });
-            originalElement.dispatchEvent(event);
+          if (originalElement && originalElement !== this) {
+            originalElement.checked = this.checked;
+            // 觸發原始頁面的 change 事件
+            $(originalElement).trigger('change');
           }
           
           saveSettings();
-          updateLabelStyles();
           setTimeout(() => {
             handlePagination();
             if (highlightQuantity) {
@@ -1804,7 +1803,7 @@
     };
   }
   
-  // 套用預設設定（修復版）
+  // 套用預設設定
   function applyPresetSettings(settings) {
     if (settings.highlightQuantity !== undefined) {
       const qtyCheckbox = document.getElementById('bv-highlight-qty');
@@ -1856,8 +1855,7 @@
       const originalFontSize = document.querySelector('.ignore-print #fontSize');
       if (originalFontSize) {
         originalFontSize.value = settings.fontSize;
-        const event = new Event('change', { bubbles: true });
-        originalFontSize.dispatchEvent(event);
+        $(originalFontSize).trigger('change');
       }
     }
     
@@ -1881,8 +1879,7 @@
         const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
         if (originalCheckbox) {
           originalCheckbox.checked = checkboxSettings[key];
-          const event = new Event('change', { bubbles: true });
-          originalCheckbox.dispatchEvent(event);
+          $(originalCheckbox).trigger('change');
         }
       }
     });
@@ -1929,51 +1926,6 @@
     }
   }
   
-  // 監聽原始控制項的變更
-  function observeOriginalControls() {
-    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        if (isConverted) {
-          // 同步更新我們的控制項
-          const ourCheckbox = document.querySelector(`#bv-label-control-panel #${checkbox.id}`);
-          if (ourCheckbox) {
-            ourCheckbox.checked = checkbox.checked;
-          }
-          
-          updateLabelStyles();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        }
-      });
-    });
-    
-    const fontSizeSelect = document.querySelector('.ignore-print #fontSize');
-    if (fontSizeSelect) {
-      fontSizeSelect.addEventListener('change', () => {
-        if (isConverted) {
-          // 同步更新我們的控制項
-          const ourFontSize = document.querySelector('#bv-label-control-panel #fontSize');
-          if (ourFontSize) {
-            ourFontSize.value = fontSizeSelect.value;
-          }
-          
-          updateLabelStyles();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        }
-      });
-    }
-  }
-  
   // 更新 Range Input 進度條
   function updateRangeProgress(input) {
     const value = (input.value - input.min) / (input.max - input.min) * 100;
@@ -1982,6 +1934,9 @@
   
   // 取得面板內容的函數
   function getPanelContent() {
+    // 收摺圖標的 HTML
+    const collapseIcon = '<span class="bv-collapse-icon"><span class="material-icons">expand_more</span></span>';
+    
     if (!isConverted) {
       // A4 模式
       return `
@@ -2082,6 +2037,7 @@
                 <h4 class="bv-card-title">
                   <span class="material-icons">straighten</span>
                   間距調整
+                  ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
@@ -2126,6 +2082,7 @@
                 <h4 class="bv-card-title">
                   <span class="material-icons">visibility</span>
                   顯示設定
+                  ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
@@ -2197,6 +2154,7 @@
                 <h4 class="bv-card-title">
                   <span class="material-icons">settings</span>
                   詳細設定
+                  ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
@@ -2326,6 +2284,7 @@
                 <h4 class="bv-card-title">
                   <span class="material-icons">image</span>
                   底圖設定
+                  ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
@@ -2386,6 +2345,7 @@
                 <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
                   預設管理
+                  ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
@@ -2603,10 +2563,11 @@
   
   // 觸發原始頁面的更新事件
   function triggerOriginalPageUpdate() {
-    const event = new Event('change', { bubbles: true });
-    document.querySelectorAll('.ignore-print input, .ignore-print select').forEach(el => {
-      el.dispatchEvent(event);
-    });
+    // 使用 jQuery 觸發原始頁面的更新
+    if (typeof $ !== 'undefined') {
+      $('.ignore-print input[type="checkbox"]').trigger('change');
+      $('.ignore-print select').trigger('change');
+    }
   }
   
   // 更新標籤樣式
@@ -3002,6 +2963,13 @@
           if (settings.fontSize) {
             const fontSizeSelect = document.getElementById('fontSize');
             if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
+            
+            // 同步原始控制項
+            const originalFontSize = document.querySelector('.ignore-print #fontSize');
+            if (originalFontSize) {
+              originalFontSize.value = settings.fontSize;
+              $(originalFontSize).trigger('change');
+            }
           }
           
           const checkboxSettings = {
@@ -3024,6 +2992,7 @@
               const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
               if (originalCheckbox) {
                 originalCheckbox.checked = checkboxSettings[key];
+                $(originalCheckbox).trigger('change');
               }
             }
           });
