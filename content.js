@@ -1665,7 +1665,7 @@
                     <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
+                      <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
                     </div>
                   </div>
                   <label class="bv-glass-switch">
@@ -1774,7 +1774,7 @@
                       <span class="bv-counter-icon"></span>
                       <div class="bv-setting-text">
                         <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
+                        <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
                       </div>
                     </div>
                     <label class="bv-glass-switch">
