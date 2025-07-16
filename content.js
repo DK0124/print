@@ -750,154 +750,84 @@
       }
     }
     
-    /* 圓圈數字樣式 */
+    /* 數量標示 - 圓角矩形樣式 */
     .bv-qty-circle {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 1.2em;
-      height: 1.2em;
-      padding: 0;
-      border: 1.5px solid currentColor;
-      color: inherit;
-      border-radius: 50%;
+      min-width: 1.8em;
+      height: 1.4em;
+      padding: 0 0.4em;
+      background: #333333;
+      color: white !important;
+      border-radius: 0.7em;
       font-weight: bold;
-      font-size: 0.9em;
+      font-size: 0.85em;
       line-height: 1;
       vertical-align: middle;
       position: relative;
       top: -0.05em;
-    }
-    
-    .bv-qty-circle.transparent {
-      border-color: transparent;
-    }
-    
-    /* 數量圖標樣式 - 使用文字而非圖標 */
-    .bv-counter-icon {
-      font-family: 'Material Icons';
-      font-weight: normal;
-      font-style: normal;
-      font-size: 18px;
-      display: inline-block;
-      line-height: 1;
-      text-transform: none;
-      letter-spacing: normal;
-      word-wrap: normal;
       white-space: nowrap;
-      direction: ltr;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      -moz-osx-font-smoothing: grayscale;
-      font-feature-settings: 'liga';
+      transition: all 0.2s ease;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
     
-    .bv-counter-icon::before {
-      content: "filter_2";
+    /* 數量為 1 時使用較淺的灰色 */
+    .bv-qty-circle.transparent {
+      background: #999999;
+      color: white !important;
     }
     
-    /* 轉換後的樣式 */
-    body.bv-converted {
-      width: auto !important;
-      max-width: none !important;
-      min-width: auto !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    
+    /* 懸停效果（螢幕顯示用） */
     @media screen {
-      body.bv-converted {
-        background: #f0f0f0;
-        padding: 20px 0;
-      }
-      
-      .bv-page-container {
-        margin: 0 auto 20px;
-        width: fit-content;
-      }
-      
-      .bv-label-page {
-        width: 377px !important;
-        height: 566px !important;
-        background: white;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-        position: relative;
-        overflow: hidden;
-        box-sizing: border-box;
-      }
-      
-      .bv-page-content {
-        width: 100%;
-        height: 100%;
-        position: relative;
-      }
-      
-      .bv-converted .order-content.bv-original {
-        display: none !important;
+      .bv-qty-circle:hover {
+        transform: scale(1.05);
       }
     }
     
+    /* 大數字自動調整 */
+    .bv-qty-circle {
+      min-width: auto;
+      width: max-content;
+    }
+    
+    /* 三位數以上的特別處理 */
+    .bv-qty-circle:has(> :nth-child(3)) {
+      font-size: 0.8em;
+      padding: 0 0.5em;
+    }
+    
+    /* 加粗模式樣式 */
+    .bold-mode .bv-qty-circle {
+      font-weight: 900 !important;
+      background: #000000;
+    }
+    
+    .bold-mode .bv-qty-circle.transparent {
+      background: #666666;
+    }
+    
+    /* 列印樣式確保顏色正確 */
     @media print {
-      /* A4 模式的列印樣式 */
-      body:not(.bv-converted) {
-        /* 保持原始的 A4 格式 */
-      }
-      
-      /* 隱藏控制面板和浮動按鈕 */
-      #bv-label-control-panel,
-      .bv-floating-button {
-        display: none !important;
-      }
-      
-      /* 確保數量圓圈在列印時正常顯示 */
       .bv-qty-circle {
-        border: 1.5px solid currentColor !important;
-        color: inherit !important;
+        background: #333333 !important;
+        color: white !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       
       .bv-qty-circle.transparent {
-        border-color: transparent !important;
+        background: #999999 !important;
+        color: white !important;
       }
       
-      /* 標籤模式的列印樣式 */
-      body.bv-converted {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: white !important;
+      .bold-mode .bv-qty-circle {
+        background: #000000 !important;
       }
       
-      @page {
-        size: 100mm 150mm;
-        margin: 0;
-      }
-      
-      body.bv-converted .bv-label-page {
-        width: 100mm !important;
-        height: 150mm !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-        page-break-after: always !important;
-        page-break-inside: avoid !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-      
-      body.bv-converted .bv-label-page:last-child {
-        page-break-after: auto !important;
-      }
-      
-      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
-        display: none !important;
-      }
-      
-      /* 加粗模式的列印樣式 */
-      .bv-converted.bold-mode .order-content * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        font-weight: 700 !important;
+      .bold-mode .bv-qty-circle.transparent {
+        background: #666666 !important;
       }
     }
     `;
