@@ -781,7 +781,6 @@
     .bv-qty-badge.qty-one {
       background: transparent;
       color: inherit !important;  /* 保持原本顏色（黑色） */
-      border: 1px solid #ccc;     /* 加個淡邊框讓透明矩形可見 */
     }
     
     /* 加粗模式樣式 */
