@@ -25,6 +25,9 @@
   let logoDataUrl = null;
   let logoAspectRatio = 1;
   
+  // 收摺狀態
+  let collapsedSections = {};
+  
   // 創建控制面板
   function createControlPanel() {
     if (document.getElementById('bv-label-control-panel')) return;
@@ -352,6 +355,7 @@
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
+      transition: all 0.3s ease;
     }
     
     .bv-card-title {
@@ -364,11 +368,44 @@
       gap: 6px;
       text-transform: uppercase;
       letter-spacing: 0.02em;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 24px;
     }
     
     .bv-card-title .material-icons {
       font-size: 16px;
       color: #86868b;
+    }
+    
+    /* 收摺圖標 */
+    .bv-card-title::after {
+      content: 'expand_more';
+      font-family: 'Material Icons';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: #86868b;
+      transition: transform 0.3s ease;
+    }
+    
+    .bv-settings-card.collapsed .bv-card-title::after {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+    
+    /* 收摺動畫 */
+    .bv-card-content {
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .bv-settings-card.collapsed .bv-card-content {
+      max-height: 0 !important;
+      margin-top: -14px;
+      opacity: 0;
     }
     
     /* 設定項目 (縮小版) */
@@ -1095,10 +1132,24 @@
       loadSettings();
       initPresetSystem();
       initLogoUpload();
+      // 恢復收摺狀態
+      restoreCollapsedStates();
     }
     
     // 重新初始化拖曳功能
     initDragFunction();
+  }
+  
+  // 恢復收摺狀態
+  function restoreCollapsedStates() {
+    Object.keys(collapsedSections).forEach(sectionId => {
+      if (collapsedSections[sectionId]) {
+        const card = document.querySelector(`[data-section="${sectionId}"]`);
+        if (card) {
+          card.classList.add('collapsed');
+        }
+      }
+    });
   }
   
   // 初始化拖曳功能（修復版）
@@ -1204,7 +1255,7 @@
     document.addEventListener('touchend', dragEnd);
   }
   
-  // 初始化 Logo 上傳功能
+  // 初始化 Logo 上傳功能（修復版）
   function initLogoUpload() {
     const logoUploadArea = document.getElementById('logo-upload-area');
     const logoInput = document.getElementById('logo-input');
@@ -1219,14 +1270,20 @@
     const logoYSlider = document.getElementById('logo-y-slider');
     const logoOpacitySlider = document.getElementById('logo-opacity-slider');
     
-    // Logo 上傳事件
-    if (logoUploadArea) {
-      logoUploadArea.addEventListener('click', function() {
-        logoInput.click();
+    // 防止重複綁定
+    if (logoUploadArea && !logoUploadArea.hasAttribute('data-initialized')) {
+      logoUploadArea.setAttribute('data-initialized', 'true');
+      
+      logoUploadArea.addEventListener('click', function(e) {
+        if (!e.target.closest('.bv-remove-logo-btn')) {
+          logoInput.click();
+        }
       });
     }
     
-    if (logoInput) {
+    if (logoInput && !logoInput.hasAttribute('data-initialized')) {
+      logoInput.setAttribute('data-initialized', 'true');
+      
       logoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg')) {
@@ -1263,8 +1320,12 @@
     }
     
     // 移除 Logo
-    if (removeLogoBtn) {
-      removeLogoBtn.addEventListener('click', function() {
+    if (removeLogoBtn && !removeLogoBtn.hasAttribute('data-initialized')) {
+      removeLogoBtn.setAttribute('data-initialized', 'true');
+      
+      removeLogoBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // 防止觸發上傳區域的點擊事件
+        
         logoDataUrl = null;
         logoAspectRatio = 1;
         logoPreview.style.display = 'none';
@@ -1286,7 +1347,9 @@
     
     // Logo 控制項事件
     [logoSizeSlider, logoXSlider, logoYSlider, logoOpacitySlider].forEach(slider => {
-      if (slider) {
+      if (slider && !slider.hasAttribute('data-initialized')) {
+        slider.setAttribute('data-initialized', 'true');
+        
         slider.addEventListener('input', function() {
           document.getElementById(this.id.replace('-slider', '')).textContent = this.value + '%';
           updateRangeProgress(this);
@@ -1379,9 +1442,33 @@
     if (isConverted) {
       setupLabelModeEventListeners();
     }
+    
+    // 設定卡片收摺功能
+    setupCollapsibleCards();
   }
   
-  // 設置標籤模式的事件監聽器
+  // 設定卡片收摺功能
+  function setupCollapsibleCards() {
+    document.querySelectorAll('.bv-card-title').forEach(title => {
+      title.addEventListener('click', function() {
+        const card = this.closest('.bv-settings-card');
+        const sectionId = card.getAttribute('data-section');
+        
+        if (card.classList.contains('collapsed')) {
+          card.classList.remove('collapsed');
+          collapsedSections[sectionId] = false;
+        } else {
+          card.classList.add('collapsed');
+          collapsedSections[sectionId] = true;
+        }
+        
+        // 儲存收摺狀態
+        chrome.storage.local.set({ bvCollapsedSections: collapsedSections });
+      });
+    });
+  }
+  
+  // 設置標籤模式的事件監聽器（修復版）
   function setupLabelModeEventListeners() {
     // 精簡模式
     const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
@@ -1442,7 +1529,31 @@
       }
     });
     
-    // 原本的顯示控制選項
+    // 文字大小設定（修復）
+    const fontSizeSelect = document.getElementById('fontSize');
+    if (fontSizeSelect) {
+      fontSizeSelect.addEventListener('change', function() {
+        // 同步更新原始控制項
+        const originalFontSize = document.querySelector('.ignore-print #fontSize');
+        if (originalFontSize) {
+          originalFontSize.value = this.value;
+          // 觸發原始頁面的更新
+          const event = new Event('change', { bubbles: true });
+          originalFontSize.dispatchEvent(event);
+        }
+        
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // 原本的顯示控制選項（修復）
     const originalControls = [
       'showProductImage',
       'showRemark',
@@ -1452,20 +1563,19 @@
       'hideInfo',
       'hidePrice',
       'showShippingTime',
-      'showLogTraceId',
-      'fontSize'
+      'showLogTraceId'
     ];
     
     originalControls.forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
-          // 觸發原本的更新事件
-          const event = new Event('change', { bubbles: true });
+          // 同步更新原始控制項
           const originalElement = document.querySelector(`.ignore-print #${id}`);
           if (originalElement) {
             originalElement.checked = element.checked;
-            originalElement.value = element.value;
+            // 觸發原始頁面的更新
+            const event = new Event('change', { bubbles: true });
             originalElement.dispatchEvent(event);
           }
           
@@ -1694,7 +1804,7 @@
     };
   }
   
-  // 套用預設設定
+  // 套用預設設定（修復版）
   function applyPresetSettings(settings) {
     if (settings.highlightQuantity !== undefined) {
       const qtyCheckbox = document.getElementById('bv-highlight-qty');
@@ -1742,6 +1852,13 @@
     
     if (settings.fontSize && document.getElementById('fontSize')) {
       document.getElementById('fontSize').value = settings.fontSize;
+      // 同步更新原始控制項
+      const originalFontSize = document.querySelector('.ignore-print #fontSize');
+      if (originalFontSize) {
+        originalFontSize.value = settings.fontSize;
+        const event = new Event('change', { bubbles: true });
+        originalFontSize.dispatchEvent(event);
+      }
     }
     
     const checkboxSettings = {
@@ -1760,8 +1877,13 @@
       const checkbox = document.getElementById(key);
       if (checkbox && checkboxSettings[key] !== undefined) {
         checkbox.checked = checkboxSettings[key];
-        const event = new Event('change', { bubbles: true });
-        checkbox.dispatchEvent(event);
+        // 同步更新原始控制項
+        const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
+        if (originalCheckbox) {
+          originalCheckbox.checked = checkboxSettings[key];
+          const event = new Event('change', { bubbles: true });
+          originalCheckbox.dispatchEvent(event);
+        }
       }
     });
     
@@ -1813,6 +1935,12 @@
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         if (isConverted) {
+          // 同步更新我們的控制項
+          const ourCheckbox = document.querySelector(`#bv-label-control-panel #${checkbox.id}`);
+          if (ourCheckbox) {
+            ourCheckbox.checked = checkbox.checked;
+          }
+          
           updateLabelStyles();
           setTimeout(() => {
             handlePagination();
@@ -1824,10 +1952,16 @@
       });
     });
     
-    const fontSizeSelect = document.getElementById('fontSize');
+    const fontSizeSelect = document.querySelector('.ignore-print #fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
         if (isConverted) {
+          // 同步更新我們的控制項
+          const ourFontSize = document.querySelector('#bv-label-control-panel #fontSize');
+          if (ourFontSize) {
+            ourFontSize.value = fontSizeSelect.value;
+          }
+          
           updateLabelStyles();
           setTimeout(() => {
             handlePagination();
@@ -1883,7 +2017,7 @@
               </div>
               
               <!-- 設定區 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="a4-settings">
                 <div class="bv-setting-item">
                   <div class="bv-setting-info">
                     <span class="bv-counter-icon"></span>
@@ -1944,331 +2078,341 @@
               </div>
               
               <!-- 間距設定 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="spacing">
                 <h4 class="bv-card-title">
                   <span class="material-icons">straighten</span>
                   間距調整
                 </h4>
                 
-                <div class="bv-slider-group">
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>標籤內距</span>
-                      <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                <div class="bv-card-content">
+                  <div class="bv-slider-group">
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>標籤內距</span>
+                        <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                      </div>
+                      <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>標題間距</span>
-                      <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>標題間距</span>
+                        <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                      </div>
+                      <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>內容間距</span>
-                      <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>內容間距</span>
+                        <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
+                      </div>
+                      <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
-                  </div>
-                  
-                  <div class="bv-slider-item">
-                    <div class="bv-slider-header">
-                      <span>費用間距</span>
-                      <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>費用間距</span>
+                        <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
+                      </div>
+                      <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                     </div>
-                    <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
                   </div>
                 </div>
               </div>
               
               <!-- 顯示設定 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="display">
                 <h4 class="bv-card-title">
                   <span class="material-icons">visibility</span>
                   顯示設定
                 </h4>
                 
-                <div class="bv-settings-list">
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="bv-counter-icon"></span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                <div class="bv-card-content">
+                  <div class="bv-settings-list">
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="bv-counter-icon"></span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">數量標示</span>
+                          <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-highlight-qty">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-highlight-qty">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">compress</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">精簡模式</span>
-                        <span class="bv-setting-desc">僅顯示必要資訊</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">compress</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">精簡模式</span>
+                          <span class="bv-setting-desc">僅顯示必要資訊</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-hide-extra-info">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-hide-extra-info">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">view_headline</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏標題</span>
-                        <span class="bv-setting-desc">隱藏表格標題列</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">view_headline</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">隱藏標題</span>
+                          <span class="bv-setting-desc">隱藏表格標題列</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-hide-table-header">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-hide-table-header">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <!-- 文字大小選項 -->
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">text_fields</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">文字大小</span>
+                    
+                    <!-- 文字大小選項 -->
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">text_fields</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">文字大小</span>
+                        </div>
                       </div>
+                      <select id="fontSize" class="bv-glass-select" style="width: 100px;">
+                        <option value="12px">12 px</option>
+                        <option value="13px">13 px</option>
+                        <option value="14px">14 px</option>
+                        <option value="15px">15 px</option>
+                        <option value="16px">16 px</option>
+                      </select>
                     </div>
-                    <select id="fontSize" class="bv-glass-select" style="width: 100px;">
-                      <option value="12px">12 px</option>
-                      <option value="13px">13 px</option>
-                      <option value="14px">14 px</option>
-                      <option value="15px">15 px</option>
-                      <option value="16px">16 px</option>
-                    </select>
                   </div>
                 </div>
               </div>
               
               <!-- 原本的顯示控制選項 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="details">
                 <h4 class="bv-card-title">
                   <span class="material-icons">settings</span>
                   詳細設定
                 </h4>
                 
-                <div class="bv-settings-list">
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">image</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示商品圖片</span>
+                <div class="bv-card-content">
+                  <div class="bv-settings-list">
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">image</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示商品圖片</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showProductImage">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showProductImage">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">comment</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示顧客備註</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">comment</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示顧客備註</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showRemark" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">admin_panel_settings</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示後台備註</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">admin_panel_settings</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示後台備註</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showManageRemark" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showManageRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">print</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示列印備註</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">print</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示列印備註</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showPrintRemark" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showPrintRemark" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">schedule</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示指定配送時段</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">schedule</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示指定配送時段</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showDeliveryTime" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showDeliveryTime" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">visibility_off</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏個人資訊</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">visibility_off</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">隱藏個人資訊</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="hideInfo">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="hideInfo">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">money_off</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">隱藏價格</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">money_off</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">隱藏價格</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="hidePrice">
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="hidePrice">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">local_shipping</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示預計出貨日</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">local_shipping</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示預計出貨日</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showShippingTime" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showShippingTime" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">qr_code</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">顯示物流編號</span>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">qr_code</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">顯示物流編號</span>
+                        </div>
                       </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="showLogTraceId" checked>
+                        <span class="bv-switch-slider"></span>
+                      </label>
                     </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="showLogTraceId" checked>
-                      <span class="bv-switch-slider"></span>
-                    </label>
                   </div>
                 </div>
               </div>
               
               <!-- 底圖設定 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="logo">
                 <h4 class="bv-card-title">
                   <span class="material-icons">image</span>
                   底圖設定
                 </h4>
                 
-                <div class="bv-logo-upload-area" id="logo-upload-area">
-                  <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" style="display:none;">
-                  <img id="logo-preview" class="bv-logo-preview" style="display:none;">
-                  <div id="upload-prompt">
-                    <span class="material-icons" style="font-size:36px; color: #86868b;">add_photo_alternate</span>
-                    <div class="bv-upload-hint">點擊上傳底圖（支援 PNG/JPG）</div>
-                  </div>
-                </div>
-                
-                <div class="bv-logo-controls" id="logo-controls">
-                  <div class="bv-slider-group">
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>底圖大小</span>
-                        <span class="bv-value-label" id="logo-size">30%</span>
-                      </div>
-                      <input type="range" id="logo-size-slider" min="10" max="100" value="30" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>水平位置</span>
-                        <span class="bv-value-label" id="logo-x">50%</span>
-                      </div>
-                      <input type="range" id="logo-x-slider" min="0" max="100" value="50" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>垂直位置</span>
-                        <span class="bv-value-label" id="logo-y">50%</span>
-                      </div>
-                      <input type="range" id="logo-y-slider" min="0" max="100" value="50" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>淡化程度</span>
-                        <span class="bv-value-label" id="logo-opacity">20%</span>
-                      </div>
-                      <input type="range" id="logo-opacity-slider" min="0" max="100" value="20" class="bv-glass-slider">
+                <div class="bv-card-content">
+                  <div class="bv-logo-upload-area" id="logo-upload-area">
+                    <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" style="display:none;">
+                    <img id="logo-preview" class="bv-logo-preview" style="display:none;">
+                    <div id="upload-prompt">
+                      <span class="material-icons" style="font-size:36px; color: #86868b;">add_photo_alternate</span>
+                      <div class="bv-upload-hint">點擊上傳底圖（支援 PNG/JPG）</div>
                     </div>
                   </div>
                   
-                  <button class="bv-remove-logo-btn" id="remove-logo-btn">
-                    <span class="material-icons">delete</span>
-                    移除底圖
-                  </button>
+                  <div class="bv-logo-controls" id="logo-controls">
+                    <div class="bv-slider-group">
+                      <div class="bv-slider-item">
+                        <div class="bv-slider-header">
+                          <span>底圖大小</span>
+                          <span class="bv-value-label" id="logo-size">30%</span>
+                        </div>
+                        <input type="range" id="logo-size-slider" min="10" max="100" value="30" class="bv-glass-slider">
+                      </div>
+                      
+                      <div class="bv-slider-item">
+                        <div class="bv-slider-header">
+                          <span>水平位置</span>
+                          <span class="bv-value-label" id="logo-x">50%</span>
+                        </div>
+                        <input type="range" id="logo-x-slider" min="0" max="100" value="50" class="bv-glass-slider">
+                      </div>
+                      
+                      <div class="bv-slider-item">
+                        <div class="bv-slider-header">
+                          <span>垂直位置</span>
+                          <span class="bv-value-label" id="logo-y">50%</span>
+                        </div>
+                        <input type="range" id="logo-y-slider" min="0" max="100" value="50" class="bv-glass-slider">
+                      </div>
+                      
+                      <div class="bv-slider-item">
+                        <div class="bv-slider-header">
+                          <span>淡化程度</span>
+                          <span class="bv-value-label" id="logo-opacity">20%</span>
+                        </div>
+                        <input type="range" id="logo-opacity-slider" min="0" max="100" value="20" class="bv-glass-slider">
+                      </div>
+                    </div>
+                    
+                    <button class="bv-remove-logo-btn" id="remove-logo-btn">
+                      <span class="material-icons">delete</span>
+                      移除底圖
+                    </button>
+                  </div>
                 </div>
               </div>
               
               <!-- 預設管理 -->
-              <div class="bv-settings-card">
+              <div class="bv-settings-card" data-section="presets">
                 <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
                   預設管理
                 </h4>
                 
-                <div class="bv-preset-controls">
-                  <select id="bv-preset-select" class="bv-glass-select">
-                    <option value="">選擇預設...</option>
-                  </select>
-                  <div class="bv-preset-buttons">
-                    <button class="bv-glass-button" id="bv-save-preset" title="儲存">
-                      <span class="material-icons">save</span>
-                    </button>
-                    <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
-                      <span class="material-icons">delete</span>
-                    </button>
+                <div class="bv-card-content">
+                  <div class="bv-preset-controls">
+                    <select id="bv-preset-select" class="bv-glass-select">
+                      <option value="">選擇預設...</option>
+                    </select>
+                    <div class="bv-preset-buttons">
+                      <button class="bv-glass-button" id="bv-save-preset" title="儲存">
+                        <span class="material-icons">save</span>
+                      </button>
+                      <button class="bv-glass-button" id="bv-delete-preset" title="刪除">
+                        <span class="material-icons">delete</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-                
-                <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
-                  <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
-                  <div class="bv-preset-buttons">
-                    <button class="bv-glass-button bv-primary" id="bv-confirm-save">
-                      <span class="material-icons">check</span>
-                    </button>
-                    <button class="bv-glass-button" id="bv-cancel-save">
-                      <span class="material-icons">close</span>
-                    </button>
+                  
+                  <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
+                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
+                    <div class="bv-preset-buttons">
+                      <button class="bv-glass-button bv-primary" id="bv-confirm-save">
+                        <span class="material-icons">check</span>
+                      </button>
+                      <button class="bv-glass-button" id="bv-cancel-save">
+                        <span class="material-icons">close</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2805,9 +2949,9 @@
     chrome.storage.local.set({ bvLabelSettings: settings });
   }
   
-  // 載入設定
+  // 載入設定（修復版）
   function loadSettings() {
-    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized'], (result) => {
+    chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized', 'bvCollapsedSections'], (result) => {
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
@@ -2876,10 +3020,15 @@
             const checkbox = document.getElementById(key);
             if (checkbox && checkboxSettings[key] !== undefined) {
               checkbox.checked = checkboxSettings[key];
+              // 同步更新原始控制項
+              const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
+              if (originalCheckbox) {
+                originalCheckbox.checked = checkboxSettings[key];
+              }
             }
           });
           
-          // 載入 Logo 設定
+          // Logo 設定
           if (settings.logoDataUrl) {
             logoDataUrl = settings.logoDataUrl;
             logoAspectRatio = settings.logoAspectRatio || 1;
@@ -2914,6 +3063,10 @@
           panel.classList.add('minimized');
           minimizeBtn.querySelector('.material-icons').textContent = 'add';
         }
+      }
+      
+      if (result.bvCollapsedSections) {
+        collapsedSections = result.bvCollapsedSections;
       }
       
       if (result.lastSelectedPreset && isConverted) {
