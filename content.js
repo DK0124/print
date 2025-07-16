@@ -813,7 +813,7 @@
       line-height: 1;
       vertical-align: baseline;  /* 改為 baseline 對齊 */
       position: relative;
-      bottom: 0.2em;  /* 往上微調，讓底部對齊 */
+      bottom: 0.15em;  /* 往上微調，讓底部對齊 */
       letter-spacing: -0.02em;
       white-space: nowrap;
       margin: 0 0.2em;
