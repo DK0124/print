@@ -1024,52 +1024,59 @@
     }
     
     @media print {
-      body:not(.bv-converted) {
-      }
-      
+      /* 隱藏控制面板 */
       #bv-label-control-panel,
       .bv-floating-button {
         display: none !important;
       }
       
-      /* 關鍵修正：確保 html 和 body 都沒有邊界 */
-      html, body {
+      /* A4 模式列印 - 保持原始樣式 */
+      body:not(.bv-converted) {
+        /* 不需要特別設定，保持原始樣式即可 */
+      }
+      
+      /* 標籤模式列印 */
+      body.bv-converted {
+        /* 關鍵修正：確保 html 和 body 都沒有邊界 */
         width: auto !important;
         max-width: none !important;
         min-width: auto !important;
         margin: 0 !important;
         padding: 0 !important;
-      }
-      
-      body.bv-converted {
         background: white !important;
       }
       
+      /* 同時設定 html 以確保完全無邊界 */
+      html {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      /* 標籤頁面設定 */
       @page {
         size: 100mm 150mm;
         margin: 0;
-        /* 移除 padding: 0; */
       }
       
+      /* 標籤樣式 */
       body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
-        padding: 0 !important;  /* 改為 0，在 preparePrintStyles 中動態設定 */
+        padding: 2.5mm !important;  /* 預設內距，會被 preparePrintStyles 覆蓋 */
         box-sizing: border-box !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
         box-shadow: none !important;
         border: none !important;
-        /* 移除 position, left, top 設定 */
       }
       
       body.bv-converted .bv-label-page:last-child {
         page-break-after: auto !important;
       }
       
-      /* 修正選擇器 */
-      body > *:not(.bv-page-container):not(.bv-label-page) {
+      /* 隱藏非必要元素 */
+      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
       }
       
@@ -1544,20 +1551,37 @@
   
   // 準備列印樣式
   function preparePrintStyles() {
-    const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
-    
     const oldPrintStyle = document.getElementById('bv-print-styles');
     if (oldPrintStyle) oldPrintStyle.remove();
     
     const printStyle = document.createElement('style');
     printStyle.id = 'bv-print-styles';
-    printStyle.textContent = `
-      @media print {
-        .bv-label-page {
-          padding: ${labelPadding}mm !important;
+    
+    if (isConverted) {
+      // 標籤模式
+      const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
+      printStyle.textContent = `
+        @media print {
+          body.bv-converted .bv-label-page {
+            padding: ${labelPadding}mm !important;
+          }
         }
-      }
-    `;
+      `;
+    } else {
+      // A4 模式 - 確保原始內容正常顯示
+      printStyle.textContent = `
+        @media print {
+          body {
+            visibility: visible !important;
+          }
+          .order-content {
+            display: block !important;
+            visibility: visible !important;
+          }
+        }
+      `;
+    }
+    
     document.head.appendChild(printStyle);
   }
   
