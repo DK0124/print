@@ -4,7 +4,6 @@
   
   let isConverted = false;
   let highlightQuantity = false;
-  let boldMode = false;
   let hideExtraInfo = false;
   let hideTableHeader = false;
   let originalBodyStyle = null;
@@ -21,6 +20,10 @@
   fontLink.rel = 'stylesheet';
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap';
   document.head.appendChild(fontLink);
+  
+  // Logo 相關變數
+  let logoDataUrl = null;
+  let logoAspectRatio = 1;
   
   // 創建控制面板
   function createControlPanel() {
@@ -761,12 +764,12 @@
       align-items: center;
       justify-content: center;
       min-width: 1.5em;
-      height: 1.3em;  /* 增加高度，讓上下有間距 */
-      padding: 0.1em 0.4em;  /* 增加上下內距 */
-      background: transparent;  /* 預設透明 */
+      height: 1.3em;
+      padding: 0.1em 0.4em;
+      background: transparent;
       color: inherit !important;
-      border: 1.5px solid #333333;  /* 外框 */
-      border-radius: 0.65em;  /* 圓角矩形 */
+      border: 1.5px solid #333333;
+      border-radius: 0.65em;
       font-weight: inherit;
       font-size: 0.7em;
       line-height: 1;
@@ -780,36 +783,17 @@
     
     /* 個位數使用圓形 */
     .bv-qty-badge.single-digit {
-      width: 1.3em;  /* 固定寬度變成圓形 */
+      width: 1.3em;
       min-width: 1.3em;
-      padding: 0.1em 0;  /* 調整內距 */
-      border-radius: 50%;  /* 圓形 */
+      padding: 0.1em 0;
+      border-radius: 50%;
     }
     
     /* 數量為 1 時完全透明（無外框無填充） */
     .bv-qty-badge.qty-one {
       background: transparent !important;
       color: inherit !important;
-      border: none !important;  /* 完全沒有外框 */
-    }
-    
-    /* 加粗模式樣式 */
-    .bold-mode .bv-qty-badge {
-      font-weight: inherit !important;
-      background: transparent !important;  /* 保持透明 */
-      border-width: 2px !important;  /* 加粗外框 */
-      border-color: #000000 !important;  /* 純黑色 */
-    }
-    
-    /* 加粗模式下的個位數 */
-    .bold-mode .bv-qty-badge.single-digit {
-      border-width: 2px !important;
-    }
-    
-    /* 加粗模式數量1 - 完全透明 */
-    .bold-mode .bv-qty-badge.qty-one {
-      background: transparent !important;
-      border: none !important;  /* 沒有外框 */
+      border: none !important;
     }
     
     /* 列印樣式確保顏色正確 */
@@ -822,26 +806,14 @@
         print-color-adjust: exact !important;
       }
       
-      /* 個位數圓形 */
       .bv-qty-badge.single-digit {
         width: 1.3em !important;
         border-radius: 50% !important;
       }
       
-      /* 數量1完全透明 */
       .bv-qty-badge.qty-one {
         background: transparent !important;
         color: black !important;
-        border: none !important;  /* 沒有外框 */
-      }
-      
-      .bold-mode .bv-qty-badge {
-        background: transparent !important;
-        border: 2px solid #000000 !important;
-      }
-      
-      .bold-mode .bv-qty-badge.qty-one {
-        background: transparent !important;
         border: none !important;
       }
     }
@@ -878,6 +850,113 @@
       padding: 0 !important;
     }
     
+    /* Logo 上傳區域樣式 */
+    .bv-logo-upload-area {
+      border: 2px dashed rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(246, 246, 248, 0.3);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bv-logo-upload-area:hover {
+      border-color: #518aff;
+      background: rgba(81, 138, 255, 0.05);
+    }
+    
+    .bv-logo-upload-area.has-logo {
+      border-style: solid;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .bv-logo-upload-area .material-icons {
+      vertical-align: middle;
+      line-height: 1;
+    }
+    
+    .bv-logo-preview {
+      max-width: 100%;
+      max-height: 100px;
+      margin: 0 auto;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+    
+    .bv-upload-hint {
+      color: #86868b;
+      font-size: 13px;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    
+    .bv-logo-controls {
+      display: none;
+    }
+    
+    .bv-logo-controls.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .bv-remove-logo-btn {
+      background: linear-gradient(135deg, #f04747 0%, #e74c3c 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(240, 71, 71, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .bv-remove-logo-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(240, 71, 71, 0.35);
+    }
+    
+    .bv-remove-logo-btn .material-icons {
+      font-size: 16px;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    
+    /* 底圖在標籤上的樣式 */
+    .label-background-logo {
+      position: absolute !important;
+      z-index: 1 !important;
+      pointer-events: none;
+      object-fit: contain !important;
+    }
+    
+    /* 確保內容在底圖上方 */
+    .bv-label-page > *:not(.label-background-logo) {
+      position: relative !important;
+      z-index: 2 !important;
+    }
+    
     @media screen {
       body.bv-converted {
         background: #f0f0f0;
@@ -907,6 +986,11 @@
       }
       
       .bv-converted .order-content.bv-original {
+        display: none !important;
+      }
+      
+      /* 隱藏原本的控制選項 */
+      .bv-converted .ignore-print {
         display: none !important;
       }
     }
@@ -952,13 +1036,6 @@
       
       body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
-      }
-      
-      /* 加粗模式的列印樣式 */
-      .bv-converted.bold-mode .order-content * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        font-weight: 700 !important;
       }
     }
     `;
@@ -1017,6 +1094,7 @@
     if (isConverted) {
       loadSettings();
       initPresetSystem();
+      initLogoUpload();
     }
     
     // 重新初始化拖曳功能
@@ -1126,6 +1204,108 @@
     document.addEventListener('touchend', dragEnd);
   }
   
+  // 初始化 Logo 上傳功能
+  function initLogoUpload() {
+    const logoUploadArea = document.getElementById('logo-upload-area');
+    const logoInput = document.getElementById('logo-input');
+    const logoPreview = document.getElementById('logo-preview');
+    const uploadPrompt = document.getElementById('upload-prompt');
+    const logoControls = document.getElementById('logo-controls');
+    const removeLogoBtn = document.getElementById('remove-logo-btn');
+    
+    // Logo 控制項
+    const logoSizeSlider = document.getElementById('logo-size-slider');
+    const logoXSlider = document.getElementById('logo-x-slider');
+    const logoYSlider = document.getElementById('logo-y-slider');
+    const logoOpacitySlider = document.getElementById('logo-opacity-slider');
+    
+    // Logo 上傳事件
+    if (logoUploadArea) {
+      logoUploadArea.addEventListener('click', function() {
+        logoInput.click();
+      });
+    }
+    
+    if (logoInput) {
+      logoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg')) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            logoDataUrl = event.target.result;
+            
+            const img = new Image();
+            img.onload = function() {
+              logoAspectRatio = img.width / img.height;
+              
+              logoPreview.src = logoDataUrl;
+              logoPreview.style.display = 'block';
+              uploadPrompt.style.display = 'none';
+              logoUploadArea.classList.add('has-logo');
+              logoControls.classList.add('active');
+              
+              saveSettings();
+              updateLabelStyles();
+              setTimeout(() => {
+                handlePagination();
+                if (highlightQuantity) {
+                  applyQuantityHighlight();
+                }
+              }, 100);
+            };
+            img.src = logoDataUrl;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          showNotification('請上傳 PNG 或 JPG 格式的圖片', 'warning');
+        }
+      });
+    }
+    
+    // 移除 Logo
+    if (removeLogoBtn) {
+      removeLogoBtn.addEventListener('click', function() {
+        logoDataUrl = null;
+        logoAspectRatio = 1;
+        logoPreview.style.display = 'none';
+        uploadPrompt.style.display = 'block';
+        logoUploadArea.classList.remove('has-logo');
+        logoControls.classList.remove('active');
+        logoInput.value = '';
+        
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // Logo 控制項事件
+    [logoSizeSlider, logoXSlider, logoYSlider, logoOpacitySlider].forEach(slider => {
+      if (slider) {
+        slider.addEventListener('input', function() {
+          document.getElementById(this.id.replace('-slider', '')).textContent = this.value + '%';
+          updateRangeProgress(this);
+          saveSettings();
+          updateLabelStyles();
+        });
+      }
+    });
+    
+    // 載入已儲存的 Logo
+    if (logoDataUrl) {
+      logoPreview.src = logoDataUrl;
+      logoPreview.style.display = 'block';
+      uploadPrompt.style.display = 'none';
+      logoUploadArea.classList.add('has-logo');
+      logoControls.classList.add('active');
+    }
+  }
+  
   // 設置事件監聽器
   function setupEventListeners() {
     const convertBtn = document.getElementById('bv-convert-btn');
@@ -1203,29 +1383,6 @@
   
   // 設置標籤模式的事件監聽器
   function setupLabelModeEventListeners() {
-    // 加粗模式
-    const boldModeCheckbox = document.getElementById('bv-bold-mode');
-    if (boldModeCheckbox) {
-      boldModeCheckbox.addEventListener('change', function(e) {
-        boldMode = e.target.checked;
-        
-        if (boldMode) {
-          document.body.classList.add('bold-mode');
-        } else {
-          document.body.classList.remove('bold-mode');
-        }
-        
-        saveSettings();
-        updateLabelStyles();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
     // 精簡模式
     const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
     if (hideExtraInfoCheckbox) {
@@ -1285,11 +1442,53 @@
       }
     });
     
+    // 原本的顯示控制選項
+    const originalControls = [
+      'showProductImage',
+      'showRemark',
+      'showManageRemark',
+      'showPrintRemark',
+      'showDeliveryTime',
+      'hideInfo',
+      'hidePrice',
+      'showShippingTime',
+      'showLogTraceId',
+      'fontSize'
+    ];
+    
+    originalControls.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('change', function() {
+          // 觸發原本的更新事件
+          const event = new Event('change', { bubbles: true });
+          const originalElement = document.querySelector(`.ignore-print #${id}`);
+          if (originalElement) {
+            originalElement.checked = element.checked;
+            originalElement.value = element.value;
+            originalElement.dispatchEvent(event);
+          }
+          
+          saveSettings();
+          updateLabelStyles();
+          setTimeout(() => {
+            handlePagination();
+            if (highlightQuantity) {
+              applyQuantityHighlight();
+            }
+          }, 100);
+        });
+      }
+    });
+    
     // 初始化 range input 進度條
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
     
     // 初始化預設系統
     initPresetSystem();
+    
+    // 初始化 Logo 上傳
+    initLogoUpload();
   }
   
   // 準備列印樣式
@@ -1470,7 +1669,6 @@
   function getCurrentSettings() {
     return {
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
-      boldMode: document.getElementById('bv-bold-mode')?.checked,
       hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
       hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
@@ -1486,7 +1684,13 @@
       hideInfo: document.getElementById('hideInfo')?.checked,
       hidePrice: document.getElementById('hidePrice')?.checked,
       showShippingTime: document.getElementById('showShippingTime')?.checked,
-      showLogTraceId: document.getElementById('showLogTraceId')?.checked
+      showLogTraceId: document.getElementById('showLogTraceId')?.checked,
+      logoDataUrl: logoDataUrl,
+      logoAspectRatio: logoAspectRatio,
+      logoSize: document.getElementById('logo-size-slider')?.value || '30',
+      logoX: document.getElementById('logo-x-slider')?.value || '50',
+      logoY: document.getElementById('logo-y-slider')?.value || '50',
+      logoOpacity: document.getElementById('logo-opacity-slider')?.value || '20'
     };
   }
   
@@ -1496,12 +1700,6 @@
       const qtyCheckbox = document.getElementById('bv-highlight-qty');
       if (qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
       highlightQuantity = settings.highlightQuantity;
-    }
-    
-    if (settings.boldMode !== undefined) {
-      const boldCheckbox = document.getElementById('bv-bold-mode');
-      if (boldCheckbox) boldCheckbox.checked = settings.boldMode;
-      boldMode = settings.boldMode;
     }
     
     if (settings.hideExtraInfo !== undefined) {
@@ -1567,6 +1765,43 @@
       }
     });
     
+    // Logo 設定
+    if (settings.logoDataUrl) {
+      logoDataUrl = settings.logoDataUrl;
+      logoAspectRatio = settings.logoAspectRatio || 1;
+      
+      const logoPreview = document.getElementById('logo-preview');
+      const uploadPrompt = document.getElementById('upload-prompt');
+      const logoUploadArea = document.getElementById('logo-upload-area');
+      const logoControls = document.getElementById('logo-controls');
+      
+      if (logoPreview) {
+        logoPreview.src = logoDataUrl;
+        logoPreview.style.display = 'block';
+      }
+      if (uploadPrompt) uploadPrompt.style.display = 'none';
+      if (logoUploadArea) logoUploadArea.classList.add('has-logo');
+      if (logoControls) logoControls.classList.add('active');
+    }
+    
+    const logoSettings = [
+      { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
+      { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
+      { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
+      { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
+    ];
+    
+    logoSettings.forEach(setting => {
+      if (setting.value !== undefined) {
+        const input = document.getElementById(setting.id);
+        if (input) {
+          input.value = setting.value;
+          document.getElementById(setting.valueId).textContent = setting.value + '%';
+          updateRangeProgress(input);
+        }
+      }
+    });
+    
     if (isConverted) {
       updateLabelStyles();
     }
@@ -1600,15 +1835,6 @@
               applyQuantityHighlight();
             }
           }, 100);
-        }
-      });
-    }
-    
-    const opacityInput = document.getElementById('baseImageOpacity');
-    if (opacityInput) {
-      opacityInput.addEventListener('input', () => {
-        if (isConverted) {
-          updateLabelStyles();
         }
       });
     }
@@ -1663,7 +1889,7 @@
                     <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
+                      <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
                     </div>
                   </div>
                   <label class="bv-glass-switch">
@@ -1685,7 +1911,7 @@
       `;
     } else {
       // 10×15cm 模式
-          return `
+      return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
             <div class="bv-header-content">
@@ -1772,25 +1998,11 @@
                       <span class="bv-counter-icon"></span>
                       <div class="bv-setting-text">
                         <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
+                        <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
                       </div>
                     </div>
                     <label class="bv-glass-switch">
                       <input type="checkbox" id="bv-highlight-qty">
-                      <span class="bv-switch-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">format_bold</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">整體加粗</span>
-                        <span class="bv-setting-desc">適用低解析度標籤機</span>
-                      </div>
-                    </div>
-                    <label class="bv-glass-switch">
-                      <input type="checkbox" id="bv-bold-mode">
                       <span class="bv-switch-slider"></span>
                     </label>
                   </div>
@@ -1822,6 +2034,208 @@
                       <span class="bv-switch-slider"></span>
                     </label>
                   </div>
+                  
+                  <!-- 文字大小選項 -->
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">text_fields</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">文字大小</span>
+                      </div>
+                    </div>
+                    <select id="fontSize" class="bv-glass-select" style="width: 100px;">
+                      <option value="12px">12 px</option>
+                      <option value="13px">13 px</option>
+                      <option value="14px">14 px</option>
+                      <option value="15px">15 px</option>
+                      <option value="16px">16 px</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 原本的顯示控制選項 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">settings</span>
+                  詳細設定
+                </h4>
+                
+                <div class="bv-settings-list">
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">image</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示商品圖片</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showProductImage">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">comment</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示顧客備註</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showRemark" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">admin_panel_settings</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示後台備註</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showManageRemark" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">print</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示列印備註</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showPrintRemark" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">schedule</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示指定配送時段</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showDeliveryTime" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">visibility_off</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">隱藏個人資訊</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="hideInfo">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">money_off</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">隱藏價格</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="hidePrice">
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">local_shipping</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示預計出貨日</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showShippingTime" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="bv-setting-item">
+                    <div class="bv-setting-info">
+                      <span class="material-icons">qr_code</span>
+                      <div class="bv-setting-text">
+                        <span class="bv-setting-label">顯示物流編號</span>
+                      </div>
+                    </div>
+                    <label class="bv-glass-switch">
+                      <input type="checkbox" id="showLogTraceId" checked>
+                      <span class="bv-switch-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 底圖設定 -->
+              <div class="bv-settings-card">
+                <h4 class="bv-card-title">
+                  <span class="material-icons">image</span>
+                  底圖設定
+                </h4>
+                
+                <div class="bv-logo-upload-area" id="logo-upload-area">
+                  <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" style="display:none;">
+                  <img id="logo-preview" class="bv-logo-preview" style="display:none;">
+                  <div id="upload-prompt">
+                    <span class="material-icons" style="font-size:36px; color: #86868b;">add_photo_alternate</span>
+                    <div class="bv-upload-hint">點擊上傳底圖（支援 PNG/JPG）</div>
+                  </div>
+                </div>
+                
+                <div class="bv-logo-controls" id="logo-controls">
+                  <div class="bv-slider-group">
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>底圖大小</span>
+                        <span class="bv-value-label" id="logo-size">30%</span>
+                      </div>
+                      <input type="range" id="logo-size-slider" min="10" max="100" value="30" class="bv-glass-slider">
+                    </div>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>水平位置</span>
+                        <span class="bv-value-label" id="logo-x">50%</span>
+                      </div>
+                      <input type="range" id="logo-x-slider" min="0" max="100" value="50" class="bv-glass-slider">
+                    </div>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>垂直位置</span>
+                        <span class="bv-value-label" id="logo-y">50%</span>
+                      </div>
+                      <input type="range" id="logo-y-slider" min="0" max="100" value="50" class="bv-glass-slider">
+                    </div>
+                    
+                    <div class="bv-slider-item">
+                      <div class="bv-slider-header">
+                        <span>淡化程度</span>
+                        <span class="bv-value-label" id="logo-opacity">20%</span>
+                      </div>
+                      <input type="range" id="logo-opacity-slider" min="0" max="100" value="20" class="bv-glass-slider">
+                    </div>
+                  </div>
+                  
+                  <button class="bv-remove-logo-btn" id="remove-logo-btn">
+                    <span class="material-icons">delete</span>
+                    移除底圖
+                  </button>
                 </div>
               </div>
               
@@ -1899,9 +2313,6 @@
     document.body.style.padding = '0';
     
     document.body.classList.add('bv-converted');
-    if (boldMode) {
-      document.body.classList.add('bold-mode');
-    }
     
     triggerOriginalPageUpdate();
     
@@ -1994,6 +2405,23 @@
         currentHeight += elementHeight;
       });
     });
+    
+    // 添加底圖到所有標籤
+    updateLogos();
+  }
+  
+  // 更新所有標籤的底圖
+  function updateLogos() {
+    document.querySelectorAll('.label-background-logo').forEach(logo => logo.remove());
+    
+    if (logoDataUrl) {
+      document.querySelectorAll('.bv-label-page').forEach(page => {
+        const logo = document.createElement('img');
+        logo.className = 'label-background-logo';
+        logo.src = logoDataUrl;
+        page.insertBefore(logo, page.firstChild);
+      });
+    }
   }
   
   // 處理隱藏額外資訊（精簡模式）
@@ -2046,6 +2474,15 @@
     const rowPadding = document.getElementById('bv-row-padding')?.value || '0.8';
     const feePadding = document.getElementById('bv-fee-padding')?.value || '0.8';
     
+    // Logo 設定
+    const logoSize = document.getElementById('logo-size-slider')?.value || '30';
+    const logoX = document.getElementById('logo-x-slider')?.value || '50';
+    const logoY = document.getElementById('logo-y-slider')?.value || '50';
+    const logoOpacity = document.getElementById('logo-opacity-slider')?.value || '20';
+    
+    const logoHeightMM = logoSize ? parseFloat(150) * parseFloat(logoSize) / 100 : 0;
+    const logoWidthMM = logoHeightMM * logoAspectRatio;
+    
     const oldStyle = document.getElementById('bv-label-styles');
     if (oldStyle) oldStyle.remove();
     
@@ -2063,13 +2500,11 @@
       .bv-converted .order-content {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
-        ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
       
       .bv-label-page * {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
         font-size: ${fontSize} !important;
-        ${boldMode ? 'font-weight: 700 !important;' : ''}
       }
       
       ${hideTableHeader ? `
@@ -2079,49 +2514,10 @@
         }
       ` : ''}
       
-      ${boldMode ? `
-        .bv-converted .order-content *,
-        .bv-label-page * {
-          font-weight: 700 !important;
-        }
-        
-        .bv-converted .list-title,
-        .bv-label-page .list-title {
-          border-top: 1mm solid #000 !important;
-          border-bottom: 1mm solid #000 !important;
-        }
-        
-        .bv-converted .list-item,
-        .bv-label-page .list-item {
-          border-bottom: 0.5mm solid #999 !important;
-        }
-        
-        .bv-converted .order-fee,
-        .bv-label-page .order-fee {
-          border-top: 0.8mm solid #000 !important;
-          border-bottom: 0.8mm solid #000 !important;
-        }
-        
-        .bv-converted .orderRemark,
-        .bv-converted .orderManageRemark,
-        .bv-converted .orderPrintRemark,
-        .bv-label-page .orderRemark,
-        .bv-label-page .orderManageRemark,
-        .bv-label-page .orderPrintRemark {
-          border: 0.5mm solid #999 !important;
-        }
-        
-        .bv-converted .bv-qty-badge,
-        .bv-label-page .bv-qty-badge {
-          font-weight: 900 !important;
-          background: #000000 !important;
-        }
-      ` : ''}
-      
       .bv-converted .title,
       .bv-label-page .title {
         font-size: 5mm !important;
-        font-weight: ${boldMode ? '900' : 'bold'} !important;
+        font-weight: bold !important;
         margin: 0 0 3mm 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
@@ -2170,15 +2566,15 @@
       
       .bv-converted .list-title,
       .bv-label-page .list-title {
-        border-top: ${boldMode ? '1mm' : '0.5mm'} solid #000 !important;
-        border-bottom: ${boldMode ? '1mm' : '0.5mm'} solid #000 !important;
+        border-top: 0.5mm solid #000 !important;
+        border-bottom: 0.5mm solid #000 !important;
       }
       
       .bv-converted .list-title th,
       .bv-label-page .list-title th {
         padding: ${headerPadding}mm 1mm !important;
         font-size: calc(${fontSize} - 1px) !important;
-        font-weight: ${boldMode ? '900' : 'bold'} !important;
+        font-weight: bold !important;
         text-align: left !important;
         line-height: 1.2 !important;
       }
@@ -2192,7 +2588,7 @@
       
       .bv-converted .list-item,
       .bv-label-page .list-item {
-        border-bottom: ${boldMode ? '0.5mm solid #999' : '0.2mm solid #ddd'} !important;
+        border-bottom: 0.2mm solid #ddd !important;
       }
       
       .bv-converted .list-item td,
@@ -2223,8 +2619,8 @@
         width: 100% !important;
         border-collapse: collapse !important;
         margin: 0 0 3mm 0 !important;
-        border-top: ${boldMode ? '0.8mm' : '0.3mm'} solid #000 !important;
-        border-bottom: ${boldMode ? '0.8mm' : '0.3mm'} solid #000 !important;
+        border-top: 0.3mm solid #000 !important;
+        border-bottom: 0.3mm solid #000 !important;
         table-layout: fixed !important;
       }
       
@@ -2234,6 +2630,7 @@
         font-size: calc(${fontSize} - 2px) !important;
         line-height: 1.2 !important;
         vertical-align: middle !important;
+        font-weight: normal !important;
       }
       
       .bv-converted .order-fee td:first-child,
@@ -2253,7 +2650,8 @@
       .bv-converted .order-fee .total,
       .bv-label-page .order-fee .total {
         text-align: right !important;
-        }
+        font-weight: normal !important;
+      }
       
       .bv-converted .orderRemark,
       .bv-converted .orderManageRemark,
@@ -2264,8 +2662,18 @@
         font-size: calc(${fontSize} - 3px) !important;
         padding: 2mm !important;
         margin: 0 0 3mm 0 !important;
-        border: ${boldMode ? '0.5mm solid #999' : '0.2mm solid #ccc'} !important;
+        border: 0.2mm solid #ccc !important;
         background-color: #f9f9f9 !important;
+      }
+      
+      /* 底圖樣式 */
+      .label-background-logo {
+        width: ${logoWidthMM}mm !important;
+        height: ${logoHeightMM}mm !important;
+        left: ${logoX}% !important;
+        top: ${logoY}% !important;
+        transform: translate(-50%, -50%) !important;
+        opacity: ${(100 - logoOpacity) / 100} !important;
       }
     `;
     
@@ -2370,13 +2778,28 @@
   function saveSettings() {
     const settings = {
       highlightQuantity: highlightQuantity,
-      boldMode: boldMode,
       hideExtraInfo: hideExtraInfo,
       hideTableHeader: hideTableHeader,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
-      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8'
+      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
+      fontSize: document.getElementById('fontSize')?.value || '14px',
+      showProductImage: document.getElementById('showProductImage')?.checked,
+      showRemark: document.getElementById('showRemark')?.checked,
+      showManageRemark: document.getElementById('showManageRemark')?.checked,
+      showPrintRemark: document.getElementById('showPrintRemark')?.checked,
+      showDeliveryTime: document.getElementById('showDeliveryTime')?.checked,
+      hideInfo: document.getElementById('hideInfo')?.checked,
+      hidePrice: document.getElementById('hidePrice')?.checked,
+      showShippingTime: document.getElementById('showShippingTime')?.checked,
+      showLogTraceId: document.getElementById('showLogTraceId')?.checked,
+      logoDataUrl: logoDataUrl,
+      logoAspectRatio: logoAspectRatio,
+      logoSize: document.getElementById('logo-size-slider')?.value || '30',
+      logoX: document.getElementById('logo-x-slider')?.value || '50',
+      logoY: document.getElementById('logo-y-slider')?.value || '50',
+      logoOpacity: document.getElementById('logo-opacity-slider')?.value || '20'
     };
     
     chrome.storage.local.set({ bvLabelSettings: settings });
@@ -2398,10 +2821,6 @@
           highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
           const qtyCheckbox = document.getElementById('bv-highlight-qty');
           if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
-          
-          boldMode = settings.boldMode !== undefined ? settings.boldMode : false;
-          const boldCheckbox = document.getElementById('bv-bold-mode');
-          if (boldCheckbox) boldCheckbox.checked = boldMode;
           
           hideExtraInfo = settings.hideExtraInfo !== undefined ? settings.hideExtraInfo : false;
           const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
@@ -2430,6 +2849,55 @@
               if (input) {
                 input.value = setting.value;
                 document.getElementById(setting.valueId).textContent = setting.value + 'mm';
+                updateRangeProgress(input);
+              }
+            }
+          });
+          
+          // 載入其他設定
+          if (settings.fontSize) {
+            const fontSizeSelect = document.getElementById('fontSize');
+            if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
+          }
+          
+          const checkboxSettings = {
+            showProductImage: settings.showProductImage,
+            showRemark: settings.showRemark,
+            showManageRemark: settings.showManageRemark,
+            showPrintRemark: settings.showPrintRemark,
+            showDeliveryTime: settings.showDeliveryTime,
+            hideInfo: settings.hideInfo,
+            hidePrice: settings.hidePrice,
+            showShippingTime: settings.showShippingTime,
+            showLogTraceId: settings.showLogTraceId
+          };
+          
+          Object.keys(checkboxSettings).forEach(key => {
+            const checkbox = document.getElementById(key);
+            if (checkbox && checkboxSettings[key] !== undefined) {
+              checkbox.checked = checkboxSettings[key];
+            }
+          });
+          
+          // 載入 Logo 設定
+          if (settings.logoDataUrl) {
+            logoDataUrl = settings.logoDataUrl;
+            logoAspectRatio = settings.logoAspectRatio || 1;
+          }
+          
+          const logoSettings = [
+            { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
+            { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
+            { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
+            { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
+          ];
+          
+          logoSettings.forEach(setting => {
+            if (setting.value) {
+              const input = document.getElementById(setting.id);
+              if (input) {
+                input.value = setting.value;
+                document.getElementById(setting.valueId).textContent = setting.value + '%';
                 updateRangeProgress(input);
               }
             }
