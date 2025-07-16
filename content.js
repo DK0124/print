@@ -1,4 +1,4 @@
-ru8// BV SHOP 標籤機-出貨明細
+// BV SHOP 標籤機-出貨明細
 (function() {
   'use strict';
   
