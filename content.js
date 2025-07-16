@@ -761,18 +761,18 @@
       align-items: center;
       justify-content: center;
       min-width: 1.5em;
-      height: 1em;
+      height: 1.3em;
       padding: 0 0.3em;
       background: transparent;  /* 改為透明背景 */
       color: inherit !important;  /* 保持原本文字顏色 */
       border: 1.5px solid #333333;  /* 黑色外框 */
       border-radius: 0.5em;
       font-weight: inherit;
-      font-size: 0.7em;
+      font-size: 1em;
       line-height: 1;
       vertical-align: middle;
       position: relative;
-      top: -0.05em;
+      top: -0.1em;
       white-space: nowrap;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
