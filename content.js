@@ -497,7 +497,7 @@
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider {
-      background: #10b981;
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 改為藍色漸層 */
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider:before {
@@ -2122,18 +2122,18 @@
                 </div>
               </div>
               
-              <!-- 預設管理 -->
+              <!-- 設定管理 -->
               <div class="bv-settings-card" data-section="presets">
                 <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
-                  預設管理
+                  設定管理
                   ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
                   <div class="bv-preset-controls">
                     <select id="bv-preset-select" class="bv-glass-select">
-                      <option value="">選擇預設...</option>
+                      <option value="">選擇預設</option>
                     </select>
                     <div class="bv-preset-buttons">
                       <button class="bv-glass-button" id="bv-save-preset" title="儲存">
@@ -2146,7 +2146,7 @@
                   </div>
                   
                   <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
-                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
+                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入名稱">
                     <div class="bv-preset-buttons">
                       <button class="bv-glass-button bv-primary" id="bv-confirm-save">
                         <span class="material-icons">check</span>
