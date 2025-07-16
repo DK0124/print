@@ -62,7 +62,7 @@
     .bv-glass-panel {
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.4);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-radius: 20px;
