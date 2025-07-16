@@ -993,15 +993,15 @@
     @media screen {
       body.bv-converted {
         background: #f0f0f0;
-        padding: 20px 0 20px 20px;
+        padding: 20px 0;
       }
       
       .bv-page-container {
-        margin: 0 0 20px 0;
+        margin: 0 auto 20px;
         width: fit-content;
       }
     }
-      
+    
       .bv-label-page {
         width: 377px !important;
         height: 566px !important;
