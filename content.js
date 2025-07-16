@@ -47,7 +47,7 @@
       box-shadow: none !important;
     }
     
-    /* 主面板 - Liquid Glass 風格 (縮小版) */
+    /* 主面板 - Liquid Glass 風格 (更透明) */
     #bv-label-control-panel {
       position: fixed;
       right: 20px;
@@ -62,15 +62,15 @@
     .bv-glass-panel {
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 12px 48px rgba(0, 0, 0, 0.15),
         0 0 0 1px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -98,16 +98,16 @@
       right: 28px;
       width: 56px;
       height: 56px;
-      background: rgba(81, 138, 255, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(81, 138, 255, 0.85);
+      backdrop-filter: blur(15px) saturate(180%);
+      -webkit-backdrop-filter: blur(15px) saturate(180%);
       color: white;
       border: none;
       border-radius: 50%;
       box-shadow: 
-        0 4px 24px rgba(81, 138, 255, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.2),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 6px 28px rgba(81, 138, 255, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
       cursor: pointer;
       display: none;
       align-items: center;
@@ -119,9 +119,9 @@
     .bv-floating-button:hover {
       transform: scale(1.08) translateY(-2px);
       box-shadow: 
-        0 8px 32px rgba(81, 138, 255, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.3),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 10px 40px rgba(81, 138, 255, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
     }
     
     .bv-floating-button:active {
@@ -140,7 +140,8 @@
     .bv-panel-header {
       padding: 16px 20px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(20px);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -166,15 +167,15 @@
       justify-content: center;
       color: white;
       box-shadow: 
-        0 2px 8px rgba(81, 138, 255, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        0 3px 12px rgba(81, 138, 255, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
     .bv-icon-wrapper.bv-label-mode {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       box-shadow: 
-        0 2px 8px rgba(16, 185, 129, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        0 3px 12px rgba(16, 185, 129, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
     .bv-icon-wrapper .material-icons {
@@ -231,13 +232,13 @@
     }
     
     .bv-glass-button.bv-primary {
-      background: rgba(81, 138, 255, 0.1);
+      background: rgba(81, 138, 255, 0.12);
       color: #518aff;
-      border-color: rgba(81, 138, 255, 0.2);
+      border-color: rgba(81, 138, 255, 0.25);
     }
     
     .bv-glass-button.bv-primary:hover {
-      background: rgba(81, 138, 255, 0.15);
+      background: rgba(81, 138, 255, 0.18);
     }
     
     /* 內容區域 (縮小版) */
@@ -271,8 +272,8 @@
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 16px rgba(81, 138, 255, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        0 4px 20px rgba(81, 138, 255, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
       gap: 14px;
@@ -283,22 +284,22 @@
     .bv-secondary-button {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       box-shadow: 
-        0 4px 16px rgba(16, 185, 129, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        0 4px 20px rgba(16, 185, 129, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
     .bv-primary-button:hover {
       transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 8px 32px rgba(81, 138, 255, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     }
     
     .bv-secondary-button:hover {
       transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(16, 185, 129, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 8px 32px rgba(16, 185, 129, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     }
     
     .bv-primary-button:active,
@@ -309,7 +310,8 @@
     .bv-button-icon {
       width: 40px;
       height: 40px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(10px);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -341,12 +343,12 @@
     
     /* 設定卡片 (縮小版) */
     .bv-settings-card {
-      background: rgba(246, 246, 248, 0.5);
+      background: rgba(246, 246, 248, 0.4);
+      backdrop-filter: blur(15px);
       border: 1px solid rgba(0, 0, 0, 0.04);
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
-      backdrop-filter: blur(10px);
     }
     
     .bv-card-title {
@@ -484,7 +486,7 @@
     }
     
     .bv-value-label {
-      background: rgba(81, 138, 255, 0.1);
+      background: rgba(81, 138, 255, 0.12);
       color: #518aff;
       padding: 3px 8px;
       border-radius: 6px;
@@ -564,7 +566,8 @@
     .bv-glass-select {
       flex: 1;
       height: 32px;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 0 10px;
@@ -580,14 +583,14 @@
     }
     
     .bv-glass-select:hover {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.8);
       border-color: rgba(0, 0, 0, 0.12);
     }
     
     .bv-glass-select:focus {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.9);
       border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
+      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.15);
     }
     
     .bv-preset-buttons {
@@ -604,7 +607,8 @@
     .bv-glass-input {
       flex: 1;
       height: 32px;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 0 10px;
@@ -618,20 +622,21 @@
     }
     
     .bv-glass-input:hover {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.8);
       border-color: rgba(0, 0, 0, 0.12);
     }
     
     .bv-glass-input:focus {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.9);
       border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
+      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.15);
     }
     
     /* 底部區域 (縮小版) */
     .bv-panel-footer {
       padding: 14px 20px 20px;
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(20px);
       border-top: 1px solid rgba(0, 0, 0, 0.06);
       flex-shrink: 0;
     }
@@ -652,15 +657,15 @@
       gap: 8px;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 16px rgba(81, 138, 255, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        0 4px 20px rgba(81, 138, 255, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     }
     
     .bv-glass-action-button:hover {
       transform: translateY(-2px);
       box-shadow: 
-        0 8px 24px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 8px 32px rgba(81, 138, 255, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     }
     
     .bv-glass-action-button:active {
@@ -698,17 +703,17 @@
       top: 28px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(25px) saturate(200%);
+      -webkit-backdrop-filter: blur(25px) saturate(200%);
       padding: 14px 20px;
       border-radius: 12px;
       font-size: 13px;
       font-weight: 500;
       box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 10px 40px rgba(0, 0, 0, 0.15),
         0 0 0 1px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
       z-index: 100001;
       display: flex;
       align-items: center;
@@ -750,8 +755,8 @@
       }
     }
     
-    /* 數量標示 - 圓角矩形樣式 */
-    .bv-qty-circle {
+    /* 數量標示 - 圓角矩形樣式 (只有數量2以上) */
+    .bv-qty-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -768,66 +773,143 @@
       position: relative;
       top: -0.05em;
       white-space: nowrap;
-      transition: all 0.2s ease;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
     
-    /* 數量為 1 時使用較淺的灰色 */
-    .bv-qty-circle.transparent {
-      background: #999999;
-      color: white !important;
-    }
-    
-    /* 懸停效果（螢幕顯示用） */
-    @media screen {
-      .bv-qty-circle:hover {
-        transform: scale(1.05);
-      }
-    }
-    
-    /* 大數字自動調整 */
-    .bv-qty-circle {
-      min-width: auto;
-      width: max-content;
-    }
-    
-    /* 三位數以上的特別處理 */
-    .bv-qty-circle:has(> :nth-child(3)) {
-      font-size: 0.8em;
-      padding: 0 0.5em;
-    }
-    
     /* 加粗模式樣式 */
-    .bold-mode .bv-qty-circle {
+    .bold-mode .bv-qty-badge {
       font-weight: 900 !important;
       background: #000000;
     }
     
-    .bold-mode .bv-qty-circle.transparent {
-      background: #666666;
-    }
-    
     /* 列印樣式確保顏色正確 */
     @media print {
-      .bv-qty-circle {
+      .bv-qty-badge {
         background: #333333 !important;
         color: white !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       
-      .bv-qty-circle.transparent {
-        background: #999999 !important;
-        color: white !important;
-      }
-      
-      .bold-mode .bv-qty-circle {
+      .bold-mode .bv-qty-badge {
         background: #000000 !important;
       }
+    }
+    
+    /* 數量圖標樣式 - 使用文字而非圖標 */
+    .bv-counter-icon {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 18px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'liga';
+    }
+    
+    .bv-counter-icon::before {
+      content: "filter_2";
+    }
+    
+    /* 轉換後的樣式 */
+    body.bv-converted {
+      width: auto !important;
+      max-width: none !important;
+      min-width: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    @media screen {
+      body.bv-converted {
+        background: #f0f0f0;
+        padding: 20px 0;
+      }
       
-      .bold-mode .bv-qty-circle.transparent {
-        background: #666666 !important;
+      .bv-page-container {
+        margin: 0 auto 20px;
+        width: fit-content;
+      }
+      
+      .bv-label-page {
+        width: 377px !important;
+        height: 566px !important;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+      
+      .bv-page-content {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      
+      .bv-converted .order-content.bv-original {
+        display: none !important;
+      }
+    }
+    
+    @media print {
+      /* A4 模式的列印樣式 */
+      body:not(.bv-converted) {
+        /* 保持原始的 A4 格式 */
+      }
+      
+      /* 隱藏控制面板和浮動按鈕 */
+      #bv-label-control-panel,
+      .bv-floating-button {
+        display: none !important;
+      }
+      
+      /* 標籤模式的列印樣式 */
+      body.bv-converted {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+      }
+      
+      @page {
+        size: 100mm 150mm;
+        margin: 0;
+      }
+      
+      body.bv-converted .bv-label-page {
+        width: 100mm !important;
+        height: 150mm !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      
+      body.bv-converted .bv-label-page:last-child {
+        page-break-after: auto !important;
+      }
+      
+      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
+        display: none !important;
+      }
+      
+      /* 加粗模式的列印樣式 */
+      .bv-converted.bold-mode .order-content * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-weight: 700 !important;
       }
     }
     `;
@@ -892,7 +974,7 @@
     initDragFunction();
   }
   
-  // 修改 initDragFunction 函數
+  // 初始化拖曳功能（修復版）
   function initDragFunction() {
     const panel = document.getElementById('bv-label-control-panel');
     const header = panel.querySelector('.bv-panel-header');
@@ -1532,7 +1614,7 @@
                     <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                      <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
                     </div>
                   </div>
                   <label class="bv-glass-switch">
@@ -1554,7 +1636,7 @@
       `;
     } else {
       // 10×15cm 模式
-      return `
+          return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
             <div class="bv-header-content">
@@ -1641,7 +1723,7 @@
                       <span class="bv-counter-icon"></span>
                       <div class="bv-setting-text">
                         <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">圓圈顯示數量 ≥ 2</span>
+                        <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
                       </div>
                     </div>
                     <label class="bv-glass-switch">
@@ -1980,10 +2062,10 @@
           border: 0.5mm solid #999 !important;
         }
         
-        .bv-converted .bv-qty-circle,
-        .bv-label-page .bv-qty-circle {
-          border-width: 2px !important;
+        .bv-converted .bv-qty-badge,
+        .bv-label-page .bv-qty-badge {
           font-weight: 900 !important;
+          background: #000000 !important;
         }
       ` : ''}
       
@@ -2086,6 +2168,7 @@
         vertical-align: middle !important;
       }
       
+      /* 費用表格樣式優化 */
       .bv-converted .order-fee,
       .bv-label-page .order-fee {
         width: 100% !important;
@@ -2093,6 +2176,7 @@
         margin: 0 0 3mm 0 !important;
         border-top: ${boldMode ? '0.8mm' : '0.3mm'} solid #000 !important;
         border-bottom: ${boldMode ? '0.8mm' : '0.3mm'} solid #000 !important;
+        table-layout: fixed !important;
       }
       
       .bv-converted .order-fee td,
@@ -2100,27 +2184,21 @@
         padding: ${feePadding}mm 1mm !important;
         font-size: calc(${fontSize} - 2px) !important;
         line-height: 1.2 !important;
+        vertical-align: middle !important;
       }
       
       .bv-converted .order-fee td:first-child,
       .bv-label-page .order-fee td:first-child {
         text-align: right !important;
-        width: 40% !important;  /* 固定左欄寬度 */
-        white-space: nowrap !important;  /* 防止文字換行 */
+        width: 35% !important;
+        padding-right: 2mm !important;
       }
-
+      
       .bv-converted .order-fee td:last-child,
       .bv-label-page .order-fee td:last-child {
-        width: 60% !important;  /* 固定右欄寬度 */
         text-align: right !important;
-        white-space: nowrap !important;  /* 防止金額換行 */
-      }
-
-      /* 總計行特別處理 */
-      .bv-converted .order-fee tr:last-child td,
-      .bv-label-page .order-fee tr:last-child td {
-        font-weight: ${boldMode ? '900' : 'bold'} !important;
-        font-size: calc(${fontSize} - 1px) !important;  /* 稍微縮小字體 */
+        width: 65% !important;
+        white-space: nowrap !important;
       }
       
       .bv-converted .order-fee .total,
@@ -2171,7 +2249,7 @@
     }
   }
     
-  // 應用數量標示
+  // 應用數量標示（修改版：只有數量2以上才套用）
   function applyQuantityHighlight() {
     // 選擇所有可能的容器（包括 A4 模式的 .order-content）
     const containers = isConverted ? 
@@ -2191,13 +2269,13 @@
           }
         }
         
-        if (qtyCell && !qtyCell.querySelector('.bv-qty-circle')) {
+        if (qtyCell && !qtyCell.querySelector('.bv-qty-badge')) {
           const qty = parseInt(qtyCell.textContent.trim());
           if (qty >= 2) {
-            qtyCell.innerHTML = `<span class="bv-qty-circle">${qty}</span>`;
-          } else if (qty === 1) {
-            qtyCell.innerHTML = `<span class="bv-qty-circle transparent">${qty}</span>`;
+            // 只有數量 2 以上才套用圓角矩形
+            qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
+          // 數量 1 不做任何處理，保持原樣
         }
       });
     });
@@ -2205,9 +2283,9 @@
   
   // 移除數量標示
   function removeQuantityHighlight() {
-    document.querySelectorAll('.bv-qty-circle').forEach(circle => {
-      const parent = circle.parentElement;
-      const qty = circle.textContent;
+    document.querySelectorAll('.bv-qty-badge').forEach(badge => {
+      const parent = badge.parentElement;
+      const qty = badge.textContent;
       parent.textContent = qty;
     });
   }
