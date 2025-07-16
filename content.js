@@ -2175,6 +2175,22 @@
       .bv-converted .order-fee td:first-child,
       .bv-label-page .order-fee td:first-child {
         text-align: right !important;
+        width: 40% !important;  /* 固定左欄寬度 */
+        white-space: nowrap !important;  /* 防止文字換行 */
+      }
+
+      .bv-converted .order-fee td:last-child,
+      .bv-label-page .order-fee td:last-child {
+        width: 60% !important;  /* 固定右欄寬度 */
+        text-align: right !important;
+        white-space: nowrap !important;  /* 防止金額換行 */
+      }
+
+      /* 總計行特別處理 */
+      .bv-converted .order-fee tr:last-child td,
+      .bv-label-page .order-fee tr:last-child td {
+        font-weight: ${boldMode ? '900' : 'bold'} !important;
+        font-size: calc(${fontSize} - 1px) !important;  /* 稍微縮小字體 */
       }
       
       .bv-converted .order-fee .total,
