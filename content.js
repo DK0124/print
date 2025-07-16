@@ -634,12 +634,14 @@
     .bv-preset-buttons {
       display: flex;
       gap: 4px;
+      flex-shrink: 0;
     }
     
     .bv-preset-save-row {
       display: flex;
       gap: 8px;
       margin-top: 12px;
+      align-items: center;
     }
     
     .bv-glass-input {
