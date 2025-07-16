@@ -831,7 +831,8 @@
     .bv-qty-badge.qty-one {
       background: transparent !important;
       color: inherit !important;
-      border: none !important;
+      border: 1.5px solid transparent !important;  /* 改為透明邊框而非無邊框 */
+      /* 其他樣式會繼承自 .bv-qty-badge，保持相同尺寸 */
     }
     
     @media print {
@@ -2611,10 +2612,13 @@
           const qty = parseInt(qtyCell.textContent.trim());
           
           if (qty === 1) {
-            qtyCell.innerHTML = `<span class="bv-qty-badge qty-one">${qty}</span>`;
+            // 數量 1 也使用 single-digit class，保持相同尺寸
+            qtyCell.innerHTML = `<span class="bv-qty-badge single-digit qty-one">${qty}</span>`;
           } else if (qty >= 2 && qty <= 9) {
             qtyCell.innerHTML = `<span class="bv-qty-badge single-digit">${qty}</span>`;
-          } else if (qty >= 10) {
+          } else if (qty >= 100) {
+            qtyCell.innerHTML = `<span class="bv-qty-badge three-digit">${qty}</span>`;
+          } else {
             qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
         }
