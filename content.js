@@ -755,52 +755,50 @@
       }
     }
     
-    /* 數量標示 - 圓角矩形外框樣式 */
+    /* 數量標示 - 圓角矩形樣式 */
     .bv-qty-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-width: 1.5em;
-      height: 1.2em;
+      height: 1em;
       padding: 0 0.3em;
-      background: transparent;  /* 改為透明背景 */
-      color: inherit !important;  /* 保持原本文字顏色 */
-      border: 1.5px solid #333333;  /* 黑色外框 */
+      background: #333333;
+      color: white !important;
       border-radius: 0.5em;
-      font-weight: inherit;
-      font-size: 1em;
+      font-weight: inherit;  /* 保持原本字重 */
+      font-size: 0.7em;      /* 縮小為70% */
       line-height: 1;
       vertical-align: middle;
       position: relative;
-      top: -0.1em;
+      top: -0.05em;
       white-space: nowrap;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
     
-    /* 數量為 1 時使用透明外框 */
+    /* 數量為 1 時使用透明背景、黑色文字 */
     .bv-qty-badge.qty-one {
       background: transparent;
-      color: inherit !important;
-      border: 1px solid transparent;  /* 透明外框 */
+      color: inherit !important;  /* 保持原本顏色（黑色） */
     }
     
     /* 加粗模式樣式 */
     .bold-mode .bv-qty-badge {
-      font-weight: inherit !important;
+      font-weight: inherit !important;  /* 保持加粗模式的字重 */
+      background: #000000;
     }
     
     .bold-mode .bv-qty-badge.qty-one {
       background: transparent;
-      border: 1.5px solid transparent;
+      border: 1px solid #666;
     }
     
     /* 列印樣式確保顏色正確 */
     @media print {
       .bv-qty-badge {
-        background: transparent !important;
-        color: black !important;
-        border: 1.5px solid #333333 !important;
+        background: #333333 !important;
+        color: white !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -808,16 +806,16 @@
       .bv-qty-badge.qty-one {
         background: transparent !important;
         color: black !important;
-        border: 1px solid transparent !important;
+        border: 1px solid #ccc !important;
       }
       
       .bold-mode .bv-qty-badge {
-        border: 2px solid #000000 !important;
+        background: #000000 !important;
       }
       
       .bold-mode .bv-qty-badge.qty-one {
         background: transparent !important;
-        border: 1.5px solid transparent !important;
+        border: 1px solid #666 !important;
       }
     }
     
@@ -1638,7 +1636,7 @@
                     <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                      <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
                     </div>
                   </div>
                   <label class="bv-glass-switch">
@@ -1747,7 +1745,7 @@
                       <span class="bv-counter-icon"></span>
                       <div class="bv-setting-text">
                         <span class="bv-setting-label">數量標示</span>
-                        <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                        <span class="bv-setting-desc">圓角矩形標示數量 ≥ 2</span>
                       </div>
                     </div>
                     <label class="bv-glass-switch">
