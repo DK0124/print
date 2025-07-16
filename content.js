@@ -104,12 +104,12 @@
       right: 32px;
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 使用您指定的藍色 */
       color: white;
       border: none;
       border-radius: 30px;
       box-shadow: 
-        0 4px 24px rgba(0, 122, 255, 0.4),
+        0 4px 24px rgba(81, 138, 255, 0.3),  /* 降低陰影濃度 */
         0 0 0 0.5px rgba(255, 255, 255, 0.2),
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
       cursor: pointer;
@@ -164,21 +164,21 @@
     .bv-icon-wrapper {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 使用您指定的藍色 */
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       box-shadow: 
-        0 2px 8px rgba(0, 122, 255, 0.25),
+        0 2px 8px rgba(81, 138, 255, 0.2),  /* 降低陰影濃度 */
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
     .bv-icon-wrapper.bv-label-mode {
-      background: linear-gradient(135deg, #34C759 0%, #248A3D 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);  /* 較低彩度的綠色 */
       box-shadow: 
-        0 2px 8px rgba(52, 199, 89, 0.25),
+        0 2px 8px rgba(16, 185, 129, 0.2),  /* 降低陰影濃度 */
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
@@ -236,13 +236,13 @@
     }
     
     .bv-glass-button.bv-primary {
-      background: rgba(0, 122, 255, 0.1);
-      color: #007AFF;
-      border-color: rgba(0, 122, 255, 0.2);
+      background: rgba(81, 138, 255, 0.08);  /* 更淡的背景 */
+      color: #518aff;
+      border-color: rgba(81, 138, 255, 0.15);  /* 降低邊框濃度 */
     }
     
     .bv-glass-button.bv-primary:hover {
-      background: rgba(0, 122, 255, 0.15);
+      background: rgba(81, 138, 255, 0.12);  /* 降低 hover 濃度 */
     }
     
     /* 內容區域 - Apple 風格 */
@@ -268,13 +268,13 @@
     .bv-primary-button,
     .bv-secondary-button {
       width: 100%;
-      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 使用您指定的藍色 */
       border: none;
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 3px 12px rgba(0, 122, 255, 0.3),
+        0 3px 12px rgba(81, 138, 255, 0.25),  /* 降低陰影濃度 */
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
@@ -284,9 +284,9 @@
     }
     
     .bv-secondary-button {
-      background: linear-gradient(135deg, #34C759 0%, #248A3D 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);  /* 較低彩度的綠色 */
       box-shadow: 
-        0 3px 12px rgba(52, 199, 89, 0.3),
+        0 3px 12px rgba(16, 185, 129, 0.25),  /* 降低陰影濃度 */
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
@@ -497,7 +497,7 @@
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider {
-      background: #34C759;
+      background: #10b981;
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider:before {
@@ -508,14 +508,14 @@
     .bv-slider-group {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 20px;  /* 從 28px 改為 20px */
     }
     
     .bv-slider-item {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      padding-bottom: 12px;
+      gap: 12px;
+      padding-bottom: 8px;  /* 保持底部內距避免裁切 */
     }
     
     .bv-slider-header {
@@ -527,8 +527,8 @@
     }
     
     .bv-value-label {
-      background: rgba(0, 122, 255, 0.08);
-      color: #007AFF;
+      background: rgba(81, 138, 255, 0.08);  /* 更淡的背景 */
+      color: #518aff;
       padding: 4px 10px;
       border-radius: 6px;
       font-size: 12px;
@@ -555,7 +555,7 @@
       position: absolute;
       height: 6px;
       border-radius: 3px;
-      background: #007AFF;
+      background: #518aff;  /* 使用您指定的藍色 */
       width: var(--value, 0%);
       pointer-events: none;
     }
@@ -682,7 +682,7 @@
     .bv-glass-action-button {
       width: 100%;
       height: 48px;
-      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 使用您指定的藍色 */
       color: white;
       border: none;
       border-radius: 12px;
@@ -695,11 +695,11 @@
       gap: 8px;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 3px 12px rgba(0, 122, 255, 0.3),
+        0 3px 12px rgba(81, 138, 255, 0.25),  /* 降低陰影濃度 */
         inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
       letter-spacing: -0.01em;
     }
-    
+
     .bv-glass-action-button:hover {
       transform: translateY(-1px);
       box-shadow: 
@@ -993,13 +993,14 @@
     @media screen {
       body.bv-converted {
         background: #f0f0f0;
-        padding: 20px 0;
+        padding: 20px 0 20px 20px;
       }
       
       .bv-page-container {
-        margin: 0 auto 20px;
+        margin: 0 0 20px 0;
         width: fit-content;
       }
+    }
       
       .bv-label-page {
         width: 377px !important;
