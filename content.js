@@ -2272,7 +2272,7 @@
     }
   }
     
-  // 應用數量標示（修改版：只有數量2以上才套用）
+  // 應用數量標示（修改版：所有數量都套用，但樣式不同）
   function applyQuantityHighlight() {
     // 選擇所有可能的容器（包括 A4 模式的 .order-content）
     const containers = isConverted ? 
@@ -2294,11 +2294,13 @@
         
         if (qtyCell && !qtyCell.querySelector('.bv-qty-badge')) {
           const qty = parseInt(qtyCell.textContent.trim());
-          if (qty >= 2) {
-            // 只有數量 2 以上才套用圓角矩形
+          if (qty === 1) {
+            // 數量 1：透明背景、黑色文字
+            qtyCell.innerHTML = `<span class="bv-qty-badge qty-one">${qty}</span>`;
+          } else if (qty >= 2) {
+            // 數量 2 以上：深灰背景、白色文字
             qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
-          // 數量 1 不做任何處理，保持原樣
         }
       });
     });
