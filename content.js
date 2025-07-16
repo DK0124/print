@@ -2226,8 +2226,7 @@
       .bv-converted .order-fee .total,
       .bv-label-page .order-fee .total {
         text-align: right !important;
-        font-weight: ${boldMode ? '900' : 'bold'} !important;
-      }
+        }
       
       .bv-converted .orderRemark,
       .bv-converted .orderManageRemark,
