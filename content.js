@@ -755,19 +755,19 @@
       }
     }
     
-    /* 數量標示 - 圓角矩形樣式 (只有數量2以上) */
+    /* 數量標示 - 圓角矩形樣式 */
     .bv-qty-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 1.8em;
-      height: 1.4em;
-      padding: 0 0.4em;
+      min-width: 1.5em;
+      height: 1em;
+      padding: 0 0.3em;
       background: #333333;
       color: white !important;
-      border-radius: 0.7em;
-      font-weight: bold;
-      font-size: 0.85em;
+      border-radius: 0.5em;
+      font-weight: inherit;  /* 保持原本字重 */
+      font-size: 0.7em;      /* 縮小為70% */
       line-height: 1;
       vertical-align: middle;
       position: relative;
@@ -777,10 +777,22 @@
       print-color-adjust: exact !important;
     }
     
+    /* 數量為 1 時使用透明背景、黑色文字 */
+    .bv-qty-badge.qty-one {
+      background: transparent;
+      color: inherit !important;  /* 保持原本顏色（黑色） */
+      border: 1px solid #ccc;     /* 加個淡邊框讓透明矩形可見 */
+    }
+    
     /* 加粗模式樣式 */
     .bold-mode .bv-qty-badge {
-      font-weight: 900 !important;
+      font-weight: inherit !important;  /* 保持加粗模式的字重 */
       background: #000000;
+    }
+    
+    .bold-mode .bv-qty-badge.qty-one {
+      background: transparent;
+      border: 1px solid #666;
     }
     
     /* 列印樣式確保顏色正確 */
@@ -792,8 +804,19 @@
         print-color-adjust: exact !important;
       }
       
+      .bv-qty-badge.qty-one {
+        background: transparent !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+      }
+      
       .bold-mode .bv-qty-badge {
         background: #000000 !important;
+      }
+      
+      .bold-mode .bv-qty-badge.qty-one {
+        background: transparent !important;
+        border: 1px solid #666 !important;
       }
     }
     
