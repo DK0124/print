@@ -801,35 +801,39 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 1.5em;
-      height: 1.3em;
-      padding: 0.1em 0.4em;
+      min-width: 2em;
+      height: 1.4em;
+      padding: 0.1em 0.6em;
       background: transparent;
       color: inherit !important;
       border: 1.5px solid #333333;
-      border-radius: 0.65em;
-      font-weight: inherit;
-      font-size: 0.7em;
+      border-radius: 999px;  /* 完全圓角，膠囊形 */
+      font-weight: 500;
+      font-size: 0.85em;
       line-height: 1;
       vertical-align: middle;
-      position: relative;
-      top: -0.05em;
+      letter-spacing: -0.02em;
       white-space: nowrap;
+      margin: 0 0.2em;  /* 左右邊距 */
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
     
     .bv-qty-badge.single-digit {
-      width: 1.3em;
-      min-width: 1.3em;
-      padding: 0.1em 0;
-      border-radius: 50%;
+      min-width: 1.4em;
+      padding: 0.1em 0.3em;
     }
     
     .bv-qty-badge.qty-one {
       background: transparent !important;
       color: inherit !important;
       border: none !important;
+    }
+    
+    /* 三位數特別處理 */
+    .bv-qty-badge.three-digit {
+      min-width: 2.8em;
+      padding: 0.1em 0.7em;
     }
     
     @media print {
@@ -839,11 +843,6 @@
         border: 1.5px solid #333333 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-      }
-      
-      .bv-qty-badge.single-digit {
-        width: 1.3em !important;
-        border-radius: 50% !important;
       }
       
       .bv-qty-badge.qty-one {
@@ -2585,7 +2584,7 @@
       removeQuantityHighlight();
     }
   }
-    
+     
   // 應用數量標示
   function applyQuantityHighlight() {
     const containers = isConverted ? 
@@ -2612,7 +2611,9 @@
             qtyCell.innerHTML = `<span class="bv-qty-badge qty-one">${qty}</span>`;
           } else if (qty >= 2 && qty <= 9) {
             qtyCell.innerHTML = `<span class="bv-qty-badge single-digit">${qty}</span>`;
-          } else if (qty >= 10) {
+          } else if (qty >= 100) {
+            qtyCell.innerHTML = `<span class="bv-qty-badge three-digit">${qty}</span>`;
+          } else {
             qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
         }
