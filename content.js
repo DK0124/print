@@ -2212,14 +2212,14 @@
       .bv-converted .order-fee td:first-child,
       .bv-label-page .order-fee td:first-child {
         text-align: right !important;
-        width: 70% !important;
+        width: 80% !important;
         padding-right: 2mm !important;
       }
       
       .bv-converted .order-fee td:last-child,
       .bv-label-page .order-fee td:last-child {
         text-align: right !important;
-        width: 30% !important;
+        width: 20% !important;
         white-space: nowrap !important;
       }
       
