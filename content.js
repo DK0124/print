@@ -1031,11 +1031,6 @@
       .bv-converted .order-content.bv-original {
         display: none !important;
       }
-      
-      /* 隱藏原本的控制選項 */
-      .bv-converted .ignore-print {
-        display: none !important;
-      }
     }
     
     @media print {
@@ -1532,64 +1527,6 @@
       }
     });
     
-    // 文字大小設定（直接操作原始控制項）
-    const fontSizeSelect = document.getElementById('fontSize');
-    if (fontSizeSelect) {
-      fontSizeSelect.addEventListener('change', function() {
-        // 找到原始的 fontSize 控制項並更新
-        const originalFontSize = document.querySelector('.ignore-print #fontSize');
-        if (originalFontSize && originalFontSize !== this) {
-          originalFontSize.value = this.value;
-          // 觸發原始頁面的 change 事件
-          $(originalFontSize).trigger('change');
-        }
-        
-        saveSettings();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    // 原本的顯示控制選項（直接操作原始控制項）
-    const originalControls = [
-      'showProductImage',
-      'showRemark',
-      'showManageRemark',
-      'showPrintRemark',
-      'showDeliveryTime',
-      'hideInfo',
-      'hidePrice',
-      'showShippingTime',
-      'showLogTraceId'
-    ];
-    
-    originalControls.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener('change', function() {
-          // 找到原始的控制項並更新
-          const originalElement = document.querySelector(`.ignore-print #${id}`);
-          if (originalElement && originalElement !== this) {
-            originalElement.checked = this.checked;
-            // 觸發原始頁面的 change 事件
-            $(originalElement).trigger('change');
-          }
-          
-          saveSettings();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        });
-      }
-    });
-    
     // 初始化 range input 進度條
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
     
@@ -1598,6 +1535,44 @@
     
     // 初始化 Logo 上傳
     initLogoUpload();
+    
+    // 監聽原始控制項的變更
+    observeOriginalControls();
+  }
+  
+  // 新增監聽原始控制項的函數
+  function observeOriginalControls() {
+    // 監聽所有原始控制項的變更
+    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        if (isConverted) {
+          saveSettings();
+          setTimeout(() => {
+            handlePagination();
+            if (highlightQuantity) {
+              applyQuantityHighlight();
+            }
+          }, 100);
+        }
+      });
+    });
+    
+    const fontSizeSelect = document.querySelector('.ignore-print #fontSize');
+    if (fontSizeSelect) {
+      fontSizeSelect.addEventListener('change', () => {
+        if (isConverted) {
+          saveSettings();
+          updateLabelStyles();
+          setTimeout(() => {
+            handlePagination();
+            if (highlightQuantity) {
+              applyQuantityHighlight();
+            }
+          }, 100);
+        }
+      });
+    }
   }
   
   // 準備列印樣式
@@ -1784,16 +1759,17 @@
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
       feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
-      fontSize: document.getElementById('fontSize')?.value || '14px',
-      showProductImage: document.getElementById('showProductImage')?.checked,
-      showRemark: document.getElementById('showRemark')?.checked,
-      showManageRemark: document.getElementById('showManageRemark')?.checked,
-      showPrintRemark: document.getElementById('showPrintRemark')?.checked,
-      showDeliveryTime: document.getElementById('showDeliveryTime')?.checked,
-      hideInfo: document.getElementById('hideInfo')?.checked,
-      hidePrice: document.getElementById('hidePrice')?.checked,
-      showShippingTime: document.getElementById('showShippingTime')?.checked,
-      showLogTraceId: document.getElementById('showLogTraceId')?.checked,
+      // 從原始控制項獲取值
+      fontSize: document.querySelector('.ignore-print #fontSize')?.value || '14px',
+      showProductImage: document.querySelector('.ignore-print #showProductImage')?.checked,
+      showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
+      showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
+      showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
+      showDeliveryTime: document.querySelector('.ignore-print #showDeliveryTime')?.checked,
+      hideInfo: document.querySelector('.ignore-print #hideInfo')?.checked,
+      hidePrice: document.querySelector('.ignore-print #hidePrice')?.checked,
+      showShippingTime: document.querySelector('.ignore-print #showShippingTime')?.checked,
+      showLogTraceId: document.querySelector('.ignore-print #showLogTraceId')?.checked,
       logoDataUrl: logoDataUrl,
       logoAspectRatio: logoAspectRatio,
       logoSize: document.getElementById('logo-size-slider')?.value || '30',
@@ -1938,7 +1914,7 @@
     const collapseIcon = '<span class="bv-collapse-icon"><span class="material-icons">expand_more</span></span>';
     
     if (!isConverted) {
-      // A4 模式
+      // A4 模式（保持不變）
       return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
@@ -1999,7 +1975,7 @@
         </div>
       `;
     } else {
-      // 10×15cm 模式
+      // 10×15cm 模式（移除詳細設定）
       return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
@@ -2125,153 +2101,6 @@
                       </div>
                       <label class="bv-glass-switch">
                         <input type="checkbox" id="bv-hide-table-header">
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <!-- 文字大小選項 -->
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">text_fields</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">文字大小</span>
-                        </div>
-                      </div>
-                      <select id="fontSize" class="bv-glass-select" style="width: 100px;">
-                        <option value="12px">12 px</option>
-                        <option value="13px">13 px</option>
-                        <option value="14px">14 px</option>
-                        <option value="15px">15 px</option>
-                        <option value="16px">16 px</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- 原本的顯示控制選項 -->
-              <div class="bv-settings-card" data-section="details">
-                <h4 class="bv-card-title">
-                  <span class="material-icons">settings</span>
-                  詳細設定
-                  ${collapseIcon}
-                </h4>
-                
-                <div class="bv-card-content">
-                  <div class="bv-settings-list">
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">image</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示商品圖片</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showProductImage">
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">comment</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示顧客備註</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showRemark" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">admin_panel_settings</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示後台備註</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showManageRemark" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">print</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示列印備註</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showPrintRemark" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">schedule</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示指定配送時段</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showDeliveryTime" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">visibility_off</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">隱藏個人資訊</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="hideInfo">
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">money_off</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">隱藏價格</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="hidePrice">
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">local_shipping</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示預計出貨日</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showShippingTime" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">qr_code</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">顯示物流編號</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="showLogTraceId" checked>
                         <span class="bv-switch-slider"></span>
                       </label>
                     </div>
@@ -2572,7 +2401,7 @@
   
   // 更新標籤樣式
   function updateLabelStyles() {
-    const fontSize = document.getElementById('fontSize')?.value || '14px';
+    const fontSize = document.querySelector('.ignore-print #fontSize')?.value || '12px';
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
     const headerPadding = document.getElementById('bv-header-padding')?.value || '0.5';
