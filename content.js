@@ -813,7 +813,7 @@
       line-height: 1;
       vertical-align: text-bottom;  /* 對齊文字底部 */
       position: relative;
-      top: 0.1em;
+      top: 0.2em;
       letter-spacing: -0.02em;
       white-space: nowrap;
       margin: 0 0.2em;  /* 左右邊距 */
