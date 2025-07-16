@@ -1,4 +1,4 @@
-// BV SHOP 標籤機-出貨明細
+ru8// BV SHOP 標籤機-出貨明細
 (function() {
   'use strict';
   
@@ -755,19 +755,20 @@
       }
     }
     
-    /* 數量標示 - 圓角矩形樣式 */
+    /* 數量標示 - 圓形/圓角矩形樣式 */
     .bv-qty-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-width: 1.5em;
-      height: 1em;
-      padding: 0 0.3em;
-      background: #333333;
-      color: white !important;
-      border-radius: 0.5em;
-      font-weight: inherit;  /* 保持原本字重 */
-      font-size: 0.7em;      /* 縮小為70% */
+      height: 1.3em;  /* 增加高度，讓上下有間距 */
+      padding: 0.1em 0.4em;  /* 增加上下內距 */
+      background: transparent;  /* 預設透明 */
+      color: inherit !important;
+      border: 1.5px solid #333333;  /* 外框 */
+      border-radius: 0.65em;  /* 圓角矩形 */
+      font-weight: inherit;
+      font-size: 0.7em;
       line-height: 1;
       vertical-align: middle;
       position: relative;
@@ -777,45 +778,71 @@
       print-color-adjust: exact !important;
     }
     
-    /* 數量為 1 時使用透明背景、黑色文字 */
+    /* 個位數使用圓形 */
+    .bv-qty-badge.single-digit {
+      width: 1.3em;  /* 固定寬度變成圓形 */
+      min-width: 1.3em;
+      padding: 0.1em 0;  /* 調整內距 */
+      border-radius: 50%;  /* 圓形 */
+    }
+    
+    /* 數量為 1 時完全透明（無外框無填充） */
     .bv-qty-badge.qty-one {
-      background: transparent;
-      color: inherit !important;  /* 保持原本顏色（黑色） */
+      background: transparent !important;
+      color: inherit !important;
+      border: none !important;  /* 完全沒有外框 */
     }
     
     /* 加粗模式樣式 */
     .bold-mode .bv-qty-badge {
-      font-weight: inherit !important;  /* 保持加粗模式的字重 */
-      background: #000000;
+      font-weight: inherit !important;
+      background: transparent !important;  /* 保持透明 */
+      border-width: 2px !important;  /* 加粗外框 */
+      border-color: #000000 !important;  /* 純黑色 */
     }
     
+    /* 加粗模式下的個位數 */
+    .bold-mode .bv-qty-badge.single-digit {
+      border-width: 2px !important;
+    }
+    
+    /* 加粗模式數量1 - 完全透明 */
     .bold-mode .bv-qty-badge.qty-one {
-      background: transparent;
-      border: 1px solid #666;
+      background: transparent !important;
+      border: none !important;  /* 沒有外框 */
     }
     
     /* 列印樣式確保顏色正確 */
     @media print {
       .bv-qty-badge {
-        background: #333333 !important;
-        color: white !important;
+        background: transparent !important;
+        color: black !important;
+        border: 1.5px solid #333333 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       
+      /* 個位數圓形 */
+      .bv-qty-badge.single-digit {
+        width: 1.3em !important;
+        border-radius: 50% !important;
+      }
+      
+      /* 數量1完全透明 */
       .bv-qty-badge.qty-one {
         background: transparent !important;
         color: black !important;
-        border: 1px solid #ccc !important;
+        border: none !important;  /* 沒有外框 */
       }
       
       .bold-mode .bv-qty-badge {
-        background: #000000 !important;
+        background: transparent !important;
+        border: 2px solid #000000 !important;
       }
       
       .bold-mode .bv-qty-badge.qty-one {
         background: transparent !important;
-        border: 1px solid #666 !important;
+        border: none !important;
       }
     }
     
@@ -2270,7 +2297,7 @@
     }
   }
     
-  // 應用數量標示（修改版：所有數量都套用，但樣式不同）
+  // 應用數量標示（修改版：個位數用圓形，十位數以上用圓角矩形）
   function applyQuantityHighlight() {
     // 選擇所有可能的容器（包括 A4 模式的 .order-content）
     const containers = isConverted ? 
@@ -2292,11 +2319,15 @@
         
         if (qtyCell && !qtyCell.querySelector('.bv-qty-badge')) {
           const qty = parseInt(qtyCell.textContent.trim());
+          
           if (qty === 1) {
-            // 數量 1：透明背景、黑色文字
+            // 數量 1：完全透明，沒有外框
             qtyCell.innerHTML = `<span class="bv-qty-badge qty-one">${qty}</span>`;
-          } else if (qty >= 2) {
-            // 數量 2 以上：深灰背景、白色文字
+          } else if (qty >= 2 && qty <= 9) {
+            // 個位數（2-9）：圓形外框
+            qtyCell.innerHTML = `<span class="bv-qty-badge single-digit">${qty}</span>`;
+          } else if (qty >= 10) {
+            // 十位數以上：圓角矩形外框
             qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
         }
