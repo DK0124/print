@@ -53,13 +53,13 @@
       box-shadow: none !important;
     }
     
-    /* 主面板 - Liquid Glass 風格 (更透明) */
+    /* 主面板 - Apple 風格優化 */
     #bv-label-control-panel {
       position: fixed;
-      right: 20px;
-      top: 20px;
-      bottom: 20px;
-      width: 340px;
+      right: 24px;
+      top: 24px;
+      bottom: 24px;
+      width: 360px;
       z-index: 10000;
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans TC', sans-serif;
       transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -68,15 +68,15 @@
     .bv-glass-panel {
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(30px) saturate(200%);
-      -webkit-backdrop-filter: blur(30px) saturate(200%);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(50px) saturate(180%);
+      -webkit-backdrop-filter: blur(50px) saturate(180%);
+      border-radius: 16px;
+      border: 0.5px solid rgba(255, 255, 255, 0.7);
       box-shadow: 
-        0 12px 48px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 0 0 0.5px rgba(0, 0, 0, 0.03),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -100,20 +100,18 @@
     /* 浮動按鈕 */
     .bv-floating-button {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
-      width: 56px;
-      height: 56px;
-      background: rgba(81, 138, 255, 0.85);
-      backdrop-filter: blur(15px) saturate(180%);
-      -webkit-backdrop-filter: blur(15px) saturate(180%);
+      bottom: 32px;
+      right: 32px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
       color: white;
       border: none;
-      border-radius: 50%;
+      border-radius: 30px;
       box-shadow: 
-        0 6px 28px rgba(81, 138, 255, 0.45),
-        0 0 0 1px rgba(255, 255, 255, 0.3),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 4px 24px rgba(0, 122, 255, 0.4),
+        0 0 0 0.5px rgba(255, 255, 255, 0.2),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
       cursor: pointer;
       display: none;
       align-items: center;
@@ -123,31 +121,31 @@
     }
     
     .bv-floating-button:hover {
-      transform: scale(1.08) translateY(-2px);
+      transform: scale(1.05) translateY(-2px);
       box-shadow: 
-        0 10px 40px rgba(81, 138, 255, 0.6),
-        0 0 0 1px rgba(255, 255, 255, 0.4),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        0 8px 32px rgba(0, 122, 255, 0.5),
+        0 0 0 0.5px rgba(255, 255, 255, 0.3),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.4);
     }
     
     .bv-floating-button:active {
-      transform: scale(1.02);
+      transform: scale(0.98);
     }
     
     .bv-floating-button .material-icons {
-      font-size: 24px;
+      font-size: 26px;
     }
     
     #bv-label-control-panel.minimized ~ .bv-floating-button {
       display: flex;
     }
     
-    /* 面板標題 (縮小版) */
+    /* 面板標題 - Apple 風格 */
     .bv-panel-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(20px);
+      padding: 20px 24px;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(30px);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -159,95 +157,95 @@
     .bv-header-content {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       flex: 1;
     }
     
     .bv-icon-wrapper {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       box-shadow: 
-        0 3px 12px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 2px 8px rgba(0, 122, 255, 0.25),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
     .bv-icon-wrapper.bv-label-mode {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #34C759 0%, #248A3D 100%);
       box-shadow: 
-        0 3px 12px rgba(16, 185, 129, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 2px 8px rgba(52, 199, 89, 0.25),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
     .bv-icon-wrapper .material-icons {
-      font-size: 20px;
+      font-size: 22px;
     }
     
     .bv-title-group {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 2px;
     }
     
     .bv-panel-title {
       margin: 0;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
-      color: #1a1a1a;
-      letter-spacing: -0.01em;
+      color: #000;
+      letter-spacing: -0.02em;
     }
     
     .bv-panel-subtitle {
-      font-size: 12px;
-      color: #86868b;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.5);
       font-weight: 400;
     }
     
-    /* Glass 按鈕 (縮小版) */
+    /* Glass 按鈕 - Apple 風格 */
     .bv-glass-button {
-      width: 28px;
-      height: 28px;
-      background: rgba(0, 0, 0, 0.04);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      color: #424245;
+      color: rgba(0, 0, 0, 0.8);
     }
     
     .bv-glass-button:hover {
       background: rgba(0, 0, 0, 0.08);
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
     
     .bv-glass-button:active {
-      transform: scale(0.95);
+      transform: scale(0.96);
     }
     
     .bv-glass-button .material-icons {
-      font-size: 18px;
+      font-size: 20px;
     }
     
     .bv-glass-button.bv-primary {
-      background: rgba(81, 138, 255, 0.12);
-      color: #518aff;
-      border-color: rgba(81, 138, 255, 0.25);
+      background: rgba(0, 122, 255, 0.1);
+      color: #007AFF;
+      border-color: rgba(0, 122, 255, 0.2);
     }
     
     .bv-glass-button.bv-primary:hover {
-      background: rgba(81, 138, 255, 0.18);
+      background: rgba(0, 122, 255, 0.15);
     }
     
-    /* 內容區域 (縮小版) */
+    /* 內容區域 - Apple 風格 */
     .bv-panel-content-wrapper {
       display: flex;
       flex-direction: column;
@@ -256,56 +254,54 @@
     }
     
     .bv-panel-body {
-      padding: 20px;
+      padding: 24px;
       overflow-y: auto;
       flex: 1;
       -webkit-overflow-scrolling: touch;
     }
     
-    /* 主要操作區 (縮小版) */
+    /* 主要操作區 - Apple 風格 */
     .bv-primary-section {
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
     
     .bv-primary-button,
     .bv-secondary-button {
       width: 100%;
-      padding: 0;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
       border: none;
-      border-radius: 14px;
+      border-radius: 12px;
       cursor: pointer;
-      overflow: hidden;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 20px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 3px 12px rgba(0, 122, 255, 0.3),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
+      gap: 16px;
+      padding: 16px 20px;
       color: white;
     }
     
     .bv-secondary-button {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #34C759 0%, #248A3D 100%);
       box-shadow: 
-        0 4px 20px rgba(16, 185, 129, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 3px 12px rgba(52, 199, 89, 0.3),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
     }
     
     .bv-primary-button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       box-shadow: 
-        0 8px 32px rgba(81, 138, 255, 0.45),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 6px 20px rgba(0, 122, 255, 0.4),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
     }
     
     .bv-secondary-button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       box-shadow: 
-        0 8px 32px rgba(16, 185, 129, 0.45),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 6px 20px rgba(52, 199, 89, 0.4),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
     }
     
     .bv-primary-button:active,
@@ -314,10 +310,10 @@
     }
     
     .bv-button-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(10px);
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -326,7 +322,7 @@
     }
     
     .bv-button-icon .material-icons {
-      font-size: 24px;
+      font-size: 26px;
     }
     
     .bv-button-content {
@@ -336,47 +332,46 @@
     
     .bv-button-title {
       display: block;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
-      margin-bottom: 1px;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
     }
     
     .bv-button-subtitle {
       display: block;
-      font-size: 12px;
-      opacity: 0.85;
+      font-size: 13px;
+      opacity: 0.8;
     }
     
-    /* 設定卡片 (縮小版) */
+    /* 設定卡片 - Apple 風格 */
     .bv-settings-card {
-      background: rgba(246, 246, 248, 0.4);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
+      background: rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
       transition: all 0.3s ease;
     }
     
     .bv-card-title {
-      margin: 0 0 14px 0;
-      font-size: 13px;
+      margin: 0 0 20px 0;
+      font-size: 14px;
       font-weight: 600;
-      color: #1a1a1a;
+      color: #000;
       display: flex;
       align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+      gap: 8px;
       cursor: pointer;
       user-select: none;
       position: relative;
-      padding-right: 24px;
+      padding-right: 28px;
     }
     
     .bv-card-title .material-icons {
-      font-size: 16px;
-      color: #86868b;
+      font-size: 18px;
+      color: rgba(0, 0, 0, 0.5);
     }
     
     /* 收摺圖標 */
@@ -385,8 +380,8 @@
       right: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -394,8 +389,8 @@
     }
     
     .bv-collapse-icon .material-icons {
-      font-size: 18px;
-      color: #86868b;
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.4);
     }
     
     .bv-settings-card.collapsed .bv-collapse-icon {
@@ -410,17 +405,17 @@
     
     .bv-settings-card.collapsed .bv-card-content {
       max-height: 0 !important;
-      margin-top: -14px;
+      margin-top: -20px;
       opacity: 0;
     }
     
-    /* 設定項目 (縮小版) */
+    /* 設定項目 - Apple 風格 */
     .bv-setting-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      padding: 14px 0;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
     }
     
     .bv-setting-item:last-child {
@@ -435,38 +430,39 @@
     .bv-setting-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex: 1;
     }
     
     .bv-setting-info .material-icons {
-      font-size: 18px;
-      color: #86868b;
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.5);
     }
     
     .bv-setting-text {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 2px;
     }
     
     .bv-setting-label {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
-      color: #1a1a1a;
+      color: #000;
+      letter-spacing: -0.01em;
     }
     
     .bv-setting-desc {
-      font-size: 11px;
-      color: #86868b;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.5);
     }
     
-    /* Glass 開關 (縮小版) */
+    /* Glass 開關 - Apple 風格 */
     .bv-glass-switch {
       position: relative;
       display: inline-block;
-      width: 42px;
-      height: 26px;
+      width: 48px;
+      height: 28px;
       cursor: pointer;
     }
     
@@ -482,84 +478,84 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 26px;
+      background: rgba(0, 0, 0, 0.16);
+      border-radius: 28px;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      backdrop-filter: blur(10px);
     }
     
     .bv-switch-slider:before {
       position: absolute;
       content: "";
-      height: 22px;
-      width: 22px;
+      height: 24px;
+      width: 24px;
       left: 2px;
       bottom: 2px;
       background: white;
       border-radius: 50%;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.15),
-        0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider {
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+      background: #34C759;
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider:before {
-      transform: translateX(16px);
+      transform: translateX(20px);
     }
     
-    /* Glass Slider (縮小版) */
+    /* Glass Slider - Apple 風格 */
     .bv-slider-group {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 28px;
     }
     
     .bv-slider-item {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 14px;
+      padding-bottom: 12px;
     }
     
     .bv-slider-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12px;
+      font-size: 13px;
+      color: #000;
     }
     
     .bv-value-label {
-      background: rgba(81, 138, 255, 0.12);
-      color: #518aff;
-      padding: 3px 8px;
+      background: rgba(0, 122, 255, 0.08);
+      color: #007AFF;
+      padding: 4px 10px;
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
-      font-family: 'SF Mono', monospace;
-      min-width: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace;
+      min-width: 48px;
       text-align: center;
     }
     
     .bv-glass-slider {
       -webkit-appearance: none;
       width: 100%;
-      height: 5px;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 2.5px;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 3px;
       outline: none;
       position: relative;
       cursor: pointer;
+      margin: 12px 0;
     }
     
     .bv-glass-slider:before {
       content: '';
       position: absolute;
-      height: 5px;
-      border-radius: 2.5px;
-      background: linear-gradient(90deg, #518aff 0%, #0040ff 100%);
+      height: 6px;
+      border-radius: 3px;
+      background: #007AFF;
       width: var(--value, 0%);
       pointer-events: none;
     }
@@ -567,15 +563,14 @@
     .bv-glass-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       background: white;
       border-radius: 50%;
       cursor: pointer;
       box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.15),
-        0 1px 2px rgba(0, 0, 0, 0.1),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+        0 1px 4px rgba(0, 0, 0, 0.15),
+        0 0 0 0.5px rgba(0, 0, 0, 0.05);
       transition: all 0.2s ease;
       position: relative;
       z-index: 1;
@@ -584,59 +579,56 @@
     .bv-glass-slider::-webkit-slider-thumb:hover {
       transform: scale(1.1);
       box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.2),
-        0 2px 4px rgba(0, 0, 0, 0.15),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 0 0 0.5px rgba(0, 0, 0, 0.08);
     }
     
     .bv-glass-slider::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       background: white;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.15),
-        0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
       transition: all 0.2s ease;
       border: none;
     }
     
-    /* 預設管理 (縮小版) */
+    /* 預設管理 - Apple 風格 */
     .bv-preset-controls {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
     }
     
     .bv-glass-select {
       flex: 1;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      height: 36px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
       border-radius: 8px;
-      padding: 0 10px;
-      font-size: 12px;
-      color: #1a1a1a;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #000;
       cursor: pointer;
       transition: all 0.2s ease;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 28px;
+      background-position: right 12px center;
+      padding-right: 32px;
     }
     
     .bv-glass-select:hover {
-      background-color: rgba(255, 255, 255, 0.8);
-      border-color: rgba(0, 0, 0, 0.12);
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.16);
     }
     
     .bv-glass-select:focus {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.15);
+      background-color: white;
+      border-color: #007AFF;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
     }
     
     .bv-preset-buttons {
@@ -646,55 +638,55 @@
     
     .bv-preset-save-row {
       display: flex;
-      gap: 6px;
-      margin-top: 10px;
+      gap: 8px;
+      margin-top: 12px;
     }
     
     .bv-glass-input {
       flex: 1;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      height: 36px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
       border-radius: 8px;
-      padding: 0 10px;
-      font-size: 12px;
-      color: #1a1a1a;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #000;
       transition: all 0.2s ease;
     }
     
     .bv-glass-input::placeholder {
-      color: #86868b;
+      color: rgba(0, 0, 0, 0.4);
     }
     
     .bv-glass-input:hover {
-      background-color: rgba(255, 255, 255, 0.8);
-      border-color: rgba(0, 0, 0, 0.12);
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.16);
     }
     
     .bv-glass-input:focus {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.15);
+      background-color: white;
+      border-color: #007AFF;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
     }
     
-    /* 底部區域 (縮小版) */
+    /* 底部區域 - Apple 風格 */
     .bv-panel-footer {
-      padding: 14px 20px 20px;
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 16px 24px 24px;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(30px);
+      border-top: 0.5px solid rgba(0, 0, 0, 0.08);
       flex-shrink: 0;
     }
     
     .bv-glass-action-button {
       width: 100%;
-      height: 42px;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+      height: 48px;
+      background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
       color: white;
       border: none;
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -703,15 +695,16 @@
       gap: 8px;
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       box-shadow: 
-        0 4px 20px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        0 3px 12px rgba(0, 122, 255, 0.3),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      letter-spacing: -0.01em;
     }
     
     .bv-glass-action-button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       box-shadow: 
-        0 8px 32px rgba(81, 138, 255, 0.45),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 6px 20px rgba(0, 122, 255, 0.4),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
     }
     
     .bv-glass-action-button:active {
@@ -719,12 +712,12 @@
     }
     
     .bv-glass-action-button .material-icons {
-      font-size: 20px;
+      font-size: 22px;
     }
     
-    /* 滾動條 */
+    /* 滾動條 - Apple 風格 */
     .bv-panel-body::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
     
     .bv-panel-body::-webkit-scrollbar-track {
@@ -732,51 +725,50 @@
     }
     
     .bv-panel-body::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 8px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      transition: background 0.2s ease;
     }
     
     .bv-panel-body::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.25);
-      background-clip: padding-box;
+      background: rgba(0, 0, 0, 0.3);
     }
     
-    /* 通知 */
+    /* 通知 - Apple 風格 */
     .bv-notification {
       position: fixed;
-      top: 28px;
+      top: 32px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(25px) saturate(200%);
-      -webkit-backdrop-filter: blur(25px) saturate(200%);
-      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(50px) saturate(180%);
+      -webkit-backdrop-filter: blur(50px) saturate(180%);
+      padding: 16px 24px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 0 0 0.5px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
       z-index: 100001;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      letter-spacing: -0.01em;
     }
     
     .bv-notification.success {
-      color: #059669;
+      color: #248A3D;
     }
     
     .bv-notification.warning {
-      color: #d97706;
+      color: #C04C00;
     }
     
     .bv-notification .material-icons {
-      font-size: 18px;
+      font-size: 20px;
     }
     
     @keyframes slideDown {
@@ -801,7 +793,7 @@
       }
     }
     
-    /* 數量標示 - 圓形/圓角矩形樣式 */
+    /* 數量標示 */
     .bv-qty-badge {
       display: inline-flex;
       align-items: center;
@@ -824,7 +816,6 @@
       print-color-adjust: exact !important;
     }
     
-    /* 個位數使用圓形 */
     .bv-qty-badge.single-digit {
       width: 1.3em;
       min-width: 1.3em;
@@ -832,14 +823,12 @@
       border-radius: 50%;
     }
     
-    /* 數量為 1 時完全透明（無外框無填充） */
     .bv-qty-badge.qty-one {
       background: transparent !important;
       color: inherit !important;
       border: none !important;
     }
     
-    /* 列印樣式確保顏色正確 */
     @media print {
       .bv-qty-badge {
         background: transparent !important;
@@ -861,12 +850,12 @@
       }
     }
     
-    /* 數量圖標樣式 - 使用文字而非圖標 */
+    /* 數量圖標 */
     .bv-counter-icon {
       font-family: 'Material Icons';
       font-weight: normal;
       font-style: normal;
-      font-size: 18px;
+      font-size: 20px;
       display: inline-block;
       line-height: 1;
       text-transform: none;
@@ -878,6 +867,7 @@
       text-rendering: optimizeLegibility;
       -moz-osx-font-smoothing: grayscale;
       font-feature-settings: 'liga';
+      color: rgba(0, 0, 0, 0.5);
     }
     
     .bv-counter-icon::before {
@@ -893,29 +883,29 @@
       padding: 0 !important;
     }
     
-    /* Logo 上傳區域樣式 */
+    /* Logo 上傳區域 - Apple 風格 */
     .bv-logo-upload-area {
       border: 2px dashed rgba(0, 0, 0, 0.12);
       border-radius: 12px;
-      padding: 24px;
+      padding: 32px;
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      background: rgba(246, 246, 248, 0.3);
-      margin-bottom: 16px;
+      background: rgba(0, 0, 0, 0.02);
+      margin-bottom: 20px;
       position: relative;
       overflow: hidden;
     }
     
     .bv-logo-upload-area:hover {
-      border-color: #518aff;
-      background: rgba(81, 138, 255, 0.05);
+      border-color: #007AFF;
+      background: rgba(0, 122, 255, 0.04);
     }
     
     .bv-logo-upload-area.has-logo {
       border-style: solid;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.6);
     }
     
     .bv-logo-upload-area .material-icons {
@@ -925,16 +915,16 @@
     
     .bv-logo-preview {
       max-width: 100%;
-      max-height: 100px;
+      max-height: 120px;
       margin: 0 auto;
       display: block;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
     
     .bv-upload-hint {
-      color: #86868b;
-      font-size: 13px;
-      margin-top: 10px;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 14px;
+      margin-top: 12px;
       font-weight: 500;
     }
     
@@ -959,29 +949,30 @@
     }
     
     .bv-remove-logo-btn {
-      background: linear-gradient(135deg, #f04747 0%, #e74c3c 100%);
+      background: linear-gradient(135deg, #FF3B30 0%, #D70015 100%);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 16px;
+      margin-top: 20px;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(240, 71, 71, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      letter-spacing: -0.01em;
     }
     
     .bv-remove-logo-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(240, 71, 71, 0.35);
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
     }
     
     .bv-remove-logo-btn .material-icons {
-      font-size: 16px;
+      font-size: 18px;
       vertical-align: middle;
       line-height: 1;
     }
@@ -994,7 +985,6 @@
       object-fit: contain !important;
     }
     
-    /* 確保內容在底圖上方 */
     .bv-label-page > *:not(.label-background-logo) {
       position: relative !important;
       z-index: 2 !important;
@@ -1034,18 +1024,14 @@
     }
     
     @media print {
-      /* A4 模式的列印樣式 */
       body:not(.bv-converted) {
-        /* 保持原始的 A4 格式 */
       }
       
-      /* 隱藏控制面板和浮動按鈕 */
       #bv-label-control-panel,
       .bv-floating-button {
         display: none !important;
       }
       
-      /* 標籤模式的列印樣式 */
       body.bv-converted {
         margin: 0 !important;
         padding: 0 !important;
@@ -1105,36 +1091,29 @@
     if (!panel) return;
     
     const wasMinimized = panel.classList.contains('minimized');
-    
-    // 保存當前位置
     const currentTransform = panel.style.transform;
     
     panel.innerHTML = getPanelContent();
     
     if (wasMinimized) {
       panel.classList.add('minimized');
-      // 確保最小化按鈕圖標正確
       const minimizeBtn = panel.querySelector('#bv-minimize-btn .material-icons');
       if (minimizeBtn) {
         minimizeBtn.textContent = 'add';
       }
     }
     
-    // 恢復位置
     panel.style.transform = currentTransform;
     
-    // 重新綁定事件
     setupEventListeners();
     
     if (isConverted) {
       loadSettings();
       initPresetSystem();
       initLogoUpload();
-      // 恢復收摺狀態
       restoreCollapsedStates();
     }
     
-    // 重新初始化拖曳功能
     initDragFunction();
   }
   
@@ -1150,7 +1129,7 @@
     });
   }
   
-  // 初始化拖曳功能（修復版）
+  // 初始化拖曳功能
   function initDragFunction() {
     const panel = document.getElementById('bv-label-control-panel');
     const header = panel.querySelector('.bv-panel-header');
@@ -1165,7 +1144,6 @@
     let xOffset = 0;
     let yOffset = 0;
     
-    // 從 transform 中取得當前位置
     const transform = panel.style.transform;
     if (transform) {
       const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
@@ -1176,7 +1154,6 @@
     }
     
     function dragStart(e) {
-      // 如果點擊的是按鈕或其子元素，不要開始拖曳
       if (e.target.closest('.bv-glass-button') || e.target.closest('.bv-minimize-btn')) return;
       
       if (e.type === "touchstart") {
@@ -1190,7 +1167,7 @@
       if (e.target === header || (header.contains(e.target) && !e.target.closest('.bv-glass-button'))) {
         isDragging = true;
         panel.style.transition = 'none';
-        e.preventDefault(); // 防止選取文字
+        e.preventDefault();
       }
     }
     
@@ -1202,7 +1179,6 @@
       isDragging = false;
       panel.style.transition = '';
       
-      // 儲存位置
       chrome.storage.local.set({
         bvPanelPosition: {
           x: xOffset,
@@ -1234,7 +1210,6 @@
       el.style.transform = `translate(${xPos}px, ${yPos}px)`;
     }
     
-    // 載入儲存的位置
     chrome.storage.local.get(['bvPanelPosition'], (result) => {
       if (result.bvPanelPosition) {
         xOffset = result.bvPanelPosition.x;
@@ -1243,7 +1218,6 @@
       }
     });
     
-    // 直接綁定事件，不替換元素
     header.addEventListener('mousedown', dragStart);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', dragEnd);
@@ -1253,7 +1227,7 @@
     document.addEventListener('touchend', dragEnd);
   }
   
-  // 初始化 Logo 上傳功能（修復版）
+  // 初始化 Logo 上傳功能
   function initLogoUpload() {
     const logoUploadArea = document.getElementById('logo-upload-area');
     const logoInput = document.getElementById('logo-input');
@@ -1262,13 +1236,11 @@
     const logoControls = document.getElementById('logo-controls');
     const removeLogoBtn = document.getElementById('remove-logo-btn');
     
-    // Logo 控制項
     const logoSizeSlider = document.getElementById('logo-size-slider');
     const logoXSlider = document.getElementById('logo-x-slider');
     const logoYSlider = document.getElementById('logo-y-slider');
     const logoOpacitySlider = document.getElementById('logo-opacity-slider');
     
-    // 防止重複綁定
     if (logoUploadArea && !logoUploadArea.hasAttribute('data-initialized')) {
       logoUploadArea.setAttribute('data-initialized', 'true');
       
@@ -1317,12 +1289,11 @@
       });
     }
     
-    // 移除 Logo
     if (removeLogoBtn && !removeLogoBtn.hasAttribute('data-initialized')) {
       removeLogoBtn.setAttribute('data-initialized', 'true');
       
       removeLogoBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); // 防止觸發上傳區域的點擊事件
+        e.stopPropagation();
         
         logoDataUrl = null;
         logoAspectRatio = 1;
@@ -1343,7 +1314,6 @@
       });
     }
     
-    // Logo 控制項事件
     [logoSizeSlider, logoXSlider, logoYSlider, logoOpacitySlider].forEach(slider => {
       if (slider && !slider.hasAttribute('data-initialized')) {
         slider.setAttribute('data-initialized', 'true');
@@ -1357,7 +1327,6 @@
       }
     });
     
-    // 載入已儲存的 Logo
     if (logoDataUrl) {
       logoPreview.src = logoDataUrl;
       logoPreview.style.display = 'block';
@@ -1406,10 +1375,8 @@
     if (floatingPrint) {
       floatingPrint.addEventListener('click', function() {
         if (!isConverted) {
-          // A4 模式下直接列印 A4 格式
           window.print();
         } else {
-          // 標籤模式下列印標籤
           preparePrintStyles();
           window.print();
         }
@@ -1423,25 +1390,21 @@
     if (applyPrint) {
       applyPrint.addEventListener('click', function() {
         if (!isConverted) {
-          // A4 模式：套用數量標示（如果啟用）然後列印 A4 格式
           if (highlightQuantity) {
             applyQuantityHighlight();
           }
           window.print();
         } else {
-          // 標籤模式：準備列印樣式然後列印標籤
           preparePrintStyles();
           window.print();
         }
       });
     }
     
-    // 10×15cm 模式的事件
     if (isConverted) {
       setupLabelModeEventListeners();
     }
     
-    // 設定卡片收摺功能
     setupCollapsibleCards();
   }
   
@@ -1460,22 +1423,19 @@
           collapsedSections[sectionId] = true;
         }
         
-        // 儲存收摺狀態
         chrome.storage.local.set({ bvCollapsedSections: collapsedSections });
       });
     });
   }
   
-  // 設置標籤模式的事件監聽器（使用原始控制項）
+  // 設置標籤模式的事件監聽器
   function setupLabelModeEventListeners() {
-    // 精簡模式
     const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
     if (hideExtraInfoCheckbox) {
       hideExtraInfoCheckbox.addEventListener('change', function(e) {
         hideExtraInfo = e.target.checked;
         saveSettings();
         
-        // 重新分頁以應用精簡模式
         setTimeout(() => {
           handlePagination();
           if (highlightQuantity) {
@@ -1485,7 +1445,6 @@
       });
     }
     
-    // 隱藏標題
     const hideTableHeaderCheckbox = document.getElementById('bv-hide-table-header');
     if (hideTableHeaderCheckbox) {
       hideTableHeaderCheckbox.addEventListener('change', function(e) {
@@ -1501,7 +1460,6 @@
       });
     }
     
-    // 間距調整
     const spacingControls = [
       { id: 'bv-label-padding', valueId: 'bv-padding-value', unit: 'mm' },
       { id: 'bv-header-padding', valueId: 'bv-header-padding-value', unit: 'mm' },
@@ -1527,22 +1485,15 @@
       }
     });
     
-    // 初始化 range input 進度條
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
     
-    // 初始化預設系統
     initPresetSystem();
-    
-    // 初始化 Logo 上傳
     initLogoUpload();
-    
-    // 監聽原始控制項的變更
     observeOriginalControls();
   }
   
-  // 新增監聽原始控制項的函數
+  // 監聽原始控制項
   function observeOriginalControls() {
-    // 監聽所有原始控制項的變更
     const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
@@ -1759,7 +1710,6 @@
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
       feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
-      // 從原始控制項獲取值
       fontSize: document.querySelector('.ignore-print #fontSize')?.value || '14px',
       showProductImage: document.querySelector('.ignore-print #showProductImage')?.checked,
       showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
@@ -1825,42 +1775,6 @@
       }
     });
     
-    if (settings.fontSize && document.getElementById('fontSize')) {
-      document.getElementById('fontSize').value = settings.fontSize;
-      // 同步更新原始控制項
-      const originalFontSize = document.querySelector('.ignore-print #fontSize');
-      if (originalFontSize) {
-        originalFontSize.value = settings.fontSize;
-        $(originalFontSize).trigger('change');
-      }
-    }
-    
-    const checkboxSettings = {
-      showProductImage: settings.showProductImage,
-      showRemark: settings.showRemark,
-      showManageRemark: settings.showManageRemark,
-      showPrintRemark: settings.showPrintRemark,
-      showDeliveryTime: settings.showDeliveryTime,
-      hideInfo: settings.hideInfo,
-      hidePrice: settings.hidePrice,
-      showShippingTime: settings.showShippingTime,
-      showLogTraceId: settings.showLogTraceId
-    };
-    
-    Object.keys(checkboxSettings).forEach(key => {
-      const checkbox = document.getElementById(key);
-      if (checkbox && checkboxSettings[key] !== undefined) {
-        checkbox.checked = checkboxSettings[key];
-        // 同步更新原始控制項
-        const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
-        if (originalCheckbox) {
-          originalCheckbox.checked = checkboxSettings[key];
-          $(originalCheckbox).trigger('change');
-        }
-      }
-    });
-    
-    // Logo 設定
     if (settings.logoDataUrl) {
       logoDataUrl = settings.logoDataUrl;
       logoAspectRatio = settings.logoAspectRatio || 1;
@@ -1910,11 +1824,10 @@
   
   // 取得面板內容的函數
   function getPanelContent() {
-    // 收摺圖標的 HTML
     const collapseIcon = '<span class="bv-collapse-icon"><span class="material-icons">expand_more</span></span>';
     
     if (!isConverted) {
-      // A4 模式（保持不變）
+      // A4 模式
       return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
@@ -1975,7 +1888,7 @@
         </div>
       `;
     } else {
-      // 10×15cm 模式（移除詳細設定）
+      // 10×15cm 模式
       return `
         <div class="bv-glass-panel">
           <div class="bv-panel-header">
@@ -2121,7 +2034,7 @@
                     <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" style="display:none;">
                     <img id="logo-preview" class="bv-logo-preview" style="display:none;">
                     <div id="upload-prompt">
-                      <span class="material-icons" style="font-size:36px; color: #86868b;">add_photo_alternate</span>
+                      <span class="material-icons" style="font-size:40px; color: rgba(0, 0, 0, 0.4);">add_photo_alternate</span>
                       <div class="bv-upload-hint">點擊上傳底圖（支援 PNG/JPG）</div>
                     </div>
                   </div>
@@ -2268,7 +2181,7 @@
     showNotification('已成功轉換為10×15cm標籤格式');
   }
   
-  // 處理分頁（移除頁碼功能）
+  // 處理分頁
   function handlePagination() {
     document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
     document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
@@ -2282,10 +2195,8 @@
     document.querySelectorAll('.order-content').forEach((orderContent) => {
       orderContent.classList.add('bv-original');
       
-      // 複製一份用於處理
       const orderContentClone = orderContent.cloneNode(true);
       
-      // 處理精簡模式
       if (hideExtraInfo) {
         processExtraInfoHiding(orderContentClone);
       }
@@ -2299,7 +2210,6 @@
       pageContainer.className = 'bv-page-container';
       orderContent.parentNode.insertBefore(pageContainer, orderContent.nextSibling);
       
-      // 創建分頁
       elements.forEach((element, index) => {
         if (hideTableHeader && element.classList.contains('list-title')) {
           return;
@@ -2339,7 +2249,6 @@
       });
     });
     
-    // 添加底圖到所有標籤
     updateLogos();
   }
   
@@ -2364,7 +2273,6 @@
     
     const allParagraphs = orderInfo.querySelectorAll('p');
     
-    // 要保留的欄位
     const keepPatterns = [
       /訂單編號/,
       /送貨方式/,
@@ -2392,7 +2300,6 @@
   
   // 觸發原始頁面的更新事件
   function triggerOriginalPageUpdate() {
-    // 使用 jQuery 觸發原始頁面的更新
     if (typeof $ !== 'undefined') {
       $('.ignore-print input[type="checkbox"]').trigger('change');
       $('.ignore-print select').trigger('change');
@@ -2401,14 +2308,13 @@
   
   // 更新標籤樣式
   function updateLabelStyles() {
-    const fontSize = document.querySelector('.ignore-print #fontSize')?.value || '12px';
+    const fontSize = document.querySelector('.ignore-print #fontSize')?.value || '14px';
     const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
     
     const headerPadding = document.getElementById('bv-header-padding')?.value || '0.5';
     const rowPadding = document.getElementById('bv-row-padding')?.value || '0.8';
     const feePadding = document.getElementById('bv-fee-padding')?.value || '0.8';
     
-    // Logo 設定
     const logoSize = document.getElementById('logo-size-slider')?.value || '30';
     const logoX = document.getElementById('logo-x-slider')?.value || '50';
     const logoY = document.getElementById('logo-y-slider')?.value || '50';
@@ -2547,7 +2453,6 @@
         vertical-align: middle !important;
       }
       
-      /* 費用表格樣式優化 */
       .bv-converted .order-fee,
       .bv-label-page .order-fee {
         width: 100% !important;
@@ -2600,7 +2505,6 @@
         background-color: #f9f9f9 !important;
       }
       
-      /* 底圖樣式 */
       .label-background-logo {
         width: ${logoWidthMM}mm !important;
         height: ${logoHeightMM}mm !important;
@@ -2639,9 +2543,8 @@
     }
   }
     
-  // 應用數量標示（修改版：個位數用圓形，十位數以上用圓角矩形）
+  // 應用數量標示
   function applyQuantityHighlight() {
-    // 選擇所有可能的容器（包括 A4 模式的 .order-content）
     const containers = isConverted ? 
       document.querySelectorAll('.bv-label-page') : 
       document.querySelectorAll('.order-content');
@@ -2663,13 +2566,10 @@
           const qty = parseInt(qtyCell.textContent.trim());
           
           if (qty === 1) {
-            // 數量 1：完全透明，沒有外框
             qtyCell.innerHTML = `<span class="bv-qty-badge qty-one">${qty}</span>`;
           } else if (qty >= 2 && qty <= 9) {
-            // 個位數（2-9）：圓形外框
             qtyCell.innerHTML = `<span class="bv-qty-badge single-digit">${qty}</span>`;
           } else if (qty >= 10) {
-            // 十位數以上：圓角矩形外框
             qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
           }
         }
@@ -2718,16 +2618,16 @@
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
       feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
-      fontSize: document.getElementById('fontSize')?.value || '14px',
-      showProductImage: document.getElementById('showProductImage')?.checked,
-      showRemark: document.getElementById('showRemark')?.checked,
-      showManageRemark: document.getElementById('showManageRemark')?.checked,
-      showPrintRemark: document.getElementById('showPrintRemark')?.checked,
-      showDeliveryTime: document.getElementById('showDeliveryTime')?.checked,
-      hideInfo: document.getElementById('hideInfo')?.checked,
-      hidePrice: document.getElementById('hidePrice')?.checked,
-      showShippingTime: document.getElementById('showShippingTime')?.checked,
-      showLogTraceId: document.getElementById('showLogTraceId')?.checked,
+      fontSize: document.querySelector('.ignore-print #fontSize')?.value || '14px',
+      showProductImage: document.querySelector('.ignore-print #showProductImage')?.checked,
+      showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
+      showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
+      showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
+      showDeliveryTime: document.querySelector('.ignore-print #showDeliveryTime')?.checked,
+      hideInfo: document.querySelector('.ignore-print #hideInfo')?.checked,
+      hidePrice: document.querySelector('.ignore-print #hidePrice')?.checked,
+      showShippingTime: document.querySelector('.ignore-print #showShippingTime')?.checked,
+      showLogTraceId: document.querySelector('.ignore-print #showLogTraceId')?.checked,
       logoDataUrl: logoDataUrl,
       logoAspectRatio: logoAspectRatio,
       logoSize: document.getElementById('logo-size-slider')?.value || '30',
@@ -2739,19 +2639,17 @@
     chrome.storage.local.set({ bvLabelSettings: settings });
   }
   
-  // 載入設定（修復版）
+  // 載入設定
   function loadSettings() {
     chrome.storage.local.get(['bvLabelSettings', 'lastSelectedPreset', 'bvPanelMinimized', 'bvCollapsedSections'], (result) => {
       if (result.bvLabelSettings) {
         const settings = result.bvLabelSettings;
         
-        // A4 模式下只載入數量標示設定（預設為關閉）
         if (!isConverted) {
-          highlightQuantity = false; // 確保 A4 模式下預設關閉
+          highlightQuantity = false;
           const qtyCheckbox = document.getElementById('bv-highlight-qty');
           if (qtyCheckbox) qtyCheckbox.checked = false;
         } else {
-          // 10×15cm 模式下載入所有設定
           highlightQuantity = settings.highlightQuantity !== undefined ? settings.highlightQuantity : false;
           const qtyCheckbox = document.getElementById('bv-highlight-qty');
           if (qtyCheckbox) qtyCheckbox.checked = highlightQuantity;
@@ -2788,45 +2686,6 @@
             }
           });
           
-          // 載入其他設定
-          if (settings.fontSize) {
-            const fontSizeSelect = document.getElementById('fontSize');
-            if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
-            
-            // 同步原始控制項
-            const originalFontSize = document.querySelector('.ignore-print #fontSize');
-            if (originalFontSize) {
-              originalFontSize.value = settings.fontSize;
-              $(originalFontSize).trigger('change');
-            }
-          }
-          
-          const checkboxSettings = {
-            showProductImage: settings.showProductImage,
-            showRemark: settings.showRemark,
-            showManageRemark: settings.showManageRemark,
-            showPrintRemark: settings.showPrintRemark,
-            showDeliveryTime: settings.showDeliveryTime,
-            hideInfo: settings.hideInfo,
-            hidePrice: settings.hidePrice,
-            showShippingTime: settings.showShippingTime,
-            showLogTraceId: settings.showLogTraceId
-          };
-          
-          Object.keys(checkboxSettings).forEach(key => {
-            const checkbox = document.getElementById(key);
-            if (checkbox && checkboxSettings[key] !== undefined) {
-              checkbox.checked = checkboxSettings[key];
-              // 同步更新原始控制項
-              const originalCheckbox = document.querySelector(`.ignore-print #${key}`);
-              if (originalCheckbox) {
-                originalCheckbox.checked = checkboxSettings[key];
-                $(originalCheckbox).trigger('change');
-              }
-            }
-          });
-          
-          // Logo 設定
           if (settings.logoDataUrl) {
             logoDataUrl = settings.logoDataUrl;
             logoAspectRatio = settings.logoAspectRatio || 1;
