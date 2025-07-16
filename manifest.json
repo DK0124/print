@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BV SHOP 標籤機-出貨明細",
-  "version": "3.2.5",
+  "version": "3.3.0",
   "description": "將出貨明細轉換為10×15cm標籤格式，支援熱感標籤機列印",
   "author": "Derek Yu",
   "permissions": ["storage"],
