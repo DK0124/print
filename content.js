@@ -761,7 +761,7 @@
       align-items: center;
       justify-content: center;
       min-width: 1.5em;
-      height: 1.3em;
+      height: 1.2em;
       padding: 0 0.3em;
       background: transparent;  /* 改為透明背景 */
       color: inherit !important;  /* 保持原本文字顏色 */
