@@ -1032,38 +1032,44 @@
         display: none !important;
       }
       
-      body.bv-converted {
+      /* 關鍵修正：確保 html 和 body 都沒有邊界 */
+      html, body {
+        width: auto !important;
+        max-width: none !important;
+        min-width: auto !important;
         margin: 0 !important;
         padding: 0 !important;
+      }
+      
+      body.bv-converted {
         background: white !important;
       }
       
       @page {
         size: 100mm 150mm;
         margin: 0;
-        padding: 0;
+        /* 移除 padding: 0; */
       }
       
       body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
-        padding: 2.5mm !important;
+        padding: 0 !important;  /* 改為 0，在 preparePrintStyles 中動態設定 */
         box-sizing: border-box !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
         box-shadow: none !important;
         border: none !important;
-        position: relative !important;
-        left: 0 !important;
-        top: 0 !important;
+        /* 移除 position, left, top 設定 */
       }
       
       body.bv-converted .bv-label-page:last-child {
         page-break-after: auto !important;
       }
       
-      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
+      /* 修正選擇器 */
+      body > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
       }
       
