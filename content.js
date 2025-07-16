@@ -26,17 +26,23 @@
   let logoAspectRatio = 1;
   
   // 儲存原始控制項的參考
-  let originalControls = null;
+  let originalControlsElement = null;
   
   // 創建控制面板
   function createControlPanel() {
     if (document.getElementById('bv-label-control-panel')) return;
     
-    // 隱藏原始控制選項
+    // 隱藏原始控制選項，並移除 baseImageOpacity 相關元素
     const ignoreArea = document.querySelector('.ignore-print');
     if (ignoreArea) {
-      originalControls = ignoreArea;
+      originalControlsElement = ignoreArea;
       ignoreArea.style.display = 'none';
+      
+      // 移除 baseImageOpacity 相關元素
+      const baseImageOpacityLabel = ignoreArea.querySelector('#baseImageOpacityLabel');
+      if (baseImageOpacityLabel) {
+        baseImageOpacityLabel.remove();
+      }
     }
     
     const panel = document.createElement('div');
@@ -567,6 +573,40 @@
         0 1px 2px rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease;
       border: none;
+    }
+    
+    /* 收折功能樣式 */
+    .bv-collapsible {
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .bv-collapsible:hover {
+      background: rgba(0, 0, 0, 0.02);
+      margin: -4px -8px;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    
+    .bv-card-title.bv-collapsible::after {
+      content: 'expand_more';
+      font-family: 'Material Icons';
+      font-size: 20px;
+      margin-left: auto;
+      transition: transform 0.3s ease;
+    }
+    
+    .bv-settings-card.collapsed .bv-card-title.bv-collapsible::after {
+      transform: rotate(-90deg);
+    }
+    
+    .bv-settings-card.collapsed .bv-settings-list,
+    .bv-settings-card.collapsed .bv-slider-group,
+    .bv-settings-card.collapsed .bv-logo-upload-area,
+    .bv-settings-card.collapsed .bv-logo-controls,
+    .bv-settings-card.collapsed .bv-preset-controls,
+    .bv-settings-card.collapsed .bv-preset-save-row {
+      display: none;
     }
     
     /* 預設管理 (縮小版) */
@@ -1131,11 +1171,49 @@
     if (!isConverted) {
       updateA4Styles();
     }
+    
+    // 初始化收折功能
+    initCollapsibles();
+  }
+  
+  // 初始化收折功能
+  function initCollapsibles() {
+    document.querySelectorAll('.bv-card-title.bv-collapsible').forEach(title => {
+      title.addEventListener('click', function() {
+        const card = this.closest('.bv-settings-card');
+        if (card) {
+          card.classList.toggle('collapsed');
+          // 儲存收折狀態
+          const cardId = Array.from(card.parentElement.children).indexOf(card);
+          const collapsedCards = JSON.parse(localStorage.getItem('bvCollapsedCards') || '[]');
+          if (card.classList.contains('collapsed')) {
+            if (!collapsedCards.includes(cardId)) {
+              collapsedCards.push(cardId);
+            }
+          } else {
+            const index = collapsedCards.indexOf(cardId);
+            if (index > -1) {
+              collapsedCards.splice(index, 1);
+            }
+          }
+          localStorage.setItem('bvCollapsedCards', JSON.stringify(collapsedCards));
+        }
+      });
+    });
+    
+    // 恢復收折狀態
+    const collapsedCards = JSON.parse(localStorage.getItem('bvCollapsedCards') || '[]');
+    const cards = document.querySelectorAll('.bv-settings-card');
+    collapsedCards.forEach(cardId => {
+      if (cards[cardId]) {
+        cards[cardId].classList.add('collapsed');
+      }
+    });
   }
   
   // 同步原始控制項的值到面板
   function syncOriginalControlsToPanel() {
-    if (!originalControls) return;
+    if (!originalControlsElement) return;
     
     // 同步 checkbox
     const checkboxes = [
@@ -1151,7 +1229,7 @@
     ];
     
     checkboxes.forEach(id => {
-      const originalCheckbox = originalControls.querySelector(`#${id}`);
+      const originalCheckbox = originalControlsElement.querySelector(`#${id}`);
       const panelCheckbox = document.getElementById(id);
       if (originalCheckbox && panelCheckbox) {
         panelCheckbox.checked = originalCheckbox.checked;
@@ -1159,17 +1237,10 @@
     });
     
     // 同步文字大小
-    const originalFontSize = originalControls.querySelector('#fontSize');
+    const originalFontSize = originalControlsElement.querySelector('#fontSize');
     const panelFontSize = document.getElementById('fontSize');
     if (originalFontSize && panelFontSize) {
       panelFontSize.value = originalFontSize.value;
-    }
-    
-    // 同步底圖透明度
-    const originalOpacity = originalControls.querySelector('#baseImageOpacity');
-    const panelOpacity = document.getElementById('baseImageOpacity');
-    if (originalOpacity && panelOpacity) {
-      panelOpacity.value = originalOpacity.value;
     }
   }
   
@@ -1211,6 +1282,9 @@
     
     // 重新初始化拖曳功能
     initDragFunction();
+    
+    // 重新初始化收折功能
+    initCollapsibles();
   }
   
   // 初始化拖曳功能（修復版）
@@ -1515,7 +1589,7 @@
   // 設置 A4 模式的事件監聽器
   function setupA4ModeEventListeners() {
     // 原本的顯示控制選項
-    const originalControls = [
+    const controlIds = [
       'showProductImage',
       'showRemark',
       'showManageRemark',
@@ -1525,17 +1599,16 @@
       'hidePrice',
       'showShippingTime',
       'showLogTraceId',
-      'fontSize',
-      'baseImageOpacity'
+      'fontSize'
     ];
     
-    originalControls.forEach(id => {
+    controlIds.forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
           // 同步到原始控制項
-          if (originalControls) {
-            const originalElement = originalControls.querySelector(`#${id}`);
+          if (originalControlsElement) {
+            const originalElement = originalControlsElement.querySelector(`#${id}`);
             if (originalElement) {
               if (element.type === 'checkbox') {
                 originalElement.checked = element.checked;
@@ -1624,7 +1697,7 @@
     });
     
     // 原本的顯示控制選項
-    const originalControls = [
+    const controlIds = [
       'showProductImage',
       'showRemark',
       'showManageRemark',
@@ -1637,7 +1710,7 @@
       'fontSize'
     ];
     
-    originalControls.forEach(id => {
+    controlIds.forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', function() {
@@ -1869,7 +1942,6 @@
       hidePrice: document.getElementById('hidePrice')?.checked,
       showShippingTime: document.getElementById('showShippingTime')?.checked,
       showLogTraceId: document.getElementById('showLogTraceId')?.checked,
-      baseImageOpacity: document.getElementById('baseImageOpacity')?.value || '100',
       logoDataUrl: logoDataUrl,
       logoAspectRatio: logoAspectRatio,
       logoSize: document.getElementById('logo-size-slider')?.value || '30',
@@ -1928,11 +2000,6 @@
     if (settings.fontSize) {
       const fontSizeSelect = document.getElementById('fontSize');
       if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
-    }
-    
-    if (settings.baseImageOpacity !== undefined) {
-      const opacityInput = document.getElementById('baseImageOpacity');
-      if (opacityInput) opacityInput.value = settings.baseImageOpacity;
     }
     
     const checkboxSettings = {
@@ -2000,9 +2067,9 @@
   
   // 監聽原始控制項的變更
   function observeOriginalControls() {
-    if (!originalControls) return;
+    if (!originalControlsElement) return;
     
-    const checkboxes = originalControls.querySelectorAll('input[type="checkbox"]');
+    const checkboxes = originalControlsElement.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         if (isConverted) {
@@ -2022,7 +2089,7 @@
       });
     });
     
-    const fontSizeSelect = originalControls.querySelector('#fontSize');
+    const fontSizeSelect = originalControlsElement.querySelector('#fontSize');
     if (fontSizeSelect) {
       fontSizeSelect.addEventListener('change', () => {
         if (isConverted) {
@@ -2039,13 +2106,6 @@
             applyQuantityHighlight();
           }
         }
-      });
-    }
-    
-    const opacityInput = originalControls.querySelector('#baseImageOpacity');
-    if (opacityInput) {
-      opacityInput.addEventListener('change', () => {
-        updateA4Styles();
       });
     }
   }
@@ -2094,7 +2154,7 @@
               
               <!-- 顯示設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">visibility</span>
                   顯示設定
                 </h4>
@@ -2246,25 +2306,12 @@
                       <option value="16px">16 px</option>
                     </select>
                   </div>
-                  
-                  <div class="bv-setting-item">
-                    <div class="bv-setting-info">
-                      <span class="material-icons">opacity</span>
-                      <div class="bv-setting-text">
-                        <span class="bv-setting-label">底圖透明度</span>
-                      </div>
-                    </div>
-                    <div class="bv-input-with-unit">
-                      <input type="number" min="1" max="100" value="100" id="baseImageOpacity" class="bv-number-input">
-                      <span class="bv-unit-label">%</span>
-                    </div>
-                  </div>
                 </div>
               </div>
               
               <!-- 底圖設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">image</span>
                   底圖設定
                 </h4>
@@ -2366,7 +2413,7 @@
               
               <!-- 間距設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">straighten</span>
                   間距調整
                 </h4>
@@ -2408,7 +2455,7 @@
               
               <!-- 顯示設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">visibility</span>
                   顯示設定
                 </h4>
@@ -2477,7 +2524,7 @@
               
               <!-- 原本的顯示控制選項 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">settings</span>
                   詳細設定
                 </h4>
@@ -2604,7 +2651,7 @@
               
               <!-- 底圖設定 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">image</span>
                   底圖設定
                 </h4>
@@ -2662,7 +2709,7 @@
               
               <!-- 預設管理 -->
               <div class="bv-settings-card">
-                <h4 class="bv-card-title">
+                <h4 class="bv-card-title bv-collapsible">
                   <span class="material-icons">bookmark</span>
                   預設管理
                 </h4>
@@ -2712,7 +2759,6 @@
     if (isConverted) return;
     
     const fontSize = document.getElementById('fontSize')?.value || '14px';
-    const baseImageOpacity = document.getElementById('baseImageOpacity')?.value || '100';
     
     // Logo 設定
     const logoSize = document.getElementById('logo-size-slider')?.value || '30';
@@ -2720,18 +2766,17 @@
     const logoY = document.getElementById('logo-y-slider')?.value || '50';
     const logoOpacity = document.getElementById('logo-opacity-slider')?.value || '20';
     
-    // 取得原始控制項的值，更新 baseImage 樣式
+    // 隱藏原本的 baseImage
+    document.querySelectorAll('.baseImage').forEach(img => {
+      img.style.display = 'none';
+    });
+    
     const oldA4Style = document.getElementById('bv-a4-styles');
     if (oldA4Style) oldA4Style.remove();
     
     const a4Styles = document.createElement('style');
     a4Styles.id = 'bv-a4-styles';
     a4Styles.textContent = `
-      /* 更新底圖透明度 */
-      .baseImage {
-        opacity: ${baseImageOpacity / 100} !important;
-      }
-      
       /* A4 底圖樣式 */
       .order-content {
         position: relative !important;
@@ -3281,7 +3326,6 @@
       hidePrice: document.getElementById('hidePrice')?.checked,
       showShippingTime: document.getElementById('showShippingTime')?.checked,
       showLogTraceId: document.getElementById('showLogTraceId')?.checked,
-      baseImageOpacity: document.getElementById('baseImageOpacity')?.value || '100',
       logoDataUrl: logoDataUrl,
       logoAspectRatio: logoAspectRatio,
       logoSize: document.getElementById('logo-size-slider')?.value || '30',
@@ -3308,11 +3352,6 @@
         if (settings.fontSize) {
           const fontSizeSelect = document.getElementById('fontSize');
           if (fontSizeSelect) fontSizeSelect.value = settings.fontSize;
-        }
-        
-        if (settings.baseImageOpacity !== undefined) {
-          const opacityInput = document.getElementById('baseImageOpacity');
-          if (opacityInput) opacityInput.value = settings.baseImageOpacity;
         }
         
         const checkboxSettings = {
@@ -3407,22 +3446,17 @@
         });
         
         // 同步到原始控制項（如果在 A4 模式）
-        if (!isConverted && originalControls) {
+        if (!isConverted && originalControlsElement) {
           Object.keys(checkboxSettings).forEach(key => {
-            const originalCheckbox = originalControls.querySelector(`#${key}`);
+            const originalCheckbox = originalControlsElement.querySelector(`#${key}`);
             if (originalCheckbox && checkboxSettings[key] !== undefined) {
               originalCheckbox.checked = checkboxSettings[key];
             }
           });
           
-          const originalFontSize = originalControls.querySelector('#fontSize');
+          const originalFontSize = originalControlsElement.querySelector('#fontSize');
           if (originalFontSize && settings.fontSize) {
             originalFontSize.value = settings.fontSize;
-          }
-          
-          const originalOpacity = originalControls.querySelector('#baseImageOpacity');
-          if (originalOpacity && settings.baseImageOpacity !== undefined) {
-            originalOpacity.value = settings.baseImageOpacity;
           }
         }
       }
