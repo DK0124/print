@@ -48,1053 +48,1061 @@
     loadSettings();
     initDragFunction();
   }
-  
+
   // 取得面板樣式
   function getPanelStyles() {
     return `
-    /* 移除所有 focus outline */
-    * {
-      outline: none !important;
-    }
-    
-    *:focus,
-    *:focus-visible,
-    *:focus-within,
-    *:active {
-      outline: none !important;
-      box-shadow: none !important;
-    }
-    
-    /* 主面板 - Apple 風格優化 */
-    #bv-label-control-panel {
-      position: fixed;
-      right: 24px;
-      top: 24px;
-      bottom: 24px;
-      width: 360px;
-      z-index: 10000;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans TC', sans-serif;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .bv-glass-panel {
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(50px) saturate(180%);
-      -webkit-backdrop-filter: blur(50px) saturate(180%);
-      border-radius: 16px;
-      border: 0.5px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 0 0 0.5px rgba(0, 0, 0, 0.03),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    
-    /* 最小化狀態 */
-    #bv-label-control-panel.minimized {
-      height: auto;
-      bottom: auto;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    #bv-label-control-panel.minimized .bv-glass-panel {
-      height: auto;
-    }
-    
-    #bv-label-control-panel.minimized .bv-panel-content-wrapper {
-      display: none;
-    }
-    
-    /* 浮動按鈕 */
-    .bv-floating-button {
-      position: fixed;
-      bottom: 32px;
-      right: 32px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
-      color: white;
-      border: none;
-      border-radius: 30px;
-      box-shadow: 
-        0 4px 24px rgba(81, 138, 255, 0.3),
-        0 0 0 0.5px rgba(255, 255, 255, 0.2),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .bv-floating-button:hover {
-      transform: scale(1.05) translateY(-2px);
-      box-shadow: 
-        0 8px 32px rgba(81, 138, 255, 0.4),
-        0 0 0 0.5px rgba(255, 255, 255, 0.3),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.4);
-    }
-    
-    .bv-floating-button:active {
-      transform: scale(0.98);
-    }
-    
-    .bv-floating-button .material-icons {
-      font-size: 26px;
-    }
-    
-    #bv-label-control-panel.minimized ~ .bv-floating-button {
-      display: flex;
-    }
-    
-    /* 面板標題 - Apple 風格 */
-    .bv-panel-header {
-      padding: 20px 24px;
-      border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(30px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-      cursor: move;
-      user-select: none;
-    }
-    
-    .bv-header-content {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex: 1;
-    }
-    
-    .bv-icon-wrapper {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 
-        0 2px 8px rgba(81, 138, 255, 0.2),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
-    }
-    
-    .bv-icon-wrapper.bv-label-mode {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 
-        0 2px 8px rgba(16, 185, 129, 0.2),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
-    }
-    
-    .bv-icon-wrapper .material-icons {
-      font-size: 22px;
-    }
-    
-    .bv-title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    
-    .bv-panel-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #000;
-      letter-spacing: -0.02em;
-    }
-    
-    .bv-panel-subtitle {
-      font-size: 13px;
-      color: rgba(0, 0, 0, 0.5);
-      font-weight: 400;
-    }
-    
-    /* Glass 按鈕 - Apple 風格 */
-    .bv-glass-button {
-      width: 32px;
-      height: 32px;
-      background: rgba(0, 0, 0, 0.05);
-      backdrop-filter: blur(20px);
-      border: 0.5px solid rgba(0, 0, 0, 0.08);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: rgba(0, 0, 0, 0.8);
-    }
-    
-    .bv-glass-button:hover {
-      background: rgba(0, 0, 0, 0.08);
-      transform: scale(1.04);
-    }
-    
-    .bv-glass-button:active {
-      transform: scale(0.96);
-    }
-    
-    .bv-glass-button .material-icons {
-      font-size: 20px;
-    }
-    
-    .bv-glass-button.bv-primary {
-      background: rgba(81, 138, 255, 0.08);
-      color: #518aff;
-      border-color: rgba(81, 138, 255, 0.15);
-    }
-    
-    .bv-glass-button.bv-primary:hover {
-      background: rgba(81, 138, 255, 0.12);
-    }
-    
-    /* 內容區域 - Apple 風格 */
-    .bv-panel-content-wrapper {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-    }
-    
-    .bv-panel-body {
-      padding: 24px;
-      overflow-y: auto;
-      flex: 1;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    /* 主要操作區 - Apple 風格 */
-    .bv-primary-section {
-      margin-bottom: 28px;
-    }
-    
-    .bv-primary-button,
-    .bv-secondary-button {
-      width: 100%;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 
-        0 3px 12px rgba(81, 138, 255, 0.25),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      color: white;
-    }
-    
-    .bv-secondary-button {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 
-        0 3px 12px rgba(16, 185, 129, 0.25),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
-    }
-    
-    .bv-primary-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 
-        0 6px 20px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
-    }
-    
-    .bv-secondary-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 
-        0 6px 20px rgba(16, 185, 129, 0.35),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
-    }
-    
-    .bv-primary-button:active,
-    .bv-secondary-button:active {
-      transform: translateY(0);
-    }
-    
-    .bv-button-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    
-    .bv-button-icon .material-icons {
-      font-size: 26px;
-    }
-    
-    .bv-button-content {
-      flex: 1;
-      text-align: left;
-    }
-    
-    .bv-button-title {
-      display: block;
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 2px;
-      letter-spacing: -0.01em;
-    }
-    
-    .bv-button-subtitle {
-      display: block;
-      font-size: 13px;
-      opacity: 0.8;
-    }
-    
-    /* 設定卡片 - Apple 風格 */
-    .bv-settings-card {
-      background: rgba(0, 0, 0, 0.03);
-      backdrop-filter: blur(20px);
-      border: 0.5px solid rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-    }
-    
-    .bv-card-title {
-      margin: 0 0 20px 0;
-      font-size: 14px;
-      font-weight: 600;
-      color: #000;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-      padding-right: 28px;
-    }
-    
-    .bv-card-title .material-icons {
-      font-size: 18px;
-      color: rgba(0, 0, 0, 0.5);
-    }
-    
-    /* 收摺圖標 */
-    .bv-collapse-icon {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
-    }
-    
-    .bv-collapse-icon .material-icons {
-      font-size: 20px;
-      color: rgba(0, 0, 0, 0.4);
-    }
-    
-    .bv-settings-card.collapsed .bv-collapse-icon {
-      transform: translateY(-50%) rotate(-90deg);
-    }
-    
-    /* 收摺動畫 */
-    .bv-card-content {
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .bv-settings-card.collapsed .bv-card-content {
-      max-height: 0 !important;
-      margin-top: -20px;
-      opacity: 0;
-    }
-    
-    /* 設定項目 - Apple 風格 */
-    .bv-setting-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 0;
-      border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
-    }
-    
-    .bv-setting-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-    
-    .bv-setting-item:first-child {
-      padding-top: 0;
-    }
-    
-    .bv-setting-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-    
-    .bv-setting-info .material-icons {
-      font-size: 20px;
-      color: rgba(0, 0, 0, 0.5);
-    }
-    
-    .bv-setting-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    
-    .bv-setting-label {
-      font-size: 14px;
-      font-weight: 500;
-      color: #000;
-      letter-spacing: -0.01em;
-    }
-    
-    .bv-setting-desc {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.5);
-    }
-    
-    /* Glass 開關 - Apple 風格 */
-    .bv-glass-switch {
-      position: relative;
-      display: inline-block;
-      width: 48px;
-      height: 28px;
-      cursor: pointer;
-    }
-    
-    .bv-glass-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .bv-switch-slider {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.16);
-      border-radius: 28px;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .bv-switch-slider:before {
-      position: absolute;
-      content: "";
-      height: 24px;
-      width: 24px;
-      left: 2px;
-      bottom: 2px;
-      background: white;
-      border-radius: 50%;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    }
-    
-    .bv-glass-switch input:checked + .bv-switch-slider {
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
-    }
-    
-    .bv-glass-switch input:checked + .bv-switch-slider:before {
-      transform: translateX(20px);
-    }
-    
-    /* Glass Slider - Apple 風格 */
-    .bv-slider-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    .bv-slider-item {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 8px;
-    }
-    
-    .bv-slider-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      color: #000;
-    }
-    
-    .bv-value-label {
-      background: rgba(81, 138, 255, 0.08);
-      color: #518aff;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace;
-      min-width: 48px;
-      text-align: center;
-    }
-    
-    .bv-glass-slider {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      background: rgba(0, 0, 0, 0.08);
-      border-radius: 3px;
-      outline: none;
-      position: relative;
-      cursor: pointer;
-      margin: 12px 0;
-    }
-    
-    .bv-glass-slider:before {
-      content: '';
-      position: absolute;
-      height: 6px;
-      border-radius: 3px;
-      background: #518aff;
-      width: var(--value, 0%);
-      pointer-events: none;
-    }
-    
-    .bv-glass-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 
-        0 1px 4px rgba(0, 0, 0, 0.15),
-        0 0 0 0.5px rgba(0, 0, 0, 0.05);
-      transition: all 0.2s ease;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .bv-glass-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        0 0 0 0.5px rgba(0, 0, 0, 0.08);
-    }
-    
-    .bv-glass-slider::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-      transition: all 0.2s ease;
-      border: none;
-    }
-    
-    /* 預設管理 - Apple 風格 */
-    .bv-preset-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    
-    .bv-glass-select {
-      flex: 1;
-      height: 36px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      border: 0.5px solid rgba(0, 0, 0, 0.12);
-      border-radius: 8px;
-      padding: 0 12px;
-      font-size: 14px;
-      color: #000;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
-    }
-    
-    .bv-glass-select:hover {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: rgba(0, 0, 0, 0.16);
-    }
-    
-    .bv-glass-select:focus {
-      background-color: white;
-      border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
-    }
-    
-    .bv-preset-buttons {
-      display: flex;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    
-    .bv-preset-save-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      align-items: center;
-    }
-    
-    .bv-glass-input {
-      flex: 1;
-      max-width: 200px;
-      height: 36px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      border: 0.5px solid rgba(0, 0, 0, 0.12);
-      border-radius: 8px;
-      padding: 0 12px;
-      font-size: 14px;
-      color: #000;
-      transition: all 0.2s ease;
-    }
-    
-    .bv-glass-input::placeholder {
-      color: rgba(0, 0, 0, 0.4);
-    }
-    
-    .bv-glass-input:hover {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: rgba(0, 0, 0, 0.16);
-    }
-    
-    .bv-glass-input:focus {
-      background-color: white;
-      border-color: #518aff;
-      box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
-    }
-    
-    /* 底部區域 - Apple 風格 */
-    .bv-panel-footer {
-      padding: 16px 24px 24px;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(30px);
-      border-top: 0.5px solid rgba(0, 0, 0, 0.08);
-      flex-shrink: 0;
-    }
-    
-    .bv-glass-action-button {
-      width: 100%;
-      height: 48px;
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 
-        0 3px 12px rgba(81, 138, 255, 0.25),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
-      letter-spacing: -0.01em;
-    }
-    
-    .bv-glass-action-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 
-        0 6px 20px rgba(81, 138, 255, 0.35),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
-    }
-    
-    .bv-glass-action-button:active {
-      transform: translateY(0);
-    }
-    
-    .bv-glass-action-button .material-icons {
-      font-size: 22px;
-    }
-    
-    /* 滾動條 - Apple 風格 */
-    .bv-panel-body::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    .bv-panel-body::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    .bv-panel-body::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-    
-    .bv-panel-body::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.3);
-    }
-    
-    /* 通知 - Apple 風格 */
-    .bv-notification {
-      position: fixed;
-      top: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(50px) saturate(180%);
-      -webkit-backdrop-filter: blur(50px) saturate(180%);
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.12),
-        0 0 0 0.5px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
-      z-index: 100001;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      letter-spacing: -0.01em;
-    }
-    
-    .bv-notification.success {
-      color: #248A3D;
-    }
-    
-    .bv-notification.warning {
-      color: #C04C00;
-    }
-    
-    .bv-notification .material-icons {
-      font-size: 20px;
-    }
-    
-    @keyframes slideDown {
-      from {
+      /* 移除所有 focus outline */
+      * {
+        outline: none !important;
+      }
+      
+      *:focus,
+      *:focus-visible,
+      *:focus-within,
+      *:active {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+      
+      /* 主面板 - 輕盈玻璃效果 */
+      #bv-label-control-panel {
+        position: fixed;
+        right: 24px;
+        top: 24px;
+        bottom: 24px;
+        width: 360px;
+        z-index: 10000;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans TC', sans-serif;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .bv-glass-panel {
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(24px) saturate(140%);
+        -webkit-backdrop-filter: blur(24px) saturate(140%);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        box-shadow: 
+          0 10px 40px rgba(0, 0, 0, 0.05),
+          0 0 0 0.5px rgba(255, 255, 255, 0.6) inset,
+          0 0 60px rgba(255, 255, 255, 0.4);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      
+      /* 最小化狀態 */
+      #bv-label-control-panel.minimized {
+        height: auto;
+        bottom: auto;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      #bv-label-control-panel.minimized .bv-glass-panel {
+        height: auto;
+      }
+      
+      #bv-label-control-panel.minimized .bv-panel-content-wrapper {
+        display: none;
+      }
+      
+      /* 浮動按鈕 */
+      .bv-floating-button {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 
+          0 4px 24px rgba(81, 138, 255, 0.3),
+          0 0 0 0.5px rgba(255, 255, 255, 0.2),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .bv-floating-button:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 
+          0 8px 32px rgba(81, 138, 255, 0.4),
+          0 0 0 0.5px rgba(255, 255, 255, 0.3),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.4);
+      }
+      
+      .bv-floating-button:active {
+        transform: scale(0.98);
+      }
+      
+      .bv-floating-button .material-icons {
+        font-size: 26px;
+      }
+      
+      #bv-label-control-panel.minimized ~ .bv-floating-button {
+        display: flex;
+      }
+      
+      /* 面板標題 - 輕盈背景 */
+      .bv-panel-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        cursor: move;
+        user-select: none;
+      }
+      
+      .bv-header-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+      }
+      
+      .bv-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 
+          0 2px 8px rgba(81, 138, 255, 0.2),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      }
+      
+      .bv-icon-wrapper.bv-label-mode {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 
+          0 2px 8px rgba(16, 185, 129, 0.2),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      }
+      
+      .bv-icon-wrapper .material-icons {
+        font-size: 22px;
+      }
+      
+      .bv-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      
+      .bv-panel-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        letter-spacing: -0.02em;
+      }
+      
+      .bv-panel-subtitle {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.5);
+        font-weight: 400;
+      }
+      
+      /* Glass 按鈕 - 輕盈風格 */
+      .bv-glass-button {
+        width: 32px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: rgba(0, 0, 0, 0.7);
+      }
+      
+      .bv-glass-button:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: scale(1.04);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      
+      .bv-glass-button:active {
+        transform: scale(0.96);
+      }
+      
+      .bv-glass-button .material-icons {
+        font-size: 20px;
+      }
+      
+      .bv-glass-button.bv-primary {
+        background: rgba(81, 138, 255, 0.08);
+        color: #518aff;
+        border-color: rgba(81, 138, 255, 0.15);
+      }
+      
+      .bv-glass-button.bv-primary:hover {
+        background: rgba(81, 138, 255, 0.12);
+      }
+      
+      /* 內容區域 */
+      .bv-panel-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+      }
+      
+      .bv-panel-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex: 1;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* 主要操作區 */
+      .bv-primary-section {
+        margin-bottom: 28px;
+      }
+      
+      .bv-primary-button,
+      .bv-secondary-button {
+        width: 100%;
+        background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: 
+          0 3px 12px rgba(81, 138, 255, 0.25),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        color: white;
+      }
+      
+      .bv-secondary-button {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 
+          0 3px 12px rgba(16, 185, 129, 0.25),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      }
+      
+      .bv-primary-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 
+          0 6px 20px rgba(81, 138, 255, 0.35),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+      }
+      
+      .bv-secondary-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 
+          0 6px 20px rgba(16, 185, 129, 0.35),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+      }
+      
+      .bv-primary-button:active,
+      .bv-secondary-button:active {
+        transform: translateY(0);
+      }
+      
+      .bv-button-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      
+      .bv-button-icon .material-icons {
+        font-size: 26px;
+      }
+      
+      .bv-button-content {
+        flex: 1;
+        text-align: left;
+      }
+      
+      .bv-button-title {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        letter-spacing: -0.01em;
+      }
+      
+      .bv-button-subtitle {
+        display: block;
+        font-size: 13px;
+        opacity: 0.8;
+      }
+      
+      /* 設定卡片 - 極輕背景 */
+      .bv-settings-card {
+        background: rgba(248, 250, 252, 0.5);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      }
+      
+      .bv-settings-card:hover {
+        background: rgba(248, 250, 252, 0.7);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      
+      .bv-card-title {
+        margin: 0 0 20px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        padding-right: 28px;
+      }
+      
+      .bv-card-title .material-icons {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+      
+      /* 收摺圖標 */
+      .bv-collapse-icon {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+      
+      .bv-collapse-icon .material-icons {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+      
+      .bv-settings-card.collapsed .bv-collapse-icon {
+        transform: translateY(-50%) rotate(-90deg);
+      }
+      
+      /* 收摺動畫 */
+      .bv-card-content {
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .bv-settings-card.collapsed .bv-card-content {
+        max-height: 0 !important;
+        margin-top: -20px;
         opacity: 0;
-        transform: translate(-50%, -20px);
       }
-      to {
-        opacity: 1;
-        transform: translate(-50%, 0);
+      
+      /* 設定項目 */
+      .bv-setting-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
       }
-    }
-    
-    @keyframes slideUp {
-      from {
-        opacity: 1;
-        transform: translate(-50%, 0);
+      
+      .bv-setting-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
       }
-      to {
+      
+      .bv-setting-item:first-child {
+        padding-top: 0;
+      }
+      
+      .bv-setting-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+      
+      .bv-setting-info .material-icons {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+      
+      .bv-setting-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      
+      .bv-setting-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000;
+        letter-spacing: -0.01em;
+      }
+      
+      .bv-setting-desc {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+      
+      /* Glass 開關 - 輕盈風格 */
+      .bv-glass-switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 28px;
+        cursor: pointer;
+      }
+      
+      .bv-glass-switch input {
         opacity: 0;
-        transform: translate(-50%, -20px);
+        width: 0;
+        height: 0;
       }
-    }
-    
-    /* 數量標示 - 星號方式 */
-    .bv-qty-star {
-      font-weight: 700;
-      color: inherit;
-    }
-    
-    .bv-qty-star::before {
-      content: "★ ";
-      color: #000;
-      font-weight: normal;
-    }
-    
-    @media print {
+      
+      .bv-switch-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 28px;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      
+      .bv-switch-slider:before {
+        position: absolute;
+        content: "";
+        height: 24px;
+        width: 24px;
+        left: 2px;
+        bottom: 2px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .bv-glass-switch input:checked + .bv-switch-slider {
+        background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+      }
+      
+      .bv-glass-switch input:checked + .bv-switch-slider:before {
+        transform: translateX(20px);
+      }
+      
+      /* Glass Slider - 輕盈風格 */
+      .bv-slider-group {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .bv-slider-item {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-bottom: 8px;
+      }
+      
+      .bv-slider-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: #000;
+      }
+      
+      .bv-value-label {
+        background: rgba(81, 138, 255, 0.08);
+        color: #518aff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace;
+        min-width: 48px;
+        text-align: center;
+      }
+      
+      .bv-glass-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: rgba(0, 0, 0, 0.06);
+        border-radius: 3px;
+        outline: none;
+        position: relative;
+        cursor: pointer;
+        margin: 12px 0;
+      }
+      
+      .bv-glass-slider:before {
+        content: '';
+        position: absolute;
+        height: 6px;
+        border-radius: 3px;
+        background: #518aff;
+        width: var(--value, 0%);
+        pointer-events: none;
+      }
+      
+      .bv-glass-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 
+          0 1px 4px rgba(0, 0, 0, 0.15),
+          0 0 0 0.5px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .bv-glass-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 
+          0 2px 8px rgba(0, 0, 0, 0.2),
+          0 0 0 0.5px rgba(0, 0, 0, 0.08);
+      }
+      
+      .bv-glass-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
+        border: none;
+      }
+      
+      /* 預設管理 */
+      .bv-preset-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .bv-glass-select {
+        flex: 1;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border: 0.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 14px;
+        color: #000;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+      }
+      
+      .bv-glass-select:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(0, 0, 0, 0.12);
+      }
+      
+      .bv-glass-select:focus {
+        background-color: white;
+        border-color: #518aff;
+        box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
+      }
+      
+      .bv-preset-buttons {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      
+      .bv-preset-save-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        align-items: center;
+      }
+      
+      .bv-glass-input {
+        flex: 1;
+        max-width: 200px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border: 0.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 14px;
+        color: #000;
+        transition: all 0.2s ease;
+      }
+      
+      .bv-glass-input::placeholder {
+        color: rgba(0, 0, 0, 0.4);
+      }
+      
+      .bv-glass-input:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(0, 0, 0, 0.12);
+      }
+      
+      .bv-glass-input:focus {
+        background-color: white;
+        border-color: #518aff;
+        box-shadow: 0 0 0 3px rgba(81, 138, 255, 0.1);
+      }
+      
+      /* 底部區域 - 輕盈背景 */
+      .bv-panel-footer {
+        padding: 16px 24px 24px;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        flex-shrink: 0;
+      }
+      
+      .bv-glass-action-button {
+        width: 100%;
+        height: 48px;
+        background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: 
+          0 3px 12px rgba(81, 138, 255, 0.25),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+        letter-spacing: -0.01em;
+      }
+      
+      .bv-glass-action-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 
+          0 6px 20px rgba(81, 138, 255, 0.35),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+      }
+      
+      .bv-glass-action-button:active {
+        transform: translateY(0);
+      }
+      
+      .bv-glass-action-button .material-icons {
+        font-size: 22px;
+      }
+      
+      /* 滾動條 */
+      .bv-panel-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .bv-panel-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .bv-panel-body::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 6px;
+        transition: background 0.2s ease;
+      }
+      
+      .bv-panel-body::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.25);
+      }
+      
+      /* 通知 */
+      .bv-notification {
+        position: fixed;
+        top: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(50px) saturate(180%);
+        -webkit-backdrop-filter: blur(50px) saturate(180%);
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 
+          0 8px 32px rgba(0, 0, 0, 0.12),
+          0 0 0 0.5px rgba(0, 0, 0, 0.05),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
+        z-index: 100001;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        letter-spacing: -0.01em;
+      }
+      
+      .bv-notification.success {
+        color: #248A3D;
+      }
+      
+      .bv-notification.warning {
+        color: #C04C00;
+      }
+      
+      .bv-notification .material-icons {
+        font-size: 20px;
+      }
+      
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+      
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+        to {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+      }
+      
+      /* 數量標示 - 星號方式 */
       .bv-qty-star {
-        font-weight: 700 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        font-weight: 700;
+        color: inherit;
       }
       
       .bv-qty-star::before {
-        content: "★ " !important;
-        color: #000 !important;
-      }
-    }
-    
-    /* 數量圖標 */
-    .bv-counter-icon {
-      font-family: 'Material Icons';
-      font-weight: normal;
-      font-style: normal;
-      font-size: 20px;
-      display: inline-block;
-      line-height: 1;
-      text-transform: none;
-      letter-spacing: normal;
-      word-wrap: normal;
-      white-space: nowrap;
-      direction: ltr;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      -moz-osx-font-smoothing: grayscale;
-      font-feature-settings: 'liga';
-      color: rgba(0, 0, 0, 0.5);
-    }
-    
-    .bv-counter-icon::before {
-      content: "star";
-    }
-    
-    /* 轉換後的樣式 */
-    body.bv-converted {
-      width: auto !important;
-      max-width: none !important;
-      min-width: auto !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    
-    /* Logo 上傳區域 - Apple 風格 */
-    .bv-logo-upload-area {
-      border: 2px dashed rgba(0, 0, 0, 0.12);
-      border-radius: 12px;
-      padding: 32px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: rgba(0, 0, 0, 0.02);
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .bv-logo-upload-area:hover {
-      border-color: #518aff;
-      background: rgba(81, 138, 255, 0.04);
-    }
-    
-    .bv-logo-upload-area.has-logo {
-      border-style: solid;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.6);
-    }
-    
-    .bv-logo-upload-area .material-icons {
-      vertical-align: middle;
-      line-height: 1;
-    }
-    
-    .bv-logo-preview {
-      max-width: 100%;
-      max-height: 120px;
-      margin: 0 auto;
-      display: block;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
-    
-    .bv-upload-hint {
-      color: rgba(0, 0, 0, 0.5);
-      font-size: 14px;
-      margin-top: 12px;
-      font-weight: 500;
-    }
-    
-    .bv-logo-controls {
-      display: none;
-    }
-    
-    .bv-logo-controls.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .bv-remove-logo-btn {
-      background: linear-gradient(135deg, #FF3B30 0%, #D70015 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: -0.01em;
-    }
-    
-    .bv-remove-logo-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
-    }
-    
-    .bv-remove-logo-btn .material-icons {
-      font-size: 18px;
-      vertical-align: middle;
-      line-height: 1;
-    }
-    
-    /* 底圖在標籤上的樣式 */
-    .label-background-logo {
-      position: absolute !important;
-      z-index: 1 !important;
-      pointer-events: none;
-      object-fit: contain !important;
-    }
-    
-    .bv-label-page > *:not(.label-background-logo) {
-      position: relative !important;
-      z-index: 2 !important;
-    }
-    
-    @media screen {
-      body.bv-converted {
-        background: white;  /* 改為白色，不要灰色 */
-        padding: 20px 0;
+        content: "★ ";
+        color: #000;
+        font-weight: normal;
       }
       
-      .bv-page-container {
-        margin: 0 auto 20px;
-        width: fit-content;
+      @media print {
+        .bv-qty-star {
+          font-weight: 700 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        
+        .bv-qty-star::before {
+          content: "★ " !important;
+          color: #000 !important;
+        }
       }
       
-      .bv-label-page {
-        width: 377px !important;
-        height: 566px !important;
-        background: white;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-        position: relative;
-        overflow: hidden;
-        box-sizing: border-box;
+      /* 數量圖標 */
+      .bv-counter-icon {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 20px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'liga';
+        color: rgba(0, 0, 0, 0.5);
       }
       
-      .bv-page-content {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: block;
-        box-sizing: border-box;
+      .bv-counter-icon::before {
+        content: "star";
       }
       
-      .bv-converted .order-content.bv-original {
-        display: none !important;
-      }
-    }
-    
-    @page {
-      size: 100mm 150mm;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    
-    @media print {
-      /* 隱藏控制面板 */
-      #bv-label-control-panel,
-      .bv-floating-button {
-        display: none !important;
-      }
-      
-      /* A4 模式列印 */
-      body:not(.bv-converted) {
-        visibility: visible !important;
-      }
-      
-      body:not(.bv-converted) .order-content {
-        display: block !important;
-        visibility: visible !important;
-      }
-      
-      /* 標籤模式列印 */
-      * {
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
-      
+      /* 轉換後的樣式 */
       body.bv-converted {
         width: auto !important;
         max-width: none !important;
         min-width: auto !important;
         margin: 0 !important;
         padding: 0 !important;
-        background: white !important;
       }
       
-      /* 隱藏原始內容 */
-      body.bv-converted .bv-original {
-        display: none !important;
+      /* Logo 上傳區域 */
+      .bv-logo-upload-area {
+        border: 2px dashed rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 32px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(248, 250, 252, 0.3);
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
       }
       
-      /* 確保每個頁面容器獨立 */
-      body.bv-converted .bv-page-container {
-        page-break-inside: avoid !important;
-        page-break-after: auto !important;
+      .bv-logo-upload-area:hover {
+        border-color: #518aff;
+        background: rgba(81, 138, 255, 0.02);
+      }
+      
+      .bv-logo-upload-area.has-logo {
+        border-style: solid;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+      
+      .bv-logo-upload-area .material-icons {
+        vertical-align: middle;
+        line-height: 1;
+      }
+      
+      .bv-logo-preview {
+        max-width: 100%;
+        max-height: 120px;
+        margin: 0 auto;
+        display: block;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+      
+      .bv-upload-hint {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 14px;
+        margin-top: 12px;
+        font-weight: 500;
+      }
+      
+      .bv-logo-controls {
+        display: none;
+      }
+      
+      .bv-logo-controls.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .bv-remove-logo-btn {
+        background: linear-gradient(135deg, #FF3B30 0%, #D70015 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.01em;
+      }
+      
+      .bv-remove-logo-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+      }
+      
+      .bv-remove-logo-btn .material-icons {
+        font-size: 18px;
+        vertical-align: middle;
+        line-height: 1;
+      }
+      
+      /* 底圖在標籤上的樣式 */
+      .label-background-logo {
+        position: absolute !important;
+        z-index: 1 !important;
+        pointer-events: none;
+        object-fit: contain !important;
+      }
+      
+      .bv-label-page > *:not(.label-background-logo) {
+        position: relative !important;
+        z-index: 2 !important;
+      }
+      
+      @media screen {
+        body.bv-converted {
+          background: white;
+          padding: 20px 0;
+        }
+        
+        .bv-page-container {
+          margin: 0 auto 20px;
+          width: fit-content;
+        }
+        
+        .bv-label-page {
+          width: 377px !important;
+          height: 566px !important;
+          background: white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          margin-bottom: 20px;
+          position: relative;
+          overflow: hidden;
+          box-sizing: border-box;
+        }
+        
+        .bv-page-content {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          display: block;
+          box-sizing: border-box;
+        }
+        
+        .bv-converted .order-content.bv-original {
+          display: none !important;
+        }
+      }
+      
+      @page {
+        size: 100mm 150mm;
         margin: 0 !important;
         padding: 0 !important;
       }
       
-      body.bv-converted .bv-label-page {
-        width: 100mm !important;
-        height: 150mm !important;
-        margin: 0 !important;
-        padding: 5mm !important;
-        box-sizing: border-box !important;
-        page-break-after: always !important;
-        page-break-inside: avoid !important;
-        box-shadow: none !important;
-        border: none !important;
-        position: relative !important;
-        display: block !important;
-        background: white !important;
+      @media print {
+        /* 隱藏控制面板 */
+        #bv-label-control-panel,
+        .bv-floating-button {
+          display: none !important;
+        }
+        
+        /* A4 模式列印 */
+        body:not(.bv-converted) {
+          visibility: visible !important;
+        }
+        
+        body:not(.bv-converted) .order-content {
+          display: block !important;
+          visibility: visible !important;
+        }
+        
+        /* 標籤模式列印 */
+        * {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+        
+        body.bv-converted {
+          width: auto !important;
+          max-width: none !important;
+          min-width: auto !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
+        }
+        
+        /* 隱藏原始內容 */
+        body.bv-converted .bv-original {
+          display: none !important;
+        }
+        
+        /* 確保每個頁面容器獨立 */
+        body.bv-converted .bv-page-container {
+          page-break-inside: avoid !important;
+          page-break-after: auto !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        body.bv-converted .bv-label-page {
+          width: 100mm !important;
+          height: 150mm !important;
+          margin: 0 !important;
+          padding: 5mm !important;
+          box-sizing: border-box !important;
+          page-break-after: always !important;
+          page-break-inside: avoid !important;
+          box-shadow: none !important;
+          border: none !important;
+          position: relative !important;
+          display: block !important;
+          background: white !important;
+        }
+        
+        body.bv-converted .bv-label-page:last-child {
+          page-break-after: auto !important;
+        }
+        
+        /* 確保內容不會重疊 */
+        body.bv-converted .bv-page-content {
+          position: relative !important;
+          page-break-inside: avoid !important;
+        }
+        
+        body.bv-converted > *:not(.bv-page-container) {
+          display: none !important;
+        }
       }
-      
-      body.bv-converted .bv-label-page:last-child {
-        page-break-after: auto !important;
-      }
-      
-      /* 確保內容不會重疊 */
-      body.bv-converted .bv-page-content {
-        position: relative !important;
-        page-break-inside: avoid !important;
-      }
-      
-      body.bv-converted > *:not(.bv-page-container) {
-        display: none !important;
-      }
-    }
     `;
   }
   
