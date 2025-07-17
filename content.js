@@ -8,7 +8,6 @@
   let hideTableHeader = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
-  let autoLayout = true; // 預設開啟 auto-layout
   
   // 載入 Material Icons
   const iconLink = document.createElement('link');
@@ -988,43 +987,8 @@
         width: 100%;
         height: 100%;
         position: relative;
-        display: flex;
-        flex-direction: column;
-      }
-      
-      /* Auto-layout 樣式 */
-      .bv-label-page.auto-layout .bv-page-content {
-        justify-content: space-between;
-      }
-      
-      .bv-label-page.auto-layout .title {
-        flex-shrink: 0;
-      }
-      
-      .bv-label-page.auto-layout .order-info {
-        flex-shrink: 0;
-      }
-      
-      .bv-label-page.auto-layout .list {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .bv-label-page.auto-layout .list-item {
-        flex-shrink: 0;
-      }
-      
-      .bv-label-page.auto-layout .order-fee {
-        flex-shrink: 0;
-        margin-top: auto;
-      }
-      
-      .bv-label-page.auto-layout .orderRemark,
-      .bv-label-page.auto-layout .orderManageRemark,
-      .bv-label-page.auto-layout .orderPrintRemark {
-        flex-shrink: 0;
+        display: block;
+        box-sizing: border-box;
       }
       
       .bv-converted .order-content.bv-original {
@@ -1145,39 +1109,22 @@
       initLogoUpload();
       restoreCollapsedStates();
       hideOriginalControls();
-      toggleLayoutControls(!autoLayout);
     }
     
     initDragFunction();
   }
   
-  // 切換版面控制項的啟用狀態
-  function toggleLayoutControls(disabled) {
-    const controls = ['bv-hide-extra-info', 'bv-hide-table-header'];
-    controls.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.disabled = disabled;
-        const switchElement = element.parentElement;
-        if (switchElement) {
-          switchElement.style.opacity = disabled ? '0.5' : '1';
-          switchElement.style.pointerEvents = disabled ? 'none' : 'auto';
-        }
-      }
-    });
-  }
-  
   // 隱藏原始控制項
   function hideOriginalControls() {
     const controlsToHide = [
-      '.ignore-print #showProductImage',
-      '.ignore-print #fontSize'
+      '.ignore-print #showProductImage',  // 底圖透明度
+      '.ignore-print #fontSize'            // 文字大小
     ];
     
     controlsToHide.forEach(selector => {
       const element = document.querySelector(selector);
       if (element) {
-        const container = element.closest('.row') || element.parentElement;
+        const container = element.closest('.form-group') || element.closest('.row') || element.parentElement;
         if (container) {
           container.style.display = 'none';
         }
@@ -1185,175 +1132,21 @@
     });
   }
   
-  // 改進的 Auto-layout 功能
-  function applyAutoLayout(page) {
-    if (!autoLayout) return;
-    
-    page.classList.add('auto-layout');
-    const content = page.querySelector('.bv-page-content');
-    if (!content) return;
-    
-    // 取得設定值
-    const fontSize = parseInt(document.getElementById('bv-font-size')?.value || '14');
+  // 套用縮放
+  function applyScaling(page) {
     const scale = parseInt(document.getElementById('bv-scale')?.value || '100');
     
-    // 固定內距為 5mm
-    const paddingMm = 5;
-    const paddingPx = paddingMm * 3.78;
-    const pageHeight = 566;
-    const pageWidth = 377;
-    const contentHeight = pageHeight - (paddingPx * 2);
-    const contentWidth = pageWidth - (paddingPx * 2);
-    
-    // 設定頁面縮放
     if (scale !== 100) {
-      page.style.transform = `scale(${scale / 100})`;
-      page.style.transformOrigin = 'top left';
-    }
-    
-    // 智慧間距計算（基於字體大小）
-    const baseSpacing = {
-      title: Math.max(Math.round(fontSize * 0.8), 8),
-      section: Math.max(Math.round(fontSize * 0.6), 6),
-      row: Math.max(Math.round(fontSize * 0.4), 4),
-      paragraph: Math.max(Math.round(fontSize * 0.3), 3)
-    };
-    
-    // 設定基本字體大小
-    content.style.fontSize = fontSize + 'px';
-    
-    // 分析內容結構
-    const elements = {
-      title: content.querySelector('.title'),
-      orderInfo: content.querySelector('.order-info'),
-      list: content.querySelector('.list'),
-      orderFee: content.querySelector('.order-fee'),
-      remarks: content.querySelectorAll('.orderRemark, .orderManageRemark, .orderPrintRemark')
-    };
-    
-    // 美觀的排版設定
-    if (elements.title) {
-      elements.title.style.marginBottom = baseSpacing.title + 'px';
-      elements.title.style.textAlign = 'center';
-      elements.title.style.fontWeight = '700';
-      elements.title.style.fontSize = (fontSize + 2) + 'px';
-    }
-    
-    if (elements.orderInfo) {
-      elements.orderInfo.style.marginBottom = baseSpacing.section + 'px';
-      const rows = elements.orderInfo.querySelectorAll('.row');
-      rows.forEach(row => {
-        row.style.marginBottom = baseSpacing.paragraph + 'px';
-      });
-      const paragraphs = elements.orderInfo.querySelectorAll('p');
-      paragraphs.forEach(p => {
-        p.style.fontSize = (fontSize - 1) + 'px';
-        p.style.lineHeight = '1.4';
-        p.style.marginBottom = baseSpacing.paragraph + 'px';
-      });
-    }
-    
-    if (elements.list) {
-      elements.list.style.marginBottom = baseSpacing.section + 'px';
-      
-      // 表格標題
-      const listTitle = elements.list.querySelector('.list-title');
-      if (listTitle) {
-        const ths = listTitle.querySelectorAll('th');
-        ths.forEach(th => {
-          th.style.fontSize = (fontSize - 1) + 'px';
-          th.style.padding = `${baseSpacing.row}px 4px`;
-        });
-      }
-      
-      // 表格內容
-      const rows = elements.list.querySelectorAll('.list-item');
-      rows.forEach(row => {
-        const tds = row.querySelectorAll('td');
-        tds.forEach(td => {
-          td.style.fontSize = (fontSize - 1) + 'px';
-          td.style.padding = `${baseSpacing.row}px 4px`;
-          td.style.lineHeight = '1.3';
-        });
-      });
-      
-      // 如果項目太多，進一步縮小間距
-      if (rows.length > 10) {
-        rows.forEach(row => {
-          row.querySelectorAll('td').forEach(td => {
-            td.style.padding = `${baseSpacing.row * 0.7}px 4px`;
-          });
-        });
-      }
-    }
-    
-    if (elements.orderFee) {
-      elements.orderFee.style.marginTop = baseSpacing.section + 'px';
-      elements.orderFee.style.marginBottom = baseSpacing.section + 'px';
-      const tds = elements.orderFee.querySelectorAll('td');
-      tds.forEach(td => {
-        td.style.fontSize = (fontSize - 1) + 'px';
-        td.style.padding = `${baseSpacing.row}px 4px`;
-      });
-    }
-    
-    // 備註區塊
-    elements.remarks.forEach((remark, index) => {
-      if (remark) {
-        remark.style.fontSize = (fontSize - 2) + 'px';
-        remark.style.padding = `${baseSpacing.row}px ${baseSpacing.section}px`;
-        remark.style.marginBottom = 
-          index === elements.remarks.length - 1 ? '0' : baseSpacing.paragraph + 'px';
-      }
-    });
-    
-    // 檢查內容是否超出並動態調整
-    let totalHeight = 0;
-    Object.entries(elements).forEach(([key, element]) => {
-      if (element instanceof NodeList) {
-        element.forEach(el => {
-          if (el) totalHeight += el.offsetHeight;
-        });
-      } else if (element) {
-        totalHeight += element.offsetHeight;
-      }
-    });
-    
-    // 如果內容超出，逐步縮小字體
-    if (totalHeight > contentHeight) {
-      let adjustedFontSize = fontSize;
-      let attempts = 0;
-      const maxAttempts = 8;
-      
-      while (totalHeight > contentHeight && adjustedFontSize > 11 && attempts < maxAttempts) {
-        adjustedFontSize -= 0.5;
-        content.style.fontSize = adjustedFontSize + 'px';
-        
-        // 重新計算所有元素的字體大小
-        if (elements.title) {
-          elements.title.style.fontSize = (adjustedFontSize + 2) + 'px';
-        }
-        
-        content.querySelectorAll('p, td, th').forEach(el => {
-          const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
-          if (currentSize > adjustedFontSize) {
-            el.style.fontSize = (adjustedFontSize - 1) + 'px';
-          }
-        });
-        
-        // 重新計算高度
-        totalHeight = 0;
-        Object.entries(elements).forEach(([key, element]) => {
-          if (element instanceof NodeList) {
-            element.forEach(el => {
-              if (el) totalHeight += el.offsetHeight;
-            });
-          } else if (element) {
-            totalHeight += element.offsetHeight;
-          }
-        });
-        
-        attempts++;
+      const content = page.querySelector('.bv-page-content');
+      if (content) {
+        // 從中心點縮放內容
+        content.style.position = 'absolute';
+        content.style.left = '50%';
+        content.style.top = '50%';
+        content.style.transform = `translate(-50%, -50%) scale(${scale / 100})`;
+        content.style.transformOrigin = 'center center';
+        content.style.width = 'calc(100% - 10mm)';  // 377px - (5mm * 2)
+        content.style.height = 'calc(100% - 10mm)'; // 566px - (5mm * 2)
       }
     }
   }
@@ -1701,21 +1494,6 @@
       });
     }
     
-    const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
-    if (autoLayoutCheckbox) {
-      autoLayoutCheckbox.addEventListener('change', function(e) {
-        autoLayout = e.target.checked;
-        toggleLayoutControls(!autoLayout);
-        saveSettings();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
     // 文字大小控制
     const fontSizeSlider = document.getElementById('bv-font-size');
     if (fontSizeSlider) {
@@ -1802,8 +1580,14 @@
         @media print {
           body.bv-converted .bv-label-page {
             padding: 5mm !important;
-            transform: scale(${scale / 100}) !important;
-            transform-origin: top left !important;
+          }
+          
+          body.bv-converted .bv-label-page .bv-page-content {
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) scale(${scale / 100}) !important;
+            transform-origin: center center !important;
           }
         }
       `;
@@ -1994,7 +1778,6 @@
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
       hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
-      autoLayout: document.getElementById('bv-auto-layout')?.checked,
       fontSize: document.getElementById('bv-font-size')?.value || '14',
       scale: document.getElementById('bv-scale')?.value || '100',
       showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
@@ -2032,13 +1815,6 @@
       const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
       if (hideHeaderCheckbox) hideHeaderCheckbox.checked = settings.hideTableHeader;
       hideTableHeader = settings.hideTableHeader;
-    }
-    
-    if (settings.autoLayout !== undefined) {
-      const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
-      if (autoLayoutCheckbox) autoLayoutCheckbox.checked = settings.autoLayout;
-      autoLayout = settings.autoLayout;
-      toggleLayoutControls(!autoLayout);
     }
     
     if (settings.fontSize !== undefined) {
@@ -2285,20 +2061,6 @@
                         <span class="bv-switch-slider"></span>
                       </label>
                     </div>
-                    
-                    <div class="bv-setting-item">
-                      <div class="bv-setting-info">
-                        <span class="material-icons">auto_fix_high</span>
-                        <div class="bv-setting-text">
-                          <span class="bv-setting-label">自動佈局</span>
-                          <span class="bv-setting-desc">智慧調整內容排版</span>
-                        </div>
-                      </div>
-                      <label class="bv-glass-switch">
-                        <input type="checkbox" id="bv-auto-layout" checked>
-                        <span class="bv-switch-slider"></span>
-                      </label>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -2523,12 +2285,10 @@
           pageContainer.appendChild(currentPage);
           currentHeight = 0;
           
-          // 套用 auto-layout
-          if (autoLayout) {
-            setTimeout(() => {
-              applyAutoLayout(currentPage);
-            }, 50);
-          }
+          // 套用縮放
+          setTimeout(() => {
+            applyScaling(currentPage);
+          }, 50);
         }
         
         const elementClone = element.cloneNode(true);
@@ -2643,20 +2403,20 @@
       .bv-label-page .title {
         font-size: ${parseInt(fontSize) + 2}px !important;
         font-weight: bold !important;
-        margin: 0 0 ${Math.max(fontSize * 0.8, 8)}px 0 !important;
+        margin: 0 0 8px 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
       }
       
       .bv-converted .order-info,
       .bv-label-page .order-info {
-        margin: 0 0 ${Math.max(fontSize * 0.6, 6)}px 0 !important;
+        margin: 0 0 6px 0 !important;
       }
       
       .bv-converted .order-info .row,
       .bv-label-page .order-info .row {
         display: flex !important;
-        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
+        margin: 0 0 3px 0 !important;
       }
       
       .bv-converted .order-info .col-6,
@@ -2677,7 +2437,7 @@
       
       .bv-converted .order-info p,
       .bv-label-page .order-info p {
-        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
+        margin: 0 0 3px 0 !important;
         font-size: ${parseInt(fontSize) - 1}px !important;
         line-height: 1.4 !important;
       }
@@ -2685,7 +2445,7 @@
       .bv-converted .list,
       .bv-label-page .list {
         width: 100% !important;
-        margin: 0 0 ${Math.max(fontSize * 0.6, 6)}px 0 !important;
+        margin: 0 0 6px 0 !important;
         border-collapse: collapse !important;
       }
       
@@ -2697,7 +2457,7 @@
       
       .bv-converted .list-title th,
       .bv-label-page .list-title th {
-        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        padding: 4px 4px !important;
         font-size: ${parseInt(fontSize) - 1}px !important;
         font-weight: bold !important;
         text-align: left !important;
@@ -2718,7 +2478,7 @@
       
       .bv-converted .list-item td,
       .bv-label-page .list-item td {
-        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        padding: 4px 4px !important;
         font-size: ${parseInt(fontSize) - 1}px !important;
         vertical-align: top !important;
         line-height: 1.3 !important;
@@ -2742,7 +2502,7 @@
       .bv-label-page .order-fee {
         width: 100% !important;
         border-collapse: collapse !important;
-        margin: ${Math.max(fontSize * 0.6, 6)}px 0 !important;
+        margin: 6px 0 !important;
         border-top: 0.3mm solid #000 !important;
         border-bottom: 0.3mm solid #000 !important;
         table-layout: fixed !important;
@@ -2750,7 +2510,7 @@
       
       .bv-converted .order-fee td,
       .bv-label-page .order-fee td {
-        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        padding: 4px 4px !important;
         font-size: ${parseInt(fontSize) - 1}px !important;
         line-height: 1.2 !important;
         vertical-align: middle !important;
@@ -2784,8 +2544,8 @@
       .bv-label-page .orderManageRemark,
       .bv-label-page .orderPrintRemark {
         font-size: ${parseInt(fontSize) - 2}px !important;
-        padding: ${Math.max(fontSize * 0.4, 4)}px ${Math.max(fontSize * 0.6, 6)}px !important;
-        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
+        padding: 4px 6px !important;
+        margin: 0 0 3px 0 !important;
         border: 0.2mm solid #ccc !important;
         background-color: #f9f9f9 !important;
       }
@@ -2799,18 +2559,28 @@
         opacity: ${(100 - logoOpacity) / 100} !important;
       }
       
-      /* 整體縮放 */
+      /* 整體縮放 - 從中心點縮放 */
       @media screen {
-        .bv-label-page {
-          transform: scale(${scale / 100});
-          transform-origin: top left;
+        .bv-label-page .bv-page-content {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%) scale(${scale / 100});
+          transform-origin: center center;
+          width: calc(377px - ${paddingPx * 2}px);
+          height: calc(566px - ${paddingPx * 2}px);
         }
       }
       
       @media print {
-        .bv-label-page {
-          transform: scale(${scale / 100}) !important;
-          transform-origin: top left !important;
+        .bv-label-page .bv-page-content {
+          position: absolute !important;
+          left: 50% !important;
+          top: 50% !important;
+          transform: translate(-50%, -50%) scale(${scale / 100}) !important;
+          transform-origin: center center !important;
+          width: calc(100mm - 10mm) !important;
+          height: calc(150mm - 10mm) !important;
         }
       }
     `;
@@ -2913,7 +2683,6 @@
       highlightQuantity: highlightQuantity,
       hideExtraInfo: hideExtraInfo,
       hideTableHeader: hideTableHeader,
-      autoLayout: autoLayout,
       fontSize: document.getElementById('bv-font-size')?.value || '14',
       scale: document.getElementById('bv-scale')?.value || '100',
       showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
@@ -2957,10 +2726,6 @@
           hideTableHeader = settings.hideTableHeader !== undefined ? settings.hideTableHeader : false;
           const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
           if (hideHeaderCheckbox) hideHeaderCheckbox.checked = hideTableHeader;
-          
-          autoLayout = settings.autoLayout !== undefined ? settings.autoLayout : true;
-          const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
-          if (autoLayoutCheckbox) autoLayoutCheckbox.checked = autoLayout;
           
           if (settings.fontSize) {
             const fontSizeSlider = document.getElementById('bv-font-size');
