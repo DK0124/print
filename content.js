@@ -1118,20 +1118,18 @@
   function hideOriginalControls() {
     const controlsToHide = [
       '.ignore-print #showProductImage',  // 底圖透明度
-      '.ignore-print #fontSize'            // 文字大小
+      '.ignore-print #fontSize',           // 文字大小
+      '#baseImageOpacityLabel'            // 底圖透明度標籤
     ];
     
     controlsToHide.forEach(selector => {
       const element = document.querySelector(selector);
       if (element) {
-        const container = element.closest('.form-group') || element.closest('.row') || element.parentElement;
-        if (container) {
-          container.style.display = 'none';
-        }
+        element.style.display = 'none';
       }
     });
   }
-  
+   
   // 套用縮放
   function applyScaling(page) {
     const scale = parseInt(document.getElementById('bv-scale')?.value || '100');
@@ -1578,8 +1576,17 @@
       const scale = document.getElementById('bv-scale')?.value || '100';
       printStyle.textContent = `
         @media print {
+          /* 隱藏原始內容 */
+          .bv-original {
+            display: none !important;
+          }
+          
           body.bv-converted .bv-label-page {
             padding: 5mm !important;
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+            position: relative !important;
+            display: block !important;
           }
           
           body.bv-converted .bv-label-page .bv-page-content {
@@ -1588,6 +1595,11 @@
             top: 50% !important;
             transform: translate(-50%, -50%) scale(${scale / 100}) !important;
             transform-origin: center center !important;
+          }
+          
+          /* 確保每個頁面獨立顯示 */
+          body.bv-converted .bv-page-container {
+            page-break-inside: avoid !important;
           }
         }
       `;
@@ -2573,6 +2585,13 @@
       }
       
       @media print {
+        .bv-label-page {
+          padding: 5mm !important;
+          page-break-after: always !important;
+          page-break-inside: avoid !important;
+          position: relative !important;
+        }
+        
         .bv-label-page .bv-page-content {
           position: absolute !important;
           left: 50% !important;
