@@ -1030,9 +1030,10 @@
       
       @page {
         size: 100mm 150mm;
-        margin: 0;
+        margin: 0 !important;
+        padding: 0 !important;
       }
-      
+            
       body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
