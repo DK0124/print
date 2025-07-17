@@ -2430,16 +2430,20 @@
         }
       }
       
-      /* 列印時保持原始位置，從左上角縮放 */
+      /* 列印時使用相同的縮放邏輯 */
       @media print {
+        .bv-label-page {
+          position: relative !important;
+        }
+        
         .bv-label-page .bv-page-content {
           position: absolute !important;
           left: 50% !important;
           top: 50% !important;
           transform: translate(-50%, -50%) scale(${scale / 100}) !important;
           transform-origin: center center !important;
-          width: calc(100mm - 10mm) !important;
-          height: calc(150mm - 10mm) !important;
+          width: 90mm !important; /* 100mm - 10mm padding */
+          height: 140mm !important; /* 150mm - 10mm padding */
         }
       }
     `;
@@ -2497,7 +2501,7 @@
           }
           
           body.bv-converted {
-            background: white !important;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
             margin: 0 !important;
             padding: 0 !important;
           }
