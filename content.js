@@ -8,25 +8,20 @@
   let hideTableHeader = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
+  let logoDataUrl = null;
+  let logoAspectRatio = 1;
+  let collapsedSections = {};
   
-  // 載入 Material Icons
+  // 載入外部資源
   const iconLink = document.createElement('link');
   iconLink.rel = 'stylesheet';
   iconLink.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
   document.head.appendChild(iconLink);
   
-  // 載入思源黑體
   const fontLink = document.createElement('link');
   fontLink.rel = 'stylesheet';
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap';
   document.head.appendChild(fontLink);
-  
-  // Logo 相關變數
-  let logoDataUrl = null;
-  let logoAspectRatio = 1;
-  
-  // 收摺狀態
-  let collapsedSections = {};
   
   // 創建控制面板
   function createControlPanel() {
@@ -34,12 +29,29 @@
     
     const panel = document.createElement('div');
     panel.id = 'bv-label-control-panel';
-    
     panel.innerHTML = getPanelContent();
     
-    // 添加樣式
     const style = document.createElement('style');
-    style.textContent = `
+    style.textContent = getPanelStyles();
+    document.head.appendChild(style);
+    document.body.appendChild(panel);
+    
+    // 創建浮動按鈕
+    const floatingButton = document.createElement('button');
+    floatingButton.className = 'bv-floating-button';
+    floatingButton.id = 'bv-floating-print';
+    floatingButton.title = '快速列印';
+    floatingButton.innerHTML = '<span class="material-icons">print</span>';
+    document.body.appendChild(floatingButton);
+    
+    setupEventListeners();
+    loadSettings();
+    initDragFunction();
+  }
+  
+  // 取得面板樣式
+  function getPanelStyles() {
+    return `
     /* 移除所有 focus outline */
     * {
       outline: none !important;
@@ -996,6 +1008,12 @@
       }
     }
     
+    @page {
+      size: 100mm 150mm;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
     @media print {
       /* 隱藏控制面板 */
       #bv-label-control-panel,
@@ -1014,6 +1032,18 @@
       }
       
       /* 標籤模式列印 */
+      * {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      
       body.bv-converted {
         width: auto !important;
         max-width: none !important;
@@ -1023,17 +1053,19 @@
         background: white !important;
       }
       
-      html {
+      /* 隱藏原始內容 */
+      body.bv-converted .bv-original {
+        display: none !important;
+      }
+      
+      /* 確保每個頁面容器獨立 */
+      body.bv-converted .bv-page-container {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
         margin: 0 !important;
         padding: 0 !important;
       }
       
-      @page {
-        size: 100mm 150mm;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-            
       body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
@@ -1044,855 +1076,26 @@
         page-break-inside: avoid !important;
         box-shadow: none !important;
         border: none !important;
+        position: relative !important;
+        display: block !important;
+        background: white !important;
       }
       
       body.bv-converted .bv-label-page:last-child {
         page-break-after: auto !important;
       }
       
-      body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
-        display: none !important;
+      /* 確保內容不會重疊 */
+      body.bv-converted .bv-page-content {
+        position: relative !important;
+        page-break-inside: avoid !important;
       }
       
-      .bv-page-container {
-        margin: 0 !important;
-        padding: 0 !important;
+      body.bv-converted > *:not(.bv-page-container) {
+        display: none !important;
       }
     }
     `;
-    
-    document.head.appendChild(style);
-    document.body.appendChild(panel);
-    
-    // 創建浮動按鈕
-    const floatingButton = document.createElement('button');
-    floatingButton.className = 'bv-floating-button';
-    floatingButton.id = 'bv-floating-print';
-    floatingButton.title = '快速列印';
-    floatingButton.innerHTML = '<span class="material-icons">print</span>';
-    document.body.appendChild(floatingButton);
-    
-    // 綁定事件
-    setupEventListeners();
-    
-    // 載入設定
-    loadSettings();
-    
-    // 初始化拖曳功能
-    initDragFunction();
-  }
-  
-  // 更新面板內容
-  function updatePanelContent() {
-    const panel = document.getElementById('bv-label-control-panel');
-    if (!panel) return;
-    
-    const wasMinimized = panel.classList.contains('minimized');
-    const currentTransform = panel.style.transform;
-    
-    panel.innerHTML = getPanelContent();
-    
-    if (wasMinimized) {
-      panel.classList.add('minimized');
-      const minimizeBtn = panel.querySelector('#bv-minimize-btn .material-icons');
-      if (minimizeBtn) {
-        minimizeBtn.textContent = 'add';
-      }
-    }
-    
-    panel.style.transform = currentTransform;
-    
-    setupEventListeners();
-    
-    if (isConverted) {
-      loadSettings();
-      initPresetSystem();
-      initLogoUpload();
-      restoreCollapsedStates();
-      hideOriginalControls();
-    }
-    
-    initDragFunction();
-  }
-  
-  // 隱藏原始控制項
-  function hideOriginalControls() {
-    const controlsToHide = [
-      '.ignore-print #showProductImage',  // 底圖透明度
-      '.ignore-print #fontSize',           // 文字大小
-      '#baseImageOpacityLabel'            // 底圖透明度標籤
-    ];
-    
-    controlsToHide.forEach(selector => {
-      const element = document.querySelector(selector);
-      if (element) {
-        element.style.display = 'none';
-      }
-    });
-  }
-   
-  // 套用縮放
-  function applyScaling(page) {
-    const scale = parseInt(document.getElementById('bv-scale')?.value || '100');
-    
-    if (scale !== 100) {
-      const content = page.querySelector('.bv-page-content');
-      if (content) {
-        // 從中心點縮放內容
-        content.style.position = 'absolute';
-        content.style.left = '50%';
-        content.style.top = '50%';
-        content.style.transform = `translate(-50%, -50%) scale(${scale / 100})`;
-        content.style.transformOrigin = 'center center';
-        content.style.width = 'calc(100% - 10mm)';  // 377px - (5mm * 2)
-        content.style.height = 'calc(100% - 10mm)'; // 566px - (5mm * 2)
-      }
-    }
-  }
-  
-  // 恢復收摺狀態
-  function restoreCollapsedStates() {
-    Object.keys(collapsedSections).forEach(sectionId => {
-      if (collapsedSections[sectionId]) {
-        const card = document.querySelector(`[data-section="${sectionId}"]`);
-        if (card) {
-          card.classList.add('collapsed');
-        }
-      }
-    });
-  }
-  
-  // 初始化拖曳功能
-  function initDragFunction() {
-    const panel = document.getElementById('bv-label-control-panel');
-    const header = panel.querySelector('.bv-panel-header');
-    
-    if (!panel || !header) return;
-    
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-    
-    const transform = panel.style.transform;
-    if (transform) {
-      const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
-      if (match) {
-        xOffset = parseFloat(match[1]);
-        yOffset = parseFloat(match[2]);
-      }
-    }
-    
-    function dragStart(e) {
-      if (e.target.closest('.bv-glass-button') || e.target.closest('.bv-minimize-btn')) return;
-      
-      if (e.type === "touchstart") {
-        initialX = e.touches[0].clientX - xOffset;
-        initialY = e.touches[0].clientY - yOffset;
-      } else {
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
-      }
-      
-      if (e.target === header || (header.contains(e.target) && !e.target.closest('.bv-glass-button'))) {
-        isDragging = true;
-        panel.style.transition = 'none';
-        e.preventDefault();
-      }
-    }
-    
-    function dragEnd(e) {
-      if (!isDragging) return;
-      
-      initialX = currentX;
-      initialY = currentY;
-      isDragging = false;
-      panel.style.transition = '';
-      
-      chrome.storage.local.set({
-        bvPanelPosition: {
-          x: xOffset,
-          y: yOffset
-        }
-      });
-    }
-    
-    function drag(e) {
-      if (isDragging) {
-        e.preventDefault();
-        
-        if (e.type === "touchmove") {
-          currentX = e.touches[0].clientX - initialX;
-          currentY = e.touches[0].clientY - initialY;
-        } else {
-          currentX = e.clientX - initialX;
-          currentY = e.clientY - initialY;
-        }
-        
-        xOffset = currentX;
-        yOffset = currentY;
-        
-        setTranslate(currentX, currentY, panel);
-      }
-    }
-    
-    function setTranslate(xPos, yPos, el) {
-      el.style.transform = `translate(${xPos}px, ${yPos}px)`;
-    }
-    
-    chrome.storage.local.get(['bvPanelPosition'], (result) => {
-      if (result.bvPanelPosition) {
-        xOffset = result.bvPanelPosition.x;
-        yOffset = result.bvPanelPosition.y;
-        setTranslate(xOffset, yOffset, panel);
-      }
-    });
-    
-    header.addEventListener('mousedown', dragStart);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', dragEnd);
-    
-    header.addEventListener('touchstart', dragStart, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', dragEnd);
-  }
-  
-  // 初始化 Logo 上傳功能
-  function initLogoUpload() {
-    const logoUploadArea = document.getElementById('logo-upload-area');
-    const logoInput = document.getElementById('logo-input');
-    const logoPreview = document.getElementById('logo-preview');
-    const uploadPrompt = document.getElementById('upload-prompt');
-    const logoControls = document.getElementById('logo-controls');
-    const removeLogoBtn = document.getElementById('remove-logo-btn');
-    
-    const logoSizeSlider = document.getElementById('logo-size-slider');
-    const logoXSlider = document.getElementById('logo-x-slider');
-    const logoYSlider = document.getElementById('logo-y-slider');
-    const logoOpacitySlider = document.getElementById('logo-opacity-slider');
-    
-    if (logoUploadArea && !logoUploadArea.hasAttribute('data-initialized')) {
-      logoUploadArea.setAttribute('data-initialized', 'true');
-      
-      logoUploadArea.addEventListener('click', function(e) {
-        if (!e.target.closest('.bv-remove-logo-btn')) {
-          logoInput.click();
-        }
-      });
-    }
-    
-    if (logoInput && !logoInput.hasAttribute('data-initialized')) {
-      logoInput.setAttribute('data-initialized', 'true');
-      
-      logoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg')) {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-            logoDataUrl = event.target.result;
-            
-            const img = new Image();
-            img.onload = function() {
-              logoAspectRatio = img.width / img.height;
-              
-              logoPreview.src = logoDataUrl;
-              logoPreview.style.display = 'block';
-              uploadPrompt.style.display = 'none';
-              logoUploadArea.classList.add('has-logo');
-              logoControls.classList.add('active');
-              
-              saveSettings();
-              updateLabelStyles();
-              setTimeout(() => {
-                handlePagination();
-                if (highlightQuantity) {
-                  applyQuantityHighlight();
-                }
-              }, 100);
-            };
-            img.src = logoDataUrl;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          showNotification('請上傳 PNG 或 JPG 格式的圖片', 'warning');
-        }
-      });
-    }
-    
-    if (removeLogoBtn && !removeLogoBtn.hasAttribute('data-initialized')) {
-      removeLogoBtn.setAttribute('data-initialized', 'true');
-      
-      removeLogoBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        
-        logoDataUrl = null;
-        logoAspectRatio = 1;
-        logoPreview.style.display = 'none';
-        uploadPrompt.style.display = 'block';
-        logoUploadArea.classList.remove('has-logo');
-        logoControls.classList.remove('active');
-        logoInput.value = '';
-        
-        saveSettings();
-        updateLabelStyles();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    [logoSizeSlider, logoXSlider, logoYSlider, logoOpacitySlider].forEach(slider => {
-      if (slider && !slider.hasAttribute('data-initialized')) {
-        slider.setAttribute('data-initialized', 'true');
-        
-        slider.addEventListener('input', function() {
-          document.getElementById(this.id.replace('-slider', '')).textContent = this.value + '%';
-          updateRangeProgress(this);
-          saveSettings();
-          updateLabelStyles();
-        });
-      }
-    });
-    
-    if (logoDataUrl) {
-      logoPreview.src = logoDataUrl;
-      logoPreview.style.display = 'block';
-      uploadPrompt.style.display = 'none';
-      logoUploadArea.classList.add('has-logo');
-      logoControls.classList.add('active');
-    }
-  }
-  
-  // 設置事件監聽器
-  function setupEventListeners() {
-    const convertBtn = document.getElementById('bv-convert-btn');
-    const revertBtn = document.getElementById('bv-revert-btn');
-    const minimizeBtn = document.getElementById('bv-minimize-btn');
-    const floatingPrint = document.getElementById('bv-floating-print');
-    const highlightQty = document.getElementById('bv-highlight-qty');
-    const applyPrint = document.getElementById('bv-apply-print');
-    
-    if (convertBtn) {
-      convertBtn.addEventListener('click', convertToLabelFormat);
-    }
-    
-    if (revertBtn) {
-      revertBtn.addEventListener('click', revertToOriginal);
-    }
-    
-    if (minimizeBtn) {
-      minimizeBtn.addEventListener('click', function() {
-        const panel = document.getElementById('bv-label-control-panel');
-        const icon = this.querySelector('.material-icons');
-        
-        if (isPanelMinimized) {
-          panel.classList.remove('minimized');
-          icon.textContent = 'remove';
-          isPanelMinimized = false;
-        } else {
-          panel.classList.add('minimized');
-          icon.textContent = 'add';
-          isPanelMinimized = true;
-        }
-        
-        chrome.storage.local.set({ bvPanelMinimized: isPanelMinimized });
-      });
-    }
-       
-    if (floatingPrint) {
-      floatingPrint.addEventListener('click', function() {
-        if (!isConverted) {
-          window.print();
-        } else {
-          preparePrintStyles();
-          window.print();
-        }
-      });
-    }
-    
-    if (highlightQty) {
-      highlightQty.addEventListener('change', toggleQuantityHighlight);
-    }
-    
-    if (applyPrint) {
-      applyPrint.addEventListener('click', function() {
-        if (!isConverted) {
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-          window.print();
-        } else {
-          preparePrintStyles();
-          window.print();
-        }
-      });
-    }
-    
-    if (isConverted) {
-      setupLabelModeEventListeners();
-    }
-    
-    setupCollapsibleCards();
-  }
-  
-  // 設定卡片收摺功能
-  function setupCollapsibleCards() {
-    document.querySelectorAll('.bv-card-title').forEach(title => {
-      title.addEventListener('click', function() {
-        const card = this.closest('.bv-settings-card');
-        const sectionId = card.getAttribute('data-section');
-        
-        if (card.classList.contains('collapsed')) {
-          card.classList.remove('collapsed');
-          collapsedSections[sectionId] = false;
-        } else {
-          card.classList.add('collapsed');
-          collapsedSections[sectionId] = true;
-        }
-        
-        chrome.storage.local.set({ bvCollapsedSections: collapsedSections });
-      });
-    });
-  }
-  
-  // 設置標籤模式的事件監聽器
-  function setupLabelModeEventListeners() {
-    const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
-    if (hideExtraInfoCheckbox) {
-      hideExtraInfoCheckbox.addEventListener('change', function(e) {
-        hideExtraInfo = e.target.checked;
-        saveSettings();
-        
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    const hideTableHeaderCheckbox = document.getElementById('bv-hide-table-header');
-    if (hideTableHeaderCheckbox) {
-      hideTableHeaderCheckbox.addEventListener('change', function(e) {
-        hideTableHeader = e.target.checked;
-        saveSettings();
-        updateLabelStyles();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    // 文字大小控制
-    const fontSizeSlider = document.getElementById('bv-font-size');
-    if (fontSizeSlider) {
-      fontSizeSlider.addEventListener('input', function() {
-        document.getElementById('bv-font-size-value').textContent = this.value;
-        updateRangeProgress(this);
-        
-        // 更新原始頁面的字體大小選擇器
-        const originalFontSize = document.querySelector('.ignore-print #fontSize');
-        if (originalFontSize) {
-          originalFontSize.value = this.value + 'px';
-          if (typeof $ !== 'undefined') {
-            $(originalFontSize).trigger('change');
-          }
-        }
-        
-        saveSettings();
-        updateLabelStyles();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    // 整體縮放控制
-    const scaleSlider = document.getElementById('bv-scale');
-    if (scaleSlider) {
-      scaleSlider.addEventListener('input', function() {
-        document.getElementById('bv-scale-value').textContent = this.value + '%';
-        updateRangeProgress(this);
-        saveSettings();
-        updateLabelStyles();
-        setTimeout(() => {
-          handlePagination();
-          if (highlightQuantity) {
-            applyQuantityHighlight();
-          }
-        }, 100);
-      });
-    }
-    
-    // 隱藏原始的底圖透明度和文字大小選項
-    hideOriginalControls();
-    
-    document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
-    
-    initPresetSystem();
-    initLogoUpload();
-    observeOriginalControls();
-  }
-  
-  // 監聽原始控制項
-  function observeOriginalControls() {
-    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]:not(#showProductImage):not(#fontSize)');
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        if (isConverted) {
-          saveSettings();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        }
-      });
-    });
-  }
-  
-  // 準備列印樣式
-  function preparePrintStyles() {
-    const oldPrintStyle = document.getElementById('bv-print-styles');
-    if (oldPrintStyle) oldPrintStyle.remove();
-    
-    const printStyle = document.createElement('style');
-    printStyle.id = 'bv-print-styles';
-    
-    if (isConverted) {
-      const scale = document.getElementById('bv-scale')?.value || '100';
-      printStyle.textContent = `
-        @media print {
-          /* 隱藏原始內容 */
-          .bv-original {
-            display: none !important;
-          }
-          
-          body.bv-converted .bv-label-page {
-            padding: 5mm !important;
-            page-break-after: always !important;
-            page-break-inside: avoid !important;
-            position: relative !important;
-            display: block !important;
-          }
-          
-          body.bv-converted .bv-label-page .bv-page-content {
-            position: absolute !important;
-            left: 50% !important;
-            top: 50% !important;
-            transform: translate(-50%, -50%) scale(${scale / 100}) !important;
-            transform-origin: center center !important;
-          }
-          
-          /* 確保每個頁面獨立顯示 */
-          body.bv-converted .bv-page-container {
-            page-break-inside: avoid !important;
-          }
-        }
-      `;
-    } else {
-      printStyle.textContent = `
-        @media print {
-          body {
-            visibility: visible !important;
-          }
-          .order-content {
-            display: block !important;
-            visibility: visible !important;
-          }
-        }
-      `;
-    }
-    
-    document.head.appendChild(printStyle);
-  }
-  
-  // 初始化預設系統
-  function initPresetSystem() {
-    const presetSelect = document.getElementById('bv-preset-select');
-    const savePresetBtn = document.getElementById('bv-save-preset');
-    const deletePresetBtn = document.getElementById('bv-delete-preset');
-    const savePresetRow = document.getElementById('bv-save-preset-row');
-    const newPresetName = document.getElementById('bv-new-preset-name');
-    const confirmSaveBtn = document.getElementById('bv-confirm-save');
-    const cancelSaveBtn = document.getElementById('bv-cancel-save');
-    
-    if (!presetSelect) return;
-    
-    // 載入預設列表
-    loadPresetList();
-    
-    // 選擇預設時載入設定
-    presetSelect.addEventListener('change', function() {
-      const selectedPreset = presetSelect.value;
-      if (selectedPreset) {
-        chrome.storage.local.get([`bvPreset_${selectedPreset}`], (result) => {
-          const settings = result[`bvPreset_${selectedPreset}`];
-          if (settings) {
-            applyPresetSettings(settings);
-            chrome.storage.local.set({ lastSelectedPreset: selectedPreset });
-            showNotification(`已載入預設「${selectedPreset}」`);
-            
-            setTimeout(() => {
-              handlePagination();
-              if (highlightQuantity) {
-                applyQuantityHighlight();
-              }
-            }, 100);
-          }
-        });
-      }
-    });
-    
-    // 儲存預設按鈕
-    if (savePresetBtn) {
-      savePresetBtn.addEventListener('click', function() {
-        if (savePresetRow) {
-          savePresetRow.style.display = 'flex';
-        }
-        if (newPresetName) {
-          newPresetName.value = presetSelect.value || '';
-          newPresetName.focus();
-        }
-      });
-    }
-    
-    // 確認儲存按鈕
-    if (confirmSaveBtn) {
-      confirmSaveBtn.addEventListener('click', function() {
-        if (!newPresetName) return;
-        
-        const presetName = newPresetName.value.trim();
-        if (!presetName) {
-          showNotification('請輸入名稱', 'warning');
-          return;
-        }
-        
-        const settings = getCurrentSettings();
-        
-        chrome.storage.local.get(['presetList'], (result) => {
-          const allPresets = result.presetList || [];
-          if (!allPresets.includes(presetName)) {
-            allPresets.push(presetName);
-          }
-          
-          const storageData = {
-            [`bvPreset_${presetName}`]: settings,
-            presetList: allPresets,
-            lastSelectedPreset: presetName
-          };
-          
-          chrome.storage.local.set(storageData, () => {
-            loadPresetList();
-            if (savePresetRow) {
-              savePresetRow.style.display = 'none';
-            }
-            showNotification(`預設「${presetName}」已儲存`);
-          });
-        });
-      });
-    }
-    
-    // 取消儲存按鈕
-    if (cancelSaveBtn) {
-      cancelSaveBtn.addEventListener('click', function() {
-        if (savePresetRow) {
-          savePresetRow.style.display = 'none';
-        }
-      });
-    }
-    
-    // 刪除預設按鈕
-    if (deletePresetBtn) {
-      deletePresetBtn.addEventListener('click', function() {
-        const selectedPreset = presetSelect.value;
-        if (!selectedPreset) {
-          showNotification('請先選擇一個預設', 'warning');
-          return;
-        }
-        
-        if (confirm(`確定要刪除預設「${selectedPreset}」嗎？`)) {
-          chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
-            const allPresets = result.presetList || [];
-            const updatedPresets = allPresets.filter(name => name !== selectedPreset);
-            
-            const storageData = { presetList: updatedPresets };
-            
-            // 如果刪除的是當前選中的預設，移除記錄
-            if (result.lastSelectedPreset === selectedPreset) {
-              chrome.storage.local.remove(['lastSelectedPreset']);
-            }
-            
-            // 先移除預設資料，再更新列表
-            chrome.storage.local.remove([`bvPreset_${selectedPreset}`], () => {
-              chrome.storage.local.set(storageData, () => {
-                loadPresetList();
-                showNotification(`預設「${selectedPreset}」已刪除`);
-              });
-            });
-          });
-        }
-      });
-    }
-    
-    // Enter 鍵儲存
-    if (newPresetName) {
-      newPresetName.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && confirmSaveBtn) {
-          confirmSaveBtn.click();
-        }
-      });
-    }
-  }
-  
-  // 載入預設檔列表
-  function loadPresetList() {
-    const presetSelect = document.getElementById('bv-preset-select');
-    if (!presetSelect) return;
-    
-    chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
-      const allPresets = result.presetList || [];
-      const lastSelected = result.lastSelectedPreset;
-      
-      while (presetSelect.options.length > 1) {
-        presetSelect.remove(1);
-      }
-      
-      allPresets.forEach(presetName => {
-        const option = document.createElement('option');
-        option.value = presetName;
-        option.textContent = presetName;
-        presetSelect.appendChild(option);
-        
-        if (presetName === lastSelected) {
-          option.selected = true;
-        }
-      });
-    });
-  }
-  
-  // 取得當前設定
-  function getCurrentSettings() {
-    return {
-      highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
-      hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
-      hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
-      fontSize: document.getElementById('bv-font-size')?.value || '14',
-      scale: document.getElementById('bv-scale')?.value || '100',
-      showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
-      showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
-      showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
-      showDeliveryTime: document.querySelector('.ignore-print #showDeliveryTime')?.checked,
-      hideInfo: document.querySelector('.ignore-print #hideInfo')?.checked,
-      hidePrice: document.querySelector('.ignore-print #hidePrice')?.checked,
-      showShippingTime: document.querySelector('.ignore-print #showShippingTime')?.checked,
-      showLogTraceId: document.querySelector('.ignore-print #showLogTraceId')?.checked,
-      logoDataUrl: logoDataUrl,
-      logoAspectRatio: logoAspectRatio,
-      logoSize: document.getElementById('logo-size-slider')?.value || '30',
-      logoX: document.getElementById('logo-x-slider')?.value || '50',
-      logoY: document.getElementById('logo-y-slider')?.value || '50',
-      logoOpacity: document.getElementById('logo-opacity-slider')?.value || '20'
-    };
-  }
-  
-  // 套用預設設定
-  function applyPresetSettings(settings) {
-    if (settings.highlightQuantity !== undefined) {
-      const qtyCheckbox = document.getElementById('bv-highlight-qty');
-      if (qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
-      highlightQuantity = settings.highlightQuantity;
-    }
-    
-    if (settings.hideExtraInfo !== undefined) {
-      const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
-      if (hideExtraCheckbox) hideExtraCheckbox.checked = settings.hideExtraInfo;
-      hideExtraInfo = settings.hideExtraInfo;
-    }
-    
-    if (settings.hideTableHeader !== undefined) {
-      const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
-      if (hideHeaderCheckbox) hideHeaderCheckbox.checked = settings.hideTableHeader;
-      hideTableHeader = settings.hideTableHeader;
-    }
-    
-    if (settings.fontSize !== undefined) {
-      const fontSizeSlider = document.getElementById('bv-font-size');
-      if (fontSizeSlider) {
-        fontSizeSlider.value = settings.fontSize;
-        document.getElementById('bv-font-size-value').textContent = settings.fontSize;
-        updateRangeProgress(fontSizeSlider);
-      }
-    }
-    
-    if (settings.scale !== undefined) {
-      const scaleSlider = document.getElementById('bv-scale');
-      if (scaleSlider) {
-        scaleSlider.value = settings.scale;
-        document.getElementById('bv-scale-value').textContent = settings.scale + '%';
-        updateRangeProgress(scaleSlider);
-      }
-    }
-    
-    if (settings.logoDataUrl) {
-      logoDataUrl = settings.logoDataUrl;
-      logoAspectRatio = settings.logoAspectRatio || 1;
-      
-      const logoPreview = document.getElementById('logo-preview');
-      const uploadPrompt = document.getElementById('upload-prompt');
-      const logoUploadArea = document.getElementById('logo-upload-area');
-      const logoControls = document.getElementById('logo-controls');
-      
-      if (logoPreview) {
-        logoPreview.src = logoDataUrl;
-        logoPreview.style.display = 'block';
-      }
-      if (uploadPrompt) uploadPrompt.style.display = 'none';
-      if (logoUploadArea) logoUploadArea.classList.add('has-logo');
-      if (logoControls) logoControls.classList.add('active');
-    }
-    
-    const logoSettings = [
-      { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
-      { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
-      { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
-      { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
-    ];
-    
-    logoSettings.forEach(setting => {
-      if (setting.value !== undefined) {
-        const input = document.getElementById(setting.id);
-        if (input) {
-          input.value = setting.value;
-          document.getElementById(setting.valueId).textContent = setting.value + '%';
-          updateRangeProgress(input);
-        }
-      }
-    });
-    
-    if (isConverted) {
-      updateLabelStyles();
-    }
-  }
-  
-  // 更新 Range Input 進度條
-  function updateRangeProgress(input) {
-    const value = (input.value - input.min) / (input.max - input.min) * 100;
-    input.style.setProperty('--value', value + '%');
   }
   
   // 取得面板內容的函數
@@ -2189,6 +1392,660 @@
     }
   }
   
+  // 更新面板內容
+  function updatePanelContent() {
+    const panel = document.getElementById('bv-label-control-panel');
+    if (!panel) return;
+    
+    const wasMinimized = panel.classList.contains('minimized');
+    const currentTransform = panel.style.transform;
+    
+    panel.innerHTML = getPanelContent();
+    
+    if (wasMinimized) {
+      panel.classList.add('minimized');
+      const minimizeBtn = panel.querySelector('#bv-minimize-btn .material-icons');
+      if (minimizeBtn) {
+        minimizeBtn.textContent = 'add';
+      }
+    }
+    
+    panel.style.transform = currentTransform;
+    
+    setupEventListeners();
+    
+    if (isConverted) {
+      loadSettings();
+      initPresetSystem();
+      initLogoUpload();
+      restoreCollapsedStates();
+      hideOriginalControls();
+    }
+    
+    initDragFunction();
+  }
+  
+  // 隱藏原始控制項
+  function hideOriginalControls() {
+    const controlsToHide = [
+      '#baseImageOpacityLabel',    // 底圖透明度標籤
+      '#fontSize',                 // 文字大小選單
+      '.checkbox-area:has(#fontSize)', // 文字大小的容器
+    ];
+    
+    controlsToHide.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        if (element) {
+          element.style.display = 'none';
+          // 如果是 label 內包含的元素，也隱藏其父元素
+          const parentLabel = element.closest('label.checkbox-area');
+          if (parentLabel) {
+            parentLabel.style.display = 'none';
+          }
+        }
+      });
+    });
+  }
+  
+  // 套用縮放
+  function applyScaling(page) {
+    const scale = parseInt(document.getElementById('bv-scale')?.value || '100');
+    
+    if (scale !== 100) {
+      const content = page.querySelector('.bv-page-content');
+      if (content) {
+        // 從中心點縮放內容
+        content.style.position = 'absolute';
+        content.style.left = '50%';
+        content.style.top = '50%';
+        content.style.transform = `translate(-50%, -50%) scale(${scale / 100})`;
+        content.style.transformOrigin = 'center center';
+        content.style.width = 'calc(100% - 10mm)';
+        content.style.height = 'calc(100% - 10mm)';
+      }
+    }
+  }
+  
+  // 設置事件監聽器
+  function setupEventListeners() {
+    const convertBtn = document.getElementById('bv-convert-btn');
+    const revertBtn = document.getElementById('bv-revert-btn');
+    const minimizeBtn = document.getElementById('bv-minimize-btn');
+    const floatingPrint = document.getElementById('bv-floating-print');
+    const highlightQty = document.getElementById('bv-highlight-qty');
+    const applyPrint = document.getElementById('bv-apply-print');
+    
+    if (convertBtn) {
+      convertBtn.addEventListener('click', convertToLabelFormat);
+    }
+    
+    if (revertBtn) {
+      revertBtn.addEventListener('click', revertToOriginal);
+    }
+    
+    if (minimizeBtn) {
+      minimizeBtn.addEventListener('click', function() {
+        const panel = document.getElementById('bv-label-control-panel');
+        const icon = this.querySelector('.material-icons');
+        
+        if (isPanelMinimized) {
+          panel.classList.remove('minimized');
+          icon.textContent = 'remove';
+          isPanelMinimized = false;
+        } else {
+          panel.classList.add('minimized');
+          icon.textContent = 'add';
+          isPanelMinimized = true;
+        }
+        
+        chrome.storage.local.set({ bvPanelMinimized: isPanelMinimized });
+      });
+    }
+       
+    if (floatingPrint) {
+      floatingPrint.addEventListener('click', function() {
+        if (!isConverted) {
+          window.print();
+        } else {
+          preparePrintStyles();
+          window.print();
+        }
+      });
+    }
+    
+    if (highlightQty) {
+      highlightQty.addEventListener('change', toggleQuantityHighlight);
+    }
+    
+    if (applyPrint) {
+      applyPrint.addEventListener('click', function() {
+        if (!isConverted) {
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+          window.print();
+        } else {
+          preparePrintStyles();
+          window.print();
+        }
+      });
+    }
+    
+    if (isConverted) {
+      setupLabelModeEventListeners();
+    }
+    
+    setupCollapsibleCards();
+  }
+  
+  // 設置標籤模式的事件監聽器
+  function setupLabelModeEventListeners() {
+    const hideExtraInfoCheckbox = document.getElementById('bv-hide-extra-info');
+    if (hideExtraInfoCheckbox) {
+      hideExtraInfoCheckbox.addEventListener('change', function(e) {
+        hideExtraInfo = e.target.checked;
+        saveSettings();
+        
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    const hideTableHeaderCheckbox = document.getElementById('bv-hide-table-header');
+    if (hideTableHeaderCheckbox) {
+      hideTableHeaderCheckbox.addEventListener('change', function(e) {
+        hideTableHeader = e.target.checked;
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // 文字大小控制
+    const fontSizeSlider = document.getElementById('bv-font-size');
+    if (fontSizeSlider) {
+      fontSizeSlider.addEventListener('input', function() {
+        document.getElementById('bv-font-size-value').textContent = this.value;
+        updateRangeProgress(this);
+        
+        // 更新原始頁面的字體大小選擇器
+        const originalFontSize = document.querySelector('.ignore-print #fontSize');
+        if (originalFontSize) {
+          originalFontSize.value = this.value + 'px';
+          if (typeof $ !== 'undefined') {
+            $(originalFontSize).trigger('change');
+          }
+        }
+        
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // 整體縮放控制
+    const scaleSlider = document.getElementById('bv-scale');
+    if (scaleSlider) {
+      scaleSlider.addEventListener('input', function() {
+        document.getElementById('bv-scale-value').textContent = this.value + '%';
+        updateRangeProgress(this);
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // 隱藏原始的底圖透明度和文字大小選項
+    hideOriginalControls();
+    
+    document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
+    
+    initPresetSystem();
+    initLogoUpload();
+    observeOriginalControls();
+  }
+  
+  // 設定卡片收摺功能
+  function setupCollapsibleCards() {
+    document.querySelectorAll('.bv-card-title').forEach(title => {
+      title.addEventListener('click', function() {
+        const card = this.closest('.bv-settings-card');
+        const sectionId = card.getAttribute('data-section');
+        
+        if (card.classList.contains('collapsed')) {
+          card.classList.remove('collapsed');
+          collapsedSections[sectionId] = false;
+        } else {
+          card.classList.add('collapsed');
+          collapsedSections[sectionId] = true;
+        }
+        
+        chrome.storage.local.set({ bvCollapsedSections: collapsedSections });
+      });
+    });
+  }
+  
+  // 恢復收摺狀態
+  function restoreCollapsedStates() {
+    Object.keys(collapsedSections).forEach(sectionId => {
+      if (collapsedSections[sectionId]) {
+        const card = document.querySelector(`[data-section="${sectionId}"]`);
+        if (card) {
+          card.classList.add('collapsed');
+        }
+      }
+    });
+  }
+  
+  // 初始化拖曳功能
+  function initDragFunction() {
+    const panel = document.getElementById('bv-label-control-panel');
+    const header = panel.querySelector('.bv-panel-header');
+    
+    if (!panel || !header) return;
+    
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+    
+    const transform = panel.style.transform;
+    if (transform) {
+      const match = transform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
+      if (match) {
+        xOffset = parseFloat(match[1]);
+        yOffset = parseFloat(match[2]);
+      }
+    }
+    
+    function dragStart(e) {
+      if (e.target.closest('.bv-glass-button') || e.target.closest('.bv-minimize-btn')) return;
+      
+      if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+      
+      if (e.target === header || (header.contains(e.target) && !e.target.closest('.bv-glass-button'))) {
+        isDragging = true;
+        panel.style.transition = 'none';
+        e.preventDefault();
+      }
+    }
+    
+    function dragEnd(e) {
+      if (!isDragging) return;
+      
+      initialX = currentX;
+      initialY = currentY;
+      isDragging = false;
+      panel.style.transition = '';
+      
+      chrome.storage.local.set({
+        bvPanelPosition: {
+          x: xOffset,
+          y: yOffset
+        }
+      });
+    }
+    
+    function drag(e) {
+      if (isDragging) {
+        e.preventDefault();
+        
+        if (e.type === "touchmove") {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+        
+        xOffset = currentX;
+        yOffset = currentY;
+        
+        setTranslate(currentX, currentY, panel);
+      }
+    }
+    
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+    }
+    
+    chrome.storage.local.get(['bvPanelPosition'], (result) => {
+      if (result.bvPanelPosition) {
+        xOffset = result.bvPanelPosition.x;
+        yOffset = result.bvPanelPosition.y;
+        setTranslate(xOffset, yOffset, panel);
+      }
+    });
+    
+    header.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd);
+    
+    header.addEventListener('touchstart', dragStart, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', dragEnd);
+  }
+  
+  // 初始化 Logo 上傳功能
+  function initLogoUpload() {
+    const logoUploadArea = document.getElementById('logo-upload-area');
+    const logoInput = document.getElementById('logo-input');
+    const logoPreview = document.getElementById('logo-preview');
+    const uploadPrompt = document.getElementById('upload-prompt');
+    const logoControls = document.getElementById('logo-controls');
+    const removeLogoBtn = document.getElementById('remove-logo-btn');
+    
+    const logoSizeSlider = document.getElementById('logo-size-slider');
+    const logoXSlider = document.getElementById('logo-x-slider');
+    const logoYSlider = document.getElementById('logo-y-slider');
+    const logoOpacitySlider = document.getElementById('logo-opacity-slider');
+    
+    if (logoUploadArea && !logoUploadArea.hasAttribute('data-initialized')) {
+      logoUploadArea.setAttribute('data-initialized', 'true');
+      
+      logoUploadArea.addEventListener('click', function(e) {
+        if (!e.target.closest('.bv-remove-logo-btn')) {
+          logoInput.click();
+        }
+      });
+    }
+    
+    if (logoInput && !logoInput.hasAttribute('data-initialized')) {
+      logoInput.setAttribute('data-initialized', 'true');
+      
+      logoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg')) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            logoDataUrl = event.target.result;
+            
+            const img = new Image();
+            img.onload = function() {
+              logoAspectRatio = img.width / img.height;
+              
+              logoPreview.src = logoDataUrl;
+              logoPreview.style.display = 'block';
+              uploadPrompt.style.display = 'none';
+              logoUploadArea.classList.add('has-logo');
+              logoControls.classList.add('active');
+              
+              saveSettings();
+              updateLabelStyles();
+              setTimeout(() => {
+                handlePagination();
+                if (highlightQuantity) {
+                  applyQuantityHighlight();
+                }
+              }, 100);
+            };
+            img.src = logoDataUrl;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          showNotification('請上傳 PNG 或 JPG 格式的圖片', 'warning');
+        }
+      });
+    }
+    
+    if (removeLogoBtn && !removeLogoBtn.hasAttribute('data-initialized')) {
+      removeLogoBtn.setAttribute('data-initialized', 'true');
+      
+      removeLogoBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        logoDataUrl = null;
+        logoAspectRatio = 1;
+        logoPreview.style.display = 'none';
+        uploadPrompt.style.display = 'block';
+        logoUploadArea.classList.remove('has-logo');
+        logoControls.classList.remove('active');
+        logoInput.value = '';
+        
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    [logoSizeSlider, logoXSlider, logoYSlider, logoOpacitySlider].forEach(slider => {
+      if (slider && !slider.hasAttribute('data-initialized')) {
+        slider.setAttribute('data-initialized', 'true');
+        
+        slider.addEventListener('input', function() {
+          document.getElementById(this.id.replace('-slider', '')).textContent = this.value + '%';
+          updateRangeProgress(this);
+          saveSettings();
+          updateLabelStyles();
+        });
+      }
+    });
+    
+    if (logoDataUrl) {
+      logoPreview.src = logoDataUrl;
+      logoPreview.style.display = 'block';
+      uploadPrompt.style.display = 'none';
+      logoUploadArea.classList.add('has-logo');
+      logoControls.classList.add('active');
+    }
+  }
+  
+  // 初始化預設系統
+  function initPresetSystem() {
+    const presetSelect = document.getElementById('bv-preset-select');
+    const savePresetBtn = document.getElementById('bv-save-preset');
+    const deletePresetBtn = document.getElementById('bv-delete-preset');
+    const savePresetRow = document.getElementById('bv-save-preset-row');
+    const newPresetName = document.getElementById('bv-new-preset-name');
+    const confirmSaveBtn = document.getElementById('bv-confirm-save');
+    const cancelSaveBtn = document.getElementById('bv-cancel-save');
+    
+    if (!presetSelect) return;
+    
+    // 載入預設列表
+    loadPresetList();
+    
+    // 選擇預設時載入設定
+    presetSelect.addEventListener('change', function() {
+      const selectedPreset = presetSelect.value;
+      if (selectedPreset) {
+        chrome.storage.local.get([`bvPreset_${selectedPreset}`], (result) => {
+          const settings = result[`bvPreset_${selectedPreset}`];
+          if (settings) {
+            applyPresetSettings(settings);
+            chrome.storage.local.set({ lastSelectedPreset: selectedPreset });
+            showNotification(`已載入預設「${selectedPreset}」`);
+            
+            setTimeout(() => {
+              handlePagination();
+              if (highlightQuantity) {
+                applyQuantityHighlight();
+              }
+            }, 100);
+          }
+        });
+      }
+    });
+    
+    // 儲存預設按鈕
+    if (savePresetBtn) {
+      savePresetBtn.addEventListener('click', function() {
+        if (savePresetRow) {
+          savePresetRow.style.display = 'flex';
+        }
+        if (newPresetName) {
+          newPresetName.value = presetSelect.value || '';
+          newPresetName.focus();
+        }
+      });
+    }
+    
+    // 確認儲存按鈕
+    if (confirmSaveBtn) {
+      confirmSaveBtn.addEventListener('click', function() {
+        if (!newPresetName) return;
+        
+        const presetName = newPresetName.value.trim();
+        if (!presetName) {
+          showNotification('請輸入名稱', 'warning');
+          return;
+        }
+        
+        const settings = getCurrentSettings();
+        
+        chrome.storage.local.get(['presetList'], (result) => {
+          const allPresets = result.presetList || [];
+          if (!allPresets.includes(presetName)) {
+            allPresets.push(presetName);
+          }
+          
+          const storageData = {
+            [`bvPreset_${presetName}`]: settings,
+            presetList: allPresets,
+            lastSelectedPreset: presetName
+          };
+          
+          chrome.storage.local.set(storageData, () => {
+            loadPresetList();
+            if (savePresetRow) {
+              savePresetRow.style.display = 'none';
+            }
+            showNotification(`預設「${presetName}」已儲存`);
+          });
+        });
+      });
+    }
+    
+    // 取消儲存按鈕
+    if (cancelSaveBtn) {
+      cancelSaveBtn.addEventListener('click', function() {
+        if (savePresetRow) {
+          savePresetRow.style.display = 'none';
+        }
+      });
+    }
+    
+    // 刪除預設按鈕
+    if (deletePresetBtn) {
+      deletePresetBtn.addEventListener('click', function() {
+        const selectedPreset = presetSelect.value;
+        if (!selectedPreset) {
+          showNotification('請先選擇一個預設', 'warning');
+          return;
+        }
+        
+        if (confirm(`確定要刪除預設「${selectedPreset}」嗎？`)) {
+          chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
+            const allPresets = result.presetList || [];
+            const updatedPresets = allPresets.filter(name => name !== selectedPreset);
+            
+            const storageData = { presetList: updatedPresets };
+            
+            // 如果刪除的是當前選中的預設，移除記錄
+            if (result.lastSelectedPreset === selectedPreset) {
+              chrome.storage.local.remove(['lastSelectedPreset']);
+            }
+            
+            // 先移除預設資料，再更新列表
+            chrome.storage.local.remove([`bvPreset_${selectedPreset}`], () => {
+              chrome.storage.local.set(storageData, () => {
+                loadPresetList();
+                showNotification(`預設「${selectedPreset}」已刪除`);
+              });
+            });
+          });
+        }
+      });
+    }
+    
+    // Enter 鍵儲存
+    if (newPresetName) {
+      newPresetName.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && confirmSaveBtn) {
+          confirmSaveBtn.click();
+        }
+      });
+    }
+  }
+  
+  // 載入預設檔列表
+  function loadPresetList() {
+    const presetSelect = document.getElementById('bv-preset-select');
+    if (!presetSelect) return;
+    
+    chrome.storage.local.get(['presetList', 'lastSelectedPreset'], (result) => {
+      const allPresets = result.presetList || [];
+      const lastSelected = result.lastSelectedPreset;
+      
+      while (presetSelect.options.length > 1) {
+        presetSelect.remove(1);
+      }
+      
+      allPresets.forEach(presetName => {
+        const option = document.createElement('option');
+        option.value = presetName;
+        option.textContent = presetName;
+        presetSelect.appendChild(option);
+        
+        if (presetName === lastSelected) {
+          option.selected = true;
+        }
+      });
+    });
+  }
+  
+  // 監聽原始控制項
+  function observeOriginalControls() {
+    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]:not(#showProductImage):not(#fontSize)');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        if (isConverted) {
+          saveSettings();
+          setTimeout(() => {
+            handlePagination();
+            if (highlightQuantity) {
+              applyQuantityHighlight();
+            }
+          }, 100);
+        }
+      });
+    });
+  }
+  
   // 轉換為標籤格式
   function convertToLabelFormat() {
     if (isConverted) return;
@@ -2313,20 +2170,6 @@
     updateLogos();
   }
   
-  // 更新所有標籤的底圖
-  function updateLogos() {
-    document.querySelectorAll('.label-background-logo').forEach(logo => logo.remove());
-    
-    if (logoDataUrl) {
-      document.querySelectorAll('.bv-label-page').forEach(page => {
-        const logo = document.createElement('img');
-        logo.className = 'label-background-logo';
-        logo.src = logoDataUrl;
-        page.insertBefore(logo, page.firstChild);
-      });
-    }
-  }
-  
   // 處理隱藏額外資訊（精簡模式）
   function processExtraInfoHiding(container) {
     const orderInfo = container.querySelector('.order-info');
@@ -2373,6 +2216,7 @@
     const scale = document.getElementById('bv-scale')?.value || '100';
     const labelPadding = '5'; // 固定為 5mm
     const paddingPx = parseFloat(labelPadding) * 3.78;
+    
     const logoSize = document.getElementById('logo-size-slider')?.value || '30';
     const logoX = document.getElementById('logo-x-slider')?.value || '50';
     const logoY = document.getElementById('logo-y-slider')?.value || '50';
@@ -2572,7 +2416,7 @@
         opacity: ${(100 - logoOpacity) / 100} !important;
       }
       
-      /* 整體縮放 - 從中心點縮放 */
+      /* 整體縮放 - 從中心點縮放（僅畫面顯示） */
       @media screen {
         .bv-label-page .bv-page-content {
           position: absolute;
@@ -2585,20 +2429,14 @@
         }
       }
       
+      /* 列印時保持原始位置，從左上角縮放 */
       @media print {
-        .bv-label-page {
-          padding: 5mm !important;
-          page-break-after: always !important;
-          page-break-inside: avoid !important;
-          position: relative !important;
-        }
-        
         .bv-label-page .bv-page-content {
-          position: absolute !important;
-          left: 50% !important;
-          top: 50% !important;
-          transform: translate(-50%, -50%) scale(${scale / 100}) !important;
-          transform-origin: center center !important;
+          position: relative !important;
+          left: auto !important;
+          top: auto !important;
+          transform: scale(${scale / 100}) !important;
+          transform-origin: top left !important;
           width: calc(100mm - 10mm) !important;
           height: calc(150mm - 10mm) !important;
         }
@@ -2606,6 +2444,120 @@
     `;
     
     document.head.appendChild(labelStyles);
+  }
+  
+  // 更新所有標籤的底圖
+  function updateLogos() {
+    document.querySelectorAll('.label-background-logo').forEach(logo => logo.remove());
+    
+    if (logoDataUrl) {
+      document.querySelectorAll('.bv-label-page').forEach(page => {
+        const logo = document.createElement('img');
+        logo.className = 'label-background-logo';
+        logo.src = logoDataUrl;
+        page.insertBefore(logo, page.firstChild);
+      });
+    }
+  }
+  
+  // 準備列印樣式
+  function preparePrintStyles() {
+    const oldPrintStyle = document.getElementById('bv-print-styles');
+    if (oldPrintStyle) oldPrintStyle.remove();
+    
+    const printStyle = document.createElement('style');
+    printStyle.id = 'bv-print-styles';
+    
+    if (isConverted) {
+      const scale = document.getElementById('bv-scale')?.value || '100';
+      printStyle.textContent = `
+        @page {
+          size: 100mm 150mm;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        @media print {
+          * {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+          }
+          
+          /* 隱藏原始內容 */
+          .bv-original {
+            display: none !important;
+          }
+          
+          body.bv-converted {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          body.bv-converted .bv-page-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-inside: avoid !important;
+          }
+          
+          body.bv-converted .bv-label-page {
+            width: 100mm !important;
+            height: 150mm !important;
+            margin: 0 !important;
+            padding: 5mm !important;
+            box-sizing: border-box !important;
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+            position: relative !important;
+            display: block !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: white !important;
+          }
+          
+          body.bv-converted .bv-label-page:last-child {
+            page-break-after: auto !important;
+          }
+          
+          /* 列印時保持畫布上的樣子，不做垂直置中 */
+          body.bv-converted .bv-label-page .bv-page-content {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            transform: scale(${scale / 100}) !important;
+            transform-origin: top left !important;
+            width: calc(100mm - 10mm) !important;
+            height: calc(150mm - 10mm) !important;
+          }
+          
+          /* 隱藏所有非列印元素 */
+          body.bv-converted > *:not(.bv-page-container) {
+            display: none !important;
+          }
+        }
+      `;
+    } else {
+      printStyle.textContent = `
+        @media print {
+          body {
+            visibility: visible !important;
+          }
+          .order-content {
+            display: block !important;
+            visibility: visible !important;
+          }
+        }
+      `;
+    }
+    
+    document.head.appendChild(printStyle);
   }
   
   // 還原原始格式
@@ -2632,7 +2584,7 @@
       removeQuantityHighlight();
     }
   }
-    
+  
   // 應用數量標示 - 星號方式
   function applyQuantityHighlight() {
     const containers = isConverted ? 
@@ -2695,6 +2647,116 @@
       notification.style.animation = 'slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       setTimeout(() => notification.remove(), 400);
     }, 3000);
+  }
+  
+  // 更新 Range Input 進度條
+  function updateRangeProgress(input) {
+    const value = (input.value - input.min) / (input.max - input.min) * 100;
+    input.style.setProperty('--value', value + '%');
+  }
+  
+  // 取得當前設定
+  function getCurrentSettings() {
+    return {
+      highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
+      hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
+      hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
+      fontSize: document.getElementById('bv-font-size')?.value || '14',
+      scale: document.getElementById('bv-scale')?.value || '100',
+      showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
+      showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
+      showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
+      showDeliveryTime: document.querySelector('.ignore-print #showDeliveryTime')?.checked,
+      hideInfo: document.querySelector('.ignore-print #hideInfo')?.checked,
+      hidePrice: document.querySelector('.ignore-print #hidePrice')?.checked,
+      showShippingTime: document.querySelector('.ignore-print #showShippingTime')?.checked,
+      showLogTraceId: document.querySelector('.ignore-print #showLogTraceId')?.checked,
+      logoDataUrl: logoDataUrl,
+      logoAspectRatio: logoAspectRatio,
+      logoSize: document.getElementById('logo-size-slider')?.value || '30',
+      logoX: document.getElementById('logo-x-slider')?.value || '50',
+      logoY: document.getElementById('logo-y-slider')?.value || '50',
+      logoOpacity: document.getElementById('logo-opacity-slider')?.value || '20'
+    };
+  }
+  
+  // 套用預設設定
+  function applyPresetSettings(settings) {
+    if (settings.highlightQuantity !== undefined) {
+      const qtyCheckbox = document.getElementById('bv-highlight-qty');
+      if (qtyCheckbox) qtyCheckbox.checked = settings.highlightQuantity;
+      highlightQuantity = settings.highlightQuantity;
+    }
+    
+    if (settings.hideExtraInfo !== undefined) {
+      const hideExtraCheckbox = document.getElementById('bv-hide-extra-info');
+      if (hideExtraCheckbox) hideExtraCheckbox.checked = settings.hideExtraInfo;
+      hideExtraInfo = settings.hideExtraInfo;
+    }
+    
+    if (settings.hideTableHeader !== undefined) {
+      const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
+      if (hideHeaderCheckbox) hideHeaderCheckbox.checked = settings.hideTableHeader;
+      hideTableHeader = settings.hideTableHeader;
+    }
+    
+    if (settings.fontSize !== undefined) {
+      const fontSizeSlider = document.getElementById('bv-font-size');
+      if (fontSizeSlider) {
+        fontSizeSlider.value = settings.fontSize;
+        document.getElementById('bv-font-size-value').textContent = settings.fontSize;
+        updateRangeProgress(fontSizeSlider);
+      }
+    }
+    
+    if (settings.scale !== undefined) {
+      const scaleSlider = document.getElementById('bv-scale');
+      if (scaleSlider) {
+        scaleSlider.value = settings.scale;
+        document.getElementById('bv-scale-value').textContent = settings.scale + '%';
+        updateRangeProgress(scaleSlider);
+      }
+    }
+    
+    if (settings.logoDataUrl) {
+      logoDataUrl = settings.logoDataUrl;
+      logoAspectRatio = settings.logoAspectRatio || 1;
+      
+      const logoPreview = document.getElementById('logo-preview');
+      const uploadPrompt = document.getElementById('upload-prompt');
+      const logoUploadArea = document.getElementById('logo-upload-area');
+      const logoControls = document.getElementById('logo-controls');
+      
+      if (logoPreview) {
+        logoPreview.src = logoDataUrl;
+        logoPreview.style.display = 'block';
+      }
+      if (uploadPrompt) uploadPrompt.style.display = 'none';
+      if (logoUploadArea) logoUploadArea.classList.add('has-logo');
+      if (logoControls) logoControls.classList.add('active');
+    }
+    
+    const logoSettings = [
+      { id: 'logo-size-slider', value: settings.logoSize, valueId: 'logo-size' },
+      { id: 'logo-x-slider', value: settings.logoX, valueId: 'logo-x' },
+      { id: 'logo-y-slider', value: settings.logoY, valueId: 'logo-y' },
+      { id: 'logo-opacity-slider', value: settings.logoOpacity, valueId: 'logo-opacity' }
+    ];
+    
+    logoSettings.forEach(setting => {
+      if (setting.value !== undefined) {
+        const input = document.getElementById(setting.id);
+        if (input) {
+          input.value = setting.value;
+          document.getElementById(setting.valueId).textContent = setting.value + '%';
+          updateRangeProgress(input);
+        }
+      }
+    });
+    
+    if (isConverted) {
+      updateLabelStyles();
+    }
   }
   
   // 儲存設定
