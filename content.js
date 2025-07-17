@@ -8,7 +8,7 @@
   let hideTableHeader = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
-  let autoLayout = true; // 新增 auto-layout 開關
+  let autoLayout = true; // 預設開啟 auto-layout
   
   // 載入 Material Icons
   const iconLink = document.createElement('link');
@@ -1073,7 +1073,7 @@
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
-        padding: 2.5mm !important;
+        padding: 5mm !important;
         box-sizing: border-box !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
@@ -1144,12 +1144,48 @@
       initPresetSystem();
       initLogoUpload();
       restoreCollapsedStates();
+      hideOriginalControls();
+      toggleLayoutControls(!autoLayout);
     }
     
     initDragFunction();
   }
   
-  // Auto-layout 功能
+  // 切換版面控制項的啟用狀態
+  function toggleLayoutControls(disabled) {
+    const controls = ['bv-hide-extra-info', 'bv-hide-table-header'];
+    controls.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.disabled = disabled;
+        const switchElement = element.parentElement;
+        if (switchElement) {
+          switchElement.style.opacity = disabled ? '0.5' : '1';
+          switchElement.style.pointerEvents = disabled ? 'none' : 'auto';
+        }
+      }
+    });
+  }
+  
+  // 隱藏原始控制項
+  function hideOriginalControls() {
+    const controlsToHide = [
+      '.ignore-print #showProductImage',
+      '.ignore-print #fontSize'
+    ];
+    
+    controlsToHide.forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        const container = element.closest('.row') || element.parentElement;
+        if (container) {
+          container.style.display = 'none';
+        }
+      }
+    });
+  }
+  
+  // 改進的 Auto-layout 功能
   function applyAutoLayout(page) {
     if (!autoLayout) return;
     
@@ -1157,63 +1193,169 @@
     const content = page.querySelector('.bv-page-content');
     if (!content) return;
     
-    // A. 自動調整字體大小
-    const originalFontSize = parseFloat(document.querySelector('.ignore-print #fontSize')?.value || '14');
-    let currentFontSize = originalFontSize;
-    let attempts = 0;
-    const maxAttempts = 10;
+    // 取得設定值
+    const fontSize = parseInt(document.getElementById('bv-font-size')?.value || '14');
+    const scale = parseInt(document.getElementById('bv-scale')?.value || '100');
     
-    // 檢查內容是否超出
-    function checkOverflow() {
-      return content.scrollHeight > content.clientHeight;
+    // 固定內距為 5mm
+    const paddingMm = 5;
+    const paddingPx = paddingMm * 3.78;
+    const pageHeight = 566;
+    const pageWidth = 377;
+    const contentHeight = pageHeight - (paddingPx * 2);
+    const contentWidth = pageWidth - (paddingPx * 2);
+    
+    // 設定頁面縮放
+    if (scale !== 100) {
+      page.style.transform = `scale(${scale / 100})`;
+      page.style.transformOrigin = 'top left';
     }
     
-    // 逐步縮小字體直到內容適合
-    while (checkOverflow() && attempts < maxAttempts && currentFontSize > 10) {
-      currentFontSize -= 0.5;
-      content.style.fontSize = currentFontSize + 'px';
+    // 智慧間距計算（基於字體大小）
+    const baseSpacing = {
+      title: Math.max(Math.round(fontSize * 0.8), 8),
+      section: Math.max(Math.round(fontSize * 0.6), 6),
+      row: Math.max(Math.round(fontSize * 0.4), 4),
+      paragraph: Math.max(Math.round(fontSize * 0.3), 3)
+    };
+    
+    // 設定基本字體大小
+    content.style.fontSize = fontSize + 'px';
+    
+    // 分析內容結構
+    const elements = {
+      title: content.querySelector('.title'),
+      orderInfo: content.querySelector('.order-info'),
+      list: content.querySelector('.list'),
+      orderFee: content.querySelector('.order-fee'),
+      remarks: content.querySelectorAll('.orderRemark, .orderManageRemark, .orderPrintRemark')
+    };
+    
+    // 美觀的排版設定
+    if (elements.title) {
+      elements.title.style.marginBottom = baseSpacing.title + 'px';
+      elements.title.style.textAlign = 'center';
+      elements.title.style.fontWeight = '700';
+      elements.title.style.fontSize = (fontSize + 2) + 'px';
+    }
+    
+    if (elements.orderInfo) {
+      elements.orderInfo.style.marginBottom = baseSpacing.section + 'px';
+      const rows = elements.orderInfo.querySelectorAll('.row');
+      rows.forEach(row => {
+        row.style.marginBottom = baseSpacing.paragraph + 'px';
+      });
+      const paragraphs = elements.orderInfo.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.fontSize = (fontSize - 1) + 'px';
+        p.style.lineHeight = '1.4';
+        p.style.marginBottom = baseSpacing.paragraph + 'px';
+      });
+    }
+    
+    if (elements.list) {
+      elements.list.style.marginBottom = baseSpacing.section + 'px';
       
-      // 同步調整所有子元素的字體大小
-      content.querySelectorAll('*').forEach(el => {
-        const style = window.getComputedStyle(el);
-        const elFontSize = parseFloat(style.fontSize);
-        if (elFontSize) {
-          el.style.fontSize = (elFontSize * currentFontSize / originalFontSize) + 'px';
-        }
+      // 表格標題
+      const listTitle = elements.list.querySelector('.list-title');
+      if (listTitle) {
+        const ths = listTitle.querySelectorAll('th');
+        ths.forEach(th => {
+          th.style.fontSize = (fontSize - 1) + 'px';
+          th.style.padding = `${baseSpacing.row}px 4px`;
+        });
+      }
+      
+      // 表格內容
+      const rows = elements.list.querySelectorAll('.list-item');
+      rows.forEach(row => {
+        const tds = row.querySelectorAll('td');
+        tds.forEach(td => {
+          td.style.fontSize = (fontSize - 1) + 'px';
+          td.style.padding = `${baseSpacing.row}px 4px`;
+          td.style.lineHeight = '1.3';
+        });
       });
       
-      attempts++;
-    }
-    
-    // B. 優化表格間距
-    if (content.querySelector('.list')) {
-      const tables = content.querySelectorAll('.list');
-      tables.forEach(table => {
-        // 如果表格項目過多，減少行間距
-        const rows = table.querySelectorAll('.list-item');
-        if (rows.length > 10) {
-          rows.forEach(row => {
-            row.style.setProperty('padding-top', '0.5mm', 'important');
-            row.style.setProperty('padding-bottom', '0.5mm', 'important');
+      // 如果項目太多，進一步縮小間距
+      if (rows.length > 10) {
+        rows.forEach(row => {
+          row.querySelectorAll('td').forEach(td => {
+            td.style.padding = `${baseSpacing.row * 0.7}px 4px`;
           });
-        }
+        });
+      }
+    }
+    
+    if (elements.orderFee) {
+      elements.orderFee.style.marginTop = baseSpacing.section + 'px';
+      elements.orderFee.style.marginBottom = baseSpacing.section + 'px';
+      const tds = elements.orderFee.querySelectorAll('td');
+      tds.forEach(td => {
+        td.style.fontSize = (fontSize - 1) + 'px';
+        td.style.padding = `${baseSpacing.row}px 4px`;
       });
     }
     
-    // C. 動態調整區塊間距
-    const sections = content.children;
-    if (checkOverflow()) {
-      // 減少區塊間距
-      Array.from(sections).forEach(section => {
-        if (section.style.marginBottom) {
-          const currentMargin = parseFloat(section.style.marginBottom);
-          section.style.marginBottom = Math.max(currentMargin * 0.7, 1) + 'mm';
-        }
-      });
-    }
+    // 備註區塊
+    elements.remarks.forEach((remark, index) => {
+      if (remark) {
+        remark.style.fontSize = (fontSize - 2) + 'px';
+        remark.style.padding = `${baseSpacing.row}px ${baseSpacing.section}px`;
+        remark.style.marginBottom = 
+          index === elements.remarks.length - 1 ? '0' : baseSpacing.paragraph + 'px';
+      }
+    });
     
-    // D. 自動對齊
-    // Flexbox 已在 CSS 中設定，確保內容垂直分佈均勻
+    // 檢查內容是否超出並動態調整
+    let totalHeight = 0;
+    Object.entries(elements).forEach(([key, element]) => {
+      if (element instanceof NodeList) {
+        element.forEach(el => {
+          if (el) totalHeight += el.offsetHeight;
+        });
+      } else if (element) {
+        totalHeight += element.offsetHeight;
+      }
+    });
+    
+    // 如果內容超出，逐步縮小字體
+    if (totalHeight > contentHeight) {
+      let adjustedFontSize = fontSize;
+      let attempts = 0;
+      const maxAttempts = 8;
+      
+      while (totalHeight > contentHeight && adjustedFontSize > 11 && attempts < maxAttempts) {
+        adjustedFontSize -= 0.5;
+        content.style.fontSize = adjustedFontSize + 'px';
+        
+        // 重新計算所有元素的字體大小
+        if (elements.title) {
+          elements.title.style.fontSize = (adjustedFontSize + 2) + 'px';
+        }
+        
+        content.querySelectorAll('p, td, th').forEach(el => {
+          const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+          if (currentSize > adjustedFontSize) {
+            el.style.fontSize = (adjustedFontSize - 1) + 'px';
+          }
+        });
+        
+        // 重新計算高度
+        totalHeight = 0;
+        Object.entries(elements).forEach(([key, element]) => {
+          if (element instanceof NodeList) {
+            element.forEach(el => {
+              if (el) totalHeight += el.offsetHeight;
+            });
+          } else if (element) {
+            totalHeight += element.offsetHeight;
+          }
+        });
+        
+        attempts++;
+      }
+    }
   }
   
   // 恢復收摺狀態
@@ -1563,6 +1705,7 @@
     if (autoLayoutCheckbox) {
       autoLayoutCheckbox.addEventListener('change', function(e) {
         autoLayout = e.target.checked;
+        toggleLayoutControls(!autoLayout);
         saveSettings();
         setTimeout(() => {
           handlePagination();
@@ -1573,30 +1716,52 @@
       });
     }
     
-    const spacingControls = [
-      { id: 'bv-label-padding', valueId: 'bv-padding-value', unit: 'mm' },
-      { id: 'bv-header-padding', valueId: 'bv-header-padding-value', unit: 'mm' },
-      { id: 'bv-row-padding', valueId: 'bv-row-padding-value', unit: 'mm' },
-      { id: 'bv-fee-padding', valueId: 'bv-fee-padding-value', unit: 'mm' }
-    ];
+    // 文字大小控制
+    const fontSizeSlider = document.getElementById('bv-font-size');
+    if (fontSizeSlider) {
+      fontSizeSlider.addEventListener('input', function() {
+        document.getElementById('bv-font-size-value').textContent = this.value;
+        updateRangeProgress(this);
+        
+        // 更新原始頁面的字體大小選擇器
+        const originalFontSize = document.querySelector('.ignore-print #fontSize');
+        if (originalFontSize) {
+          originalFontSize.value = this.value + 'px';
+          if (typeof $ !== 'undefined') {
+            $(originalFontSize).trigger('change');
+          }
+        }
+        
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
     
-    spacingControls.forEach(control => {
-      const input = document.getElementById(control.id);
-      if (input) {
-        input.addEventListener('input', function() {
-          document.getElementById(control.valueId).textContent = this.value + control.unit;
-          updateRangeProgress(this);
-          saveSettings();
-          updateLabelStyles();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        });
-      }
-    });
+    // 整體縮放控制
+    const scaleSlider = document.getElementById('bv-scale');
+    if (scaleSlider) {
+      scaleSlider.addEventListener('input', function() {
+        document.getElementById('bv-scale-value').textContent = this.value + '%';
+        updateRangeProgress(this);
+        saveSettings();
+        updateLabelStyles();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
+    // 隱藏原始的底圖透明度和文字大小選項
+    hideOriginalControls();
     
     document.querySelectorAll('input[type="range"]').forEach(updateRangeProgress);
     
@@ -1607,7 +1772,7 @@
   
   // 監聽原始控制項
   function observeOriginalControls() {
-    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]');
+    const checkboxes = document.querySelectorAll('.ignore-print input[type="checkbox"]:not(#showProductImage):not(#fontSize)');
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         if (isConverted) {
@@ -1621,22 +1786,6 @@
         }
       });
     });
-    
-    const fontSizeSelect = document.querySelector('.ignore-print #fontSize');
-    if (fontSizeSelect) {
-      fontSizeSelect.addEventListener('change', () => {
-        if (isConverted) {
-          saveSettings();
-          updateLabelStyles();
-          setTimeout(() => {
-            handlePagination();
-            if (highlightQuantity) {
-              applyQuantityHighlight();
-            }
-          }, 100);
-        }
-      });
-    }
   }
   
   // 準備列印樣式
@@ -1648,11 +1797,13 @@
     printStyle.id = 'bv-print-styles';
     
     if (isConverted) {
-      const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
+      const scale = document.getElementById('bv-scale')?.value || '100';
       printStyle.textContent = `
         @media print {
           body.bv-converted .bv-label-page {
-            padding: ${labelPadding}mm !important;
+            padding: 5mm !important;
+            transform: scale(${scale / 100}) !important;
+            transform-origin: top left !important;
           }
         }
       `;
@@ -1844,12 +1995,8 @@
       hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
       hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
       autoLayout: document.getElementById('bv-auto-layout')?.checked,
-      labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
-      headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
-      rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
-      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
-      fontSize: document.querySelector('.ignore-print #fontSize')?.value || '14px',
-      showProductImage: document.querySelector('.ignore-print #showProductImage')?.checked,
+      fontSize: document.getElementById('bv-font-size')?.value || '14',
+      scale: document.getElementById('bv-scale')?.value || '100',
       showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
       showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
       showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
@@ -1891,33 +2038,26 @@
       const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
       if (autoLayoutCheckbox) autoLayoutCheckbox.checked = settings.autoLayout;
       autoLayout = settings.autoLayout;
+      toggleLayoutControls(!autoLayout);
     }
     
-    if (settings.labelPadding !== undefined) {
-      const paddingInput = document.getElementById('bv-label-padding');
-      if (paddingInput) {
-        paddingInput.value = settings.labelPadding;
-        document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
-        updateRangeProgress(paddingInput);
+    if (settings.fontSize !== undefined) {
+      const fontSizeSlider = document.getElementById('bv-font-size');
+      if (fontSizeSlider) {
+        fontSizeSlider.value = settings.fontSize;
+        document.getElementById('bv-font-size-value').textContent = settings.fontSize;
+        updateRangeProgress(fontSizeSlider);
       }
     }
     
-    const spacingSettings = [
-      { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
-      { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
-      { id: 'bv-fee-padding', value: settings.feePadding, valueId: 'bv-fee-padding-value' }
-    ];
-    
-    spacingSettings.forEach(setting => {
-      if (setting.value !== undefined) {
-        const input = document.getElementById(setting.id);
-        if (input) {
-          input.value = setting.value;
-          document.getElementById(setting.valueId).textContent = setting.value + 'mm';
-          updateRangeProgress(input);
-        }
+    if (settings.scale !== undefined) {
+      const scaleSlider = document.getElementById('bv-scale');
+      if (scaleSlider) {
+        scaleSlider.value = settings.scale;
+        document.getElementById('bv-scale-value').textContent = settings.scale + '%';
+        updateRangeProgress(scaleSlider);
       }
-    });
+    }
     
     if (settings.logoDataUrl) {
       logoDataUrl = settings.logoDataUrl;
@@ -2065,11 +2205,11 @@
                 </button>
               </div>
               
-              <!-- 間距設定 -->
-              <div class="bv-settings-card" data-section="spacing">
+              <!-- 版面設定 -->
+              <div class="bv-settings-card" data-section="layout">
                 <h4 class="bv-card-title">
-                  <span class="material-icons">straighten</span>
-                  間距調整
+                  <span class="material-icons">tune</span>
+                  版面設定
                   ${collapseIcon}
                 </h4>
                 
@@ -2077,34 +2217,18 @@
                   <div class="bv-slider-group">
                     <div class="bv-slider-item">
                       <div class="bv-slider-header">
-                        <span>標籤內距</span>
-                        <span class="bv-value-label" id="bv-padding-value">2.5mm</span>
+                        <span>文字大小</span>
+                        <span class="bv-value-label" id="bv-font-size-value">14</span>
                       </div>
-                      <input type="range" id="bv-label-padding" min="0" max="10" step="0.5" value="2.5" class="bv-glass-slider">
+                      <input type="range" id="bv-font-size" min="11" max="15" step="1" value="14" class="bv-glass-slider">
                     </div>
                     
                     <div class="bv-slider-item">
                       <div class="bv-slider-header">
-                        <span>標題間距</span>
-                        <span class="bv-value-label" id="bv-header-padding-value">0.5mm</span>
+                        <span>整體縮放</span>
+                        <span class="bv-value-label" id="bv-scale-value">100%</span>
                       </div>
-                      <input type="range" id="bv-header-padding" min="0" max="5" step="0.1" value="0.5" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>內容間距</span>
-                        <span class="bv-value-label" id="bv-row-padding-value">0.8mm</span>
-                      </div>
-                      <input type="range" id="bv-row-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
-                    </div>
-                    
-                    <div class="bv-slider-item">
-                      <div class="bv-slider-header">
-                        <span>費用間距</span>
-                        <span class="bv-value-label" id="bv-fee-padding-value">0.8mm</span>
-                      </div>
-                      <input type="range" id="bv-fee-padding" min="0" max="5" step="0.1" value="0.8" class="bv-glass-slider">
+                      <input type="range" id="bv-scale" min="60" max="100" step="1" value="100" class="bv-glass-slider">
                     </div>
                   </div>
                 </div>
@@ -2344,9 +2468,8 @@
     document.querySelectorAll('.bv-page-container').forEach(container => container.remove());
     document.querySelectorAll('.bv-label-page').forEach(page => page.remove());
     
-    const labelPadding = parseFloat(document.getElementById('bv-label-padding')?.value || '2.5');
-    const paddingMm = labelPadding;
-    const paddingPx = labelPadding * 3.78;
+    const paddingMm = 5; // 固定內距
+    const paddingPx = paddingMm * 3.78;
     const pageHeight = 566;
     const contentHeight = pageHeight - (paddingPx * 2);
     
@@ -2466,19 +2589,16 @@
   // 觸發原始頁面的更新事件
   function triggerOriginalPageUpdate() {
     if (typeof $ !== 'undefined') {
-      $('.ignore-print input[type="checkbox"]').trigger('change');
-      $('.ignore-print select').trigger('change');
+      $('.ignore-print input[type="checkbox"]:not(#showProductImage):not(#fontSize)').trigger('change');
+      $('.ignore-print select:not(#fontSize)').trigger('change');
     }
   }
   
   // 更新標籤樣式
   function updateLabelStyles() {
-    const fontSize = document.querySelector('.ignore-print #fontSize')?.value || '14px';
-    const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
-    
-    const headerPadding = document.getElementById('bv-header-padding')?.value || '0.5';
-    const rowPadding = document.getElementById('bv-row-padding')?.value || '0.8';
-    const feePadding = document.getElementById('bv-fee-padding')?.value || '0.8';
+    const fontSize = document.getElementById('bv-font-size')?.value || '14';
+    const scale = document.getElementById('bv-scale')?.value || '100';
+    const labelPadding = '5'; // 固定為 5mm
     
     const logoSize = document.getElementById('logo-size-slider')?.value || '30';
     const logoX = document.getElementById('logo-x-slider')?.value || '50';
@@ -2504,12 +2624,12 @@
       
       .bv-converted .order-content {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
-        font-size: ${fontSize} !important;
+        font-size: ${fontSize}px !important;
       }
       
       .bv-label-page * {
         font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif !important;
-        font-size: ${fontSize} !important;
+        font-size: ${fontSize}px !important;
       }
       
       ${hideTableHeader ? `
@@ -2521,22 +2641,22 @@
       
       .bv-converted .title,
       .bv-label-page .title {
-        font-size: 5mm !important;
+        font-size: ${parseInt(fontSize) + 2}px !important;
         font-weight: bold !important;
-        margin: 0 0 3mm 0 !important;
+        margin: 0 0 ${Math.max(fontSize * 0.8, 8)}px 0 !important;
         text-align: center !important;
         letter-spacing: 0.5mm !important;
       }
       
       .bv-converted .order-info,
       .bv-label-page .order-info {
-        margin: 0 0 3mm 0 !important;
+        margin: 0 0 ${Math.max(fontSize * 0.6, 6)}px 0 !important;
       }
       
       .bv-converted .order-info .row,
       .bv-label-page .order-info .row {
         display: flex !important;
-        margin: 0 !important;
+        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
       }
       
       .bv-converted .order-info .col-6,
@@ -2557,15 +2677,15 @@
       
       .bv-converted .order-info p,
       .bv-label-page .order-info p {
-        margin: 0 0 1mm 0 !important;
-        font-size: calc(${fontSize} - 2px) !important;
-        line-height: 1.3 !important;
+        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
+        font-size: ${parseInt(fontSize) - 1}px !important;
+        line-height: 1.4 !important;
       }
       
       .bv-converted .list,
       .bv-label-page .list {
         width: 100% !important;
-        margin: 0 0 3mm 0 !important;
+        margin: 0 0 ${Math.max(fontSize * 0.6, 6)}px 0 !important;
         border-collapse: collapse !important;
       }
       
@@ -2577,8 +2697,8 @@
       
       .bv-converted .list-title th,
       .bv-label-page .list-title th {
-        padding: ${headerPadding}mm 1mm !important;
-        font-size: calc(${fontSize} - 1px) !important;
+        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        font-size: ${parseInt(fontSize) - 1}px !important;
         font-weight: bold !important;
         text-align: left !important;
         line-height: 1.2 !important;
@@ -2598,8 +2718,8 @@
       
       .bv-converted .list-item td,
       .bv-label-page .list-item td {
-        padding: ${rowPadding}mm 1mm !important;
-        font-size: calc(${fontSize} - 2px) !important;
+        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        font-size: ${parseInt(fontSize) - 1}px !important;
         vertical-align: top !important;
         line-height: 1.3 !important;
       }
@@ -2622,7 +2742,7 @@
       .bv-label-page .order-fee {
         width: 100% !important;
         border-collapse: collapse !important;
-        margin: 0 0 3mm 0 !important;
+        margin: ${Math.max(fontSize * 0.6, 6)}px 0 !important;
         border-top: 0.3mm solid #000 !important;
         border-bottom: 0.3mm solid #000 !important;
         table-layout: fixed !important;
@@ -2630,8 +2750,8 @@
       
       .bv-converted .order-fee td,
       .bv-label-page .order-fee td {
-        padding: ${feePadding}mm 1mm !important;
-        font-size: calc(${fontSize} - 2px) !important;
+        padding: ${Math.max(fontSize * 0.4, 4)}px 4px !important;
+        font-size: ${parseInt(fontSize) - 1}px !important;
         line-height: 1.2 !important;
         vertical-align: middle !important;
         font-weight: normal !important;
@@ -2663,9 +2783,9 @@
       .bv-label-page .orderRemark,
       .bv-label-page .orderManageRemark,
       .bv-label-page .orderPrintRemark {
-        font-size: calc(${fontSize} - 3px) !important;
-        padding: 2mm !important;
-        margin: 0 0 3mm 0 !important;
+        font-size: ${parseInt(fontSize) - 2}px !important;
+        padding: ${Math.max(fontSize * 0.4, 4)}px ${Math.max(fontSize * 0.6, 6)}px !important;
+        margin: 0 0 ${Math.max(fontSize * 0.3, 3)}px 0 !important;
         border: 0.2mm solid #ccc !important;
         background-color: #f9f9f9 !important;
       }
@@ -2677,6 +2797,21 @@
         top: ${logoY}% !important;
         transform: translate(-50%, -50%) !important;
         opacity: ${(100 - logoOpacity) / 100} !important;
+      }
+      
+      /* 整體縮放 */
+      @media screen {
+        .bv-label-page {
+          transform: scale(${scale / 100});
+          transform-origin: top left;
+        }
+      }
+      
+      @media print {
+        .bv-label-page {
+          transform: scale(${scale / 100}) !important;
+          transform-origin: top left !important;
+        }
       }
     `;
     
@@ -2779,12 +2914,8 @@
       hideExtraInfo: hideExtraInfo,
       hideTableHeader: hideTableHeader,
       autoLayout: autoLayout,
-      labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
-      headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
-      rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
-      feePadding: document.getElementById('bv-fee-padding')?.value || '0.8',
-      fontSize: document.querySelector('.ignore-print #fontSize')?.value || '14px',
-      showProductImage: document.querySelector('.ignore-print #showProductImage')?.checked,
+      fontSize: document.getElementById('bv-font-size')?.value || '14',
+      scale: document.getElementById('bv-scale')?.value || '100',
       showRemark: document.querySelector('.ignore-print #showRemark')?.checked,
       showManageRemark: document.querySelector('.ignore-print #showManageRemark')?.checked,
       showPrintRemark: document.querySelector('.ignore-print #showPrintRemark')?.checked,
@@ -2831,29 +2962,23 @@
           const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
           if (autoLayoutCheckbox) autoLayoutCheckbox.checked = autoLayout;
           
-          const paddingInput = document.getElementById('bv-label-padding');
-          if (paddingInput && settings.labelPadding) {
-            paddingInput.value = settings.labelPadding;
-            document.getElementById('bv-padding-value').textContent = settings.labelPadding + 'mm';
-            updateRangeProgress(paddingInput);
+          if (settings.fontSize) {
+            const fontSizeSlider = document.getElementById('bv-font-size');
+            if (fontSizeSlider) {
+              fontSizeSlider.value = settings.fontSize;
+              document.getElementById('bv-font-size-value').textContent = settings.fontSize;
+              updateRangeProgress(fontSizeSlider);
+            }
           }
           
-          const spacingSettings = [
-            { id: 'bv-header-padding', value: settings.headerPadding, valueId: 'bv-header-padding-value' },
-            { id: 'bv-row-padding', value: settings.rowPadding, valueId: 'bv-row-padding-value' },
-            { id: 'bv-fee-padding', value: settings.feePadding, valueId: 'bv-fee-padding-value' }
-          ];
-          
-          spacingSettings.forEach(setting => {
-            if (setting.value) {
-              const input = document.getElementById(setting.id);
-              if (input) {
-                input.value = setting.value;
-                document.getElementById(setting.valueId).textContent = setting.value + 'mm';
-                updateRangeProgress(input);
-              }
+          if (settings.scale) {
+            const scaleSlider = document.getElementById('bv-scale');
+            if (scaleSlider) {
+              scaleSlider.value = settings.scale;
+              document.getElementById('bv-scale-value').textContent = settings.scale + '%';
+              updateRangeProgress(scaleSlider);
             }
-          });
+          }
           
           if (settings.logoDataUrl) {
             logoDataUrl = settings.logoDataUrl;
