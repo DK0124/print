@@ -1685,8 +1685,10 @@
     
     if (!presetSelect) return;
     
+    // 載入預設列表
     loadPresetList();
     
+    // 選擇預設時載入設定
     presetSelect.addEventListener('change', function() {
       const selectedPreset = presetSelect.value;
       if (selectedPreset) {
@@ -1703,10 +1705,12 @@
                 applyQuantityHighlight();
               }
             }, 100);
+          }
         });
       }
     });
     
+    // 儲存預設按鈕
     if (savePresetBtn) {
       savePresetBtn.addEventListener('click', function() {
         if (savePresetRow) {
@@ -1719,6 +1723,7 @@
       });
     }
     
+    // 確認儲存按鈕
     if (confirmSaveBtn) {
       confirmSaveBtn.addEventListener('click', function() {
         if (!newPresetName) return;
@@ -1754,6 +1759,7 @@
       });
     }
     
+    // 取消儲存按鈕
     if (cancelSaveBtn) {
       cancelSaveBtn.addEventListener('click', function() {
         if (savePresetRow) {
@@ -1762,6 +1768,7 @@
       });
     }
     
+    // 刪除預設按鈕
     if (deletePresetBtn) {
       deletePresetBtn.addEventListener('click', function() {
         const selectedPreset = presetSelect.value;
@@ -1777,10 +1784,12 @@
             
             const storageData = { presetList: updatedPresets };
             
+            // 如果刪除的是當前選中的預設，移除記錄
             if (result.lastSelectedPreset === selectedPreset) {
               chrome.storage.local.remove(['lastSelectedPreset']);
             }
             
+            // 先移除預設資料，再更新列表
             chrome.storage.local.remove([`bvPreset_${selectedPreset}`], () => {
               chrome.storage.local.set(storageData, () => {
                 loadPresetList();
@@ -1792,6 +1801,7 @@
       });
     }
     
+    // Enter 鍵儲存
     if (newPresetName) {
       newPresetName.addEventListener('keypress', function(e) {
         if (e.key === 'Enter' && confirmSaveBtn) {
