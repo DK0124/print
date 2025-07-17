@@ -8,6 +8,7 @@
   let hideTableHeader = false;
   let originalBodyStyle = null;
   let isPanelMinimized = false;
+  let autoLayout = true; // 新增 auto-layout 開關
   
   // 載入 Material Icons
   const iconLink = document.createElement('link');
@@ -497,7 +498,7 @@
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider {
-      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);  /* 改為藍色漸層 */
+      background: linear-gradient(135deg, #518aff 0%, #0040ff 100%);
     }
     
     .bv-glass-switch input:checked + .bv-switch-slider:before {
@@ -646,7 +647,7 @@
     
     .bv-glass-input {
       flex: 1;
-      max-width: 188px;
+      max-width: 200px;
       height: 36px;
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(20px);
@@ -796,63 +797,28 @@
       }
     }
     
-    /* 數量標示 */
-    .bv-qty-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 2em;
-      height: 1.4em;
-      padding: 0.1em 0.6em;
-      background: transparent;
-      color: inherit !important;
-      border: 1.5px solid #333333;
-      border-radius: 999px;
-      font-weight: 500;
-      font-size: 0.85em;
-      line-height: 1;
-      vertical-align: baseline;  /* 改為 baseline 對齊 */
-      position: relative;
-      bottom: 0.15em;  /* 往上微調，讓底部對齊 */
-      letter-spacing: -0.02em;
-      white-space: nowrap;
-      margin: 0 0.2em;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
+    /* 數量標示 - 星號方式 */
+    .bv-qty-star {
+      font-weight: 700;
+      color: inherit;
     }
     
-    .bv-qty-badge.single-digit {
-      width: 1.3em;
-      min-width: 1.3em;
-      padding: 0.1em 0;
-      border-radius: 50%;
-    }
-    
-    .bv-qty-badge.qty-one {
-      background: transparent !important;
-      color: inherit !important;
-      border: 1.5px solid transparent !important;  /* 改為透明邊框而非無邊框 */
-      /* 其他樣式會繼承自 .bv-qty-badge，保持相同尺寸 */
+    .bv-qty-star::before {
+      content: "★ ";
+      color: #000;
+      font-weight: normal;
     }
     
     @media print {
-      .bv-qty-badge {
-        background: transparent !important;
-        color: black !important;
-        border: 1.5px solid #333333 !important;
+      .bv-qty-star {
+        font-weight: 700 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       
-      .bv-qty-badge.single-digit {
-        width: 1.3em !important;
-        border-radius: 50% !important;
-      }
-      
-      .bv-qty-badge.qty-one {
-        background: transparent !important;
-        color: black !important;
-        border: none !important;
+      .bv-qty-star::before {
+        content: "★ " !important;
+        color: #000 !important;
       }
     }
     
@@ -877,7 +843,7 @@
     }
     
     .bv-counter-icon::before {
-      content: "filter_2";
+      content: "star";
     }
     
     /* 轉換後的樣式 */
@@ -1022,6 +988,43 @@
         width: 100%;
         height: 100%;
         position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Auto-layout 樣式 */
+      .bv-label-page.auto-layout .bv-page-content {
+        justify-content: space-between;
+      }
+      
+      .bv-label-page.auto-layout .title {
+        flex-shrink: 0;
+      }
+      
+      .bv-label-page.auto-layout .order-info {
+        flex-shrink: 0;
+      }
+      
+      .bv-label-page.auto-layout .list {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .bv-label-page.auto-layout .list-item {
+        flex-shrink: 0;
+      }
+      
+      .bv-label-page.auto-layout .order-fee {
+        flex-shrink: 0;
+        margin-top: auto;
+      }
+      
+      .bv-label-page.auto-layout .orderRemark,
+      .bv-label-page.auto-layout .orderManageRemark,
+      .bv-label-page.auto-layout .orderPrintRemark {
+        flex-shrink: 0;
       }
       
       .bv-converted .order-content.bv-original {
@@ -1036,14 +1039,18 @@
         display: none !important;
       }
       
-      /* A4 模式列印 - 保持原始樣式 */
+      /* A4 模式列印 */
       body:not(.bv-converted) {
-        /* 不需要特別設定，保持原始樣式即可 */
+        visibility: visible !important;
+      }
+      
+      body:not(.bv-converted) .order-content {
+        display: block !important;
+        visibility: visible !important;
       }
       
       /* 標籤模式列印 */
       body.bv-converted {
-        /* 關鍵修正：確保 html 和 body 都沒有邊界 */
         width: auto !important;
         max-width: none !important;
         min-width: auto !important;
@@ -1052,24 +1059,21 @@
         background: white !important;
       }
       
-      /* 同時設定 html 以確保完全無邊界 */
       html {
         margin: 0 !important;
         padding: 0 !important;
       }
       
-      /* 標籤頁面設定 */
       @page {
         size: 100mm 150mm;
         margin: 0;
       }
       
-      /* 標籤樣式 */
       body.bv-converted .bv-label-page {
         width: 100mm !important;
         height: 150mm !important;
         margin: 0 !important;
-        padding: 2.5mm !important;  /* 預設內距，會被 preparePrintStyles 覆蓋 */
+        padding: 2.5mm !important;
         box-sizing: border-box !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
@@ -1081,7 +1085,6 @@
         page-break-after: auto !important;
       }
       
-      /* 隱藏非必要元素 */
       body.bv-converted > *:not(.bv-page-container):not(.bv-label-page) {
         display: none !important;
       }
@@ -1144,6 +1147,73 @@
     }
     
     initDragFunction();
+  }
+  
+  // Auto-layout 功能
+  function applyAutoLayout(page) {
+    if (!autoLayout) return;
+    
+    page.classList.add('auto-layout');
+    const content = page.querySelector('.bv-page-content');
+    if (!content) return;
+    
+    // A. 自動調整字體大小
+    const originalFontSize = parseFloat(document.querySelector('.ignore-print #fontSize')?.value || '14');
+    let currentFontSize = originalFontSize;
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    // 檢查內容是否超出
+    function checkOverflow() {
+      return content.scrollHeight > content.clientHeight;
+    }
+    
+    // 逐步縮小字體直到內容適合
+    while (checkOverflow() && attempts < maxAttempts && currentFontSize > 10) {
+      currentFontSize -= 0.5;
+      content.style.fontSize = currentFontSize + 'px';
+      
+      // 同步調整所有子元素的字體大小
+      content.querySelectorAll('*').forEach(el => {
+        const style = window.getComputedStyle(el);
+        const elFontSize = parseFloat(style.fontSize);
+        if (elFontSize) {
+          el.style.fontSize = (elFontSize * currentFontSize / originalFontSize) + 'px';
+        }
+      });
+      
+      attempts++;
+    }
+    
+    // B. 優化表格間距
+    if (content.querySelector('.list')) {
+      const tables = content.querySelectorAll('.list');
+      tables.forEach(table => {
+        // 如果表格項目過多，減少行間距
+        const rows = table.querySelectorAll('.list-item');
+        if (rows.length > 10) {
+          rows.forEach(row => {
+            row.style.setProperty('padding-top', '0.5mm', 'important');
+            row.style.setProperty('padding-bottom', '0.5mm', 'important');
+          });
+        }
+      });
+    }
+    
+    // C. 動態調整區塊間距
+    const sections = content.children;
+    if (checkOverflow()) {
+      // 減少區塊間距
+      Array.from(sections).forEach(section => {
+        if (section.style.marginBottom) {
+          const currentMargin = parseFloat(section.style.marginBottom);
+          section.style.marginBottom = Math.max(currentMargin * 0.7, 1) + 'mm';
+        }
+      });
+    }
+    
+    // D. 自動對齊
+    // Flexbox 已在 CSS 中設定，確保內容垂直分佈均勻
   }
   
   // 恢復收摺狀態
@@ -1489,6 +1559,20 @@
       });
     }
     
+    const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
+    if (autoLayoutCheckbox) {
+      autoLayoutCheckbox.addEventListener('change', function(e) {
+        autoLayout = e.target.checked;
+        saveSettings();
+        setTimeout(() => {
+          handlePagination();
+          if (highlightQuantity) {
+            applyQuantityHighlight();
+          }
+        }, 100);
+      });
+    }
+    
     const spacingControls = [
       { id: 'bv-label-padding', valueId: 'bv-padding-value', unit: 'mm' },
       { id: 'bv-header-padding', valueId: 'bv-header-padding-value', unit: 'mm' },
@@ -1564,7 +1648,6 @@
     printStyle.id = 'bv-print-styles';
     
     if (isConverted) {
-      // 標籤模式
       const labelPadding = document.getElementById('bv-label-padding')?.value || '2.5';
       printStyle.textContent = `
         @media print {
@@ -1574,7 +1657,6 @@
         }
       `;
     } else {
-      // A4 模式 - 確保原始內容正常顯示
       printStyle.textContent = `
         @media print {
           body {
@@ -1621,7 +1703,6 @@
                 applyQuantityHighlight();
               }
             }, 100);
-          }
         });
       }
     });
@@ -1752,6 +1833,7 @@
       highlightQuantity: document.getElementById('bv-highlight-qty')?.checked,
       hideExtraInfo: document.getElementById('bv-hide-extra-info')?.checked,
       hideTableHeader: document.getElementById('bv-hide-table-header')?.checked,
+      autoLayout: document.getElementById('bv-auto-layout')?.checked,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
@@ -1793,6 +1875,12 @@
       const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
       if (hideHeaderCheckbox) hideHeaderCheckbox.checked = settings.hideTableHeader;
       hideTableHeader = settings.hideTableHeader;
+    }
+    
+    if (settings.autoLayout !== undefined) {
+      const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
+      if (autoLayoutCheckbox) autoLayoutCheckbox.checked = settings.autoLayout;
+      autoLayout = settings.autoLayout;
     }
     
     if (settings.labelPadding !== undefined) {
@@ -1913,7 +2001,7 @@
                     <span class="bv-counter-icon"></span>
                     <div class="bv-setting-text">
                       <span class="bv-setting-label">數量標示</span>
-                      <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                      <span class="bv-setting-desc">標示數量 ≥ 2（★）</span>
                     </div>
                   </div>
                   <label class="bv-glass-switch">
@@ -2027,7 +2115,7 @@
                         <span class="bv-counter-icon"></span>
                         <div class="bv-setting-text">
                           <span class="bv-setting-label">數量標示</span>
-                          <span class="bv-setting-desc">外框標示數量 ≥ 2</span>
+                          <span class="bv-setting-desc">標示數量 ≥ 2（★）</span>
                         </div>
                       </div>
                       <label class="bv-glass-switch">
@@ -2060,6 +2148,20 @@
                       </div>
                       <label class="bv-glass-switch">
                         <input type="checkbox" id="bv-hide-table-header">
+                        <span class="bv-switch-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div class="bv-setting-item">
+                      <div class="bv-setting-info">
+                        <span class="material-icons">auto_fix_high</span>
+                        <div class="bv-setting-text">
+                          <span class="bv-setting-label">自動佈局</span>
+                          <span class="bv-setting-desc">智慧調整內容排版</span>
+                        </div>
+                      </div>
+                      <label class="bv-glass-switch">
+                        <input type="checkbox" id="bv-auto-layout" checked>
                         <span class="bv-switch-slider"></span>
                       </label>
                     </div>
@@ -2128,18 +2230,18 @@
                 </div>
               </div>
               
-              <!-- 設定管理 -->
+              <!-- 預設管理 -->
               <div class="bv-settings-card" data-section="presets">
                 <h4 class="bv-card-title">
                   <span class="material-icons">bookmark</span>
-                  設定管理
+                  預設管理
                   ${collapseIcon}
                 </h4>
                 
                 <div class="bv-card-content">
                   <div class="bv-preset-controls">
                     <select id="bv-preset-select" class="bv-glass-select">
-                      <option value="">選擇預設</option>
+                      <option value="">選擇預設...</option>
                     </select>
                     <div class="bv-preset-buttons">
                       <button class="bv-glass-button" id="bv-save-preset" title="儲存">
@@ -2152,7 +2254,7 @@
                   </div>
                   
                   <div class="bv-preset-save-row" id="bv-save-preset-row" style="display:none;">
-                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入名稱">
+                    <input type="text" id="bv-new-preset-name" class="bv-glass-input" placeholder="輸入預設名稱...">
                     <div class="bv-preset-buttons">
                       <button class="bv-glass-button bv-primary" id="bv-confirm-save">
                         <span class="material-icons">check</span>
@@ -2287,6 +2389,13 @@
           
           pageContainer.appendChild(currentPage);
           currentHeight = 0;
+          
+          // 套用 auto-layout
+          if (autoLayout) {
+            setTimeout(() => {
+              applyAutoLayout(currentPage);
+            }, 50);
+          }
         }
         
         const elementClone = element.cloneNode(true);
@@ -2589,7 +2698,7 @@
     }
   }
     
-  // 應用數量標示
+  // 應用數量標示 - 星號方式
   function applyQuantityHighlight() {
     const containers = isConverted ? 
       document.querySelectorAll('.bv-label-page') : 
@@ -2600,6 +2709,7 @@
         let qtyCell = null;
         const cells = item.querySelectorAll('td');
         
+        // 找出數量欄位
         for (let i = cells.length - 2; i >= 0; i--) {
           const text = cells[i].textContent.trim();
           if (/^\d+$/.test(text) && parseInt(text) > 0) {
@@ -2608,19 +2718,14 @@
           }
         }
         
-        if (qtyCell && !qtyCell.querySelector('.bv-qty-badge')) {
+        if (qtyCell && !qtyCell.querySelector('.bv-qty-star')) {
           const qty = parseInt(qtyCell.textContent.trim());
           
-          if (qty === 1) {
-            // 數量 1 也使用 single-digit class，保持相同尺寸
-            qtyCell.innerHTML = `<span class="bv-qty-badge single-digit qty-one">${qty}</span>`;
-          } else if (qty >= 2 && qty <= 9) {
-            qtyCell.innerHTML = `<span class="bv-qty-badge single-digit">${qty}</span>`;
-          } else if (qty >= 100) {
-            qtyCell.innerHTML = `<span class="bv-qty-badge three-digit">${qty}</span>`;
-          } else {
-            qtyCell.innerHTML = `<span class="bv-qty-badge">${qty}</span>`;
+          if (qty >= 2) {
+            // 數量 ≥ 2 時加上星號
+            qtyCell.innerHTML = `<span class="bv-qty-star">${qty}</span>`;
           }
+          // 數量 = 1 時保持原樣，不做任何處理
         }
       });
     });
@@ -2628,9 +2733,9 @@
   
   // 移除數量標示
   function removeQuantityHighlight() {
-    document.querySelectorAll('.bv-qty-badge').forEach(badge => {
-      const parent = badge.parentElement;
-      const qty = badge.textContent;
+    document.querySelectorAll('.bv-qty-star').forEach(star => {
+      const parent = star.parentElement;
+      const qty = star.textContent;
       parent.textContent = qty;
     });
   }
@@ -2663,6 +2768,7 @@
       highlightQuantity: highlightQuantity,
       hideExtraInfo: hideExtraInfo,
       hideTableHeader: hideTableHeader,
+      autoLayout: autoLayout,
       labelPadding: document.getElementById('bv-label-padding')?.value || '2.5',
       headerPadding: document.getElementById('bv-header-padding')?.value || '0.5',
       rowPadding: document.getElementById('bv-row-padding')?.value || '0.8',
@@ -2710,6 +2816,10 @@
           hideTableHeader = settings.hideTableHeader !== undefined ? settings.hideTableHeader : false;
           const hideHeaderCheckbox = document.getElementById('bv-hide-table-header');
           if (hideHeaderCheckbox) hideHeaderCheckbox.checked = hideTableHeader;
+          
+          autoLayout = settings.autoLayout !== undefined ? settings.autoLayout : true;
+          const autoLayoutCheckbox = document.getElementById('bv-auto-layout');
+          if (autoLayoutCheckbox) autoLayoutCheckbox.checked = autoLayout;
           
           const paddingInput = document.getElementById('bv-label-padding');
           if (paddingInput && settings.labelPadding) {
