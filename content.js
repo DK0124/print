@@ -668,6 +668,7 @@
     .bv-glass-input {
       flex: 1;
       height: 36px;
+      max-width: 188px;
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(20px);
       border: 0.5px solid rgba(0, 0, 0, 0.08);
