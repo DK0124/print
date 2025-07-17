@@ -975,7 +975,7 @@
     
     @media screen {
       body.bv-converted {
-        background: #f0f0f0;
+        background: white;  /* 改為白色，不要灰色 */
         padding: 20px 0;
       }
       
@@ -1431,6 +1431,7 @@
       '#baseImageOpacityLabel',    // 底圖透明度標籤
       '#fontSize',                 // 文字大小選單
       '.checkbox-area:has(#fontSize)', // 文字大小的容器
+      'button[onclick="printPage()"]'  // 列印此頁按鈕
     ];
     
     controlsToHide.forEach(selector => {
@@ -2432,11 +2433,11 @@
       /* 列印時保持原始位置，從左上角縮放 */
       @media print {
         .bv-label-page .bv-page-content {
-          position: relative !important;
-          left: auto !important;
-          top: auto !important;
-          transform: scale(${scale / 100}) !important;
-          transform-origin: top left !important;
+          position: absolute !important;
+          left: 50% !important;
+          top: 50% !important;
+          transform: translate(-50%, -50%) scale(${scale / 100}) !important;
+          transform-origin: center center !important;
           width: calc(100mm - 10mm) !important;
           height: calc(150mm - 10mm) !important;
         }
@@ -2526,13 +2527,13 @@
             page-break-after: auto !important;
           }
           
-          /* 列印時保持畫布上的樣子，不做垂直置中 */
+          /* 列印時保持從中心點縮放，與畫面顯示一致 */
           body.bv-converted .bv-label-page .bv-page-content {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            transform: scale(${scale / 100}) !important;
-            transform-origin: top left !important;
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) scale(${scale / 100}) !important;
+            transform-origin: center center !important;
             width: calc(100mm - 10mm) !important;
             height: calc(150mm - 10mm) !important;
           }
