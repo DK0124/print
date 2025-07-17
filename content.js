@@ -2359,7 +2359,7 @@
     const fontSize = document.getElementById('bv-font-size')?.value || '14';
     const scale = document.getElementById('bv-scale')?.value || '100';
     const labelPadding = '5'; // 固定為 5mm
-    
+    const paddingPx = parseFloat(labelPadding) * 3.78;
     const logoSize = document.getElementById('logo-size-slider')?.value || '30';
     const logoX = document.getElementById('logo-x-slider')?.value || '50';
     const logoY = document.getElementById('logo-y-slider')?.value || '50';
